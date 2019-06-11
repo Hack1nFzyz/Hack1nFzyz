@@ -10,7 +10,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="福州一中App"
+        android:label="hack-FZYZ"
         android:icon="@mipmap/ic_launcher"
         android:allowBackup="false">
         <activity
