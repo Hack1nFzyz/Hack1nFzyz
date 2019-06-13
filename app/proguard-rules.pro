@@ -29,9 +29,3 @@
 -overloadaggressively
 
 -dontpreverify
-
-#-android
-
--dontobfuscate
-
--whyareyoukeeping androidx.appcompat

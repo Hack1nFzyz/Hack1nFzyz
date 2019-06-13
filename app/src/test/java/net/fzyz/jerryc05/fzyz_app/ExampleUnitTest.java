@@ -1,4 +1,4 @@
-package com.jerryc05.fzyz_app;
+package net.fzyz.jerryc05.fzyz_app;
 
 import org.junit.Test;
 

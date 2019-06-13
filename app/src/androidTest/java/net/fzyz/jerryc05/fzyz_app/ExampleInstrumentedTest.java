@@ -1,4 +1,4 @@
-package com.jerryc05.fzyz_app;
+package net.fzyz.jerryc05.fzyz_app;
 
 import android.content.Context;
 
@@ -22,6 +22,6 @@ public class ExampleInstrumentedTest {
     // Context of the app under test.
     Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-    assertEquals("com.jerryc05.fzyz_app", appContext.getPackageName());
+    assertEquals("net.fzyz.jerryc05.fzyz_app", appContext.getPackageName());
   }
 }
