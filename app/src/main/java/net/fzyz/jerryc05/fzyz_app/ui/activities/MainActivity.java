@@ -9,6 +9,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.Fragment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -17,12 +18,15 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
 import net.fzyz.jerryc05.fzyz_app.R;
+import net.fzyz.jerryc05.fzyz_app.core.MainPage;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.DashboardFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.HomeFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileFragment;
 
 
 public class MainActivity extends AppCompatActivity {
+  private final static String TAG = "MainActivity";
+
   private DrawerLayout drawerLayout;
 
   @Override
@@ -43,7 +47,10 @@ public class MainActivity extends AppCompatActivity {
 
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-    Snackbar.make(item.getActionView(),"????",Snackbar.LENGTH_INDEFINITE).show();
+    Snackbar.make(findViewById(R.id.drawer_layout),
+            "????", Snackbar.LENGTH_INDEFINITE).show();
+    Log.d(TAG, "onOptionsItemSelected: ");
+    MainPage.test();
     return super.onOptionsItemSelected(item);
   }
 
@@ -69,23 +76,25 @@ public class MainActivity extends AppCompatActivity {
 
   private void setBottomNavView() {
     BottomNavigationView bottomNavView = findViewById(R.id.bottom_nav_view);
-    bottomNavView.setOnNavigationItemSelectedListener(item -> {
-
-      Fragment fragment;
-      switch (item.getItemId()) {
-        case R.id.nav_home:
-          fragment = new HomeFragment();
-          break;
-        case R.id.nav_dashboard:
-          fragment = new DashboardFragment();
-          break;
-        case R.id.nav_profile:
-        default:
-          fragment = new ProfileFragment();
-      }
-      setFragment(fragment);
-      return true;
-    });
+    bottomNavView.setOnNavigationItemSelectedListener(
+            item -> {
+              Fragment fragment;
+              switch (item.getItemId()) {
+                case R.id.nav_home:
+                  fragment = new HomeFragment();
+                  break;
+                case R.id.nav_dashboard:
+                  fragment = new DashboardFragment();
+                  break;
+                case R.id.nav_profile:
+                  fragment = new ProfileFragment();
+                  break;
+                default:
+                  return false;
+              }
+              setFragment(fragment);
+              return true;
+            });
   }
 
   private void setFragment(@NonNull Fragment fragment) {
