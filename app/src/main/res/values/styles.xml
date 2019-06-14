@@ -1,13 +1,16 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="MDLibraryTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="MyLibraryThemeNoActionbar" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <!--        <item name="android:textColorPrimary">@color/colorTextPrimary</item>-->
         <!--        <item name="android:textColorSecondary">@color/colorTextSecondary</item>-->
         <!--        <item name="android:listDivider">@color/colorDivider</item>-->
-    <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
+
+    <style name="MyLibraryThemeAppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
+
+    <style name="MyLibraryThemePopupOverlay" parent="ThemeOverlay.MaterialComponents.Light" />
 </resources>

@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="net.fzyz.jerryc05.fzyz_app"
+    android:installLocation="auto"
     tools:ignore="GoogleAppIndexingWarning">
 
     <application
@@ -9,7 +10,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:theme="@style/MDLibraryTheme"
+        android:theme="@style/MyLibraryThemeNoActionbar"
+
         tools:ignore="AllowBackup">
         <activity
             android:name=".MainActivity"

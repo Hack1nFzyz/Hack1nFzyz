@@ -1,25 +1,28 @@
 package net.fzyz.jerryc05.fzyz_app;
 
-import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.legacy.app.ActionBarDrawerToggle;
 
 import android.app.Fragment;
-import android.view.Gravity;
-import android.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.snackbar.Snackbar;
 
 import net.fzyz.jerryc05.fzyz_app.bottom_nav_bar.DashboardFragment;
 import net.fzyz.jerryc05.fzyz_app.bottom_nav_bar.HomeFragment;
 import net.fzyz.jerryc05.fzyz_app.bottom_nav_bar.ProfileFragment;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
   private DrawerLayout drawerLayout;
 
   @Override
@@ -33,6 +36,18 @@ public class MainActivity extends Activity {
   }
 
   @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.activity_main_toolbar, menu);
+    return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    Snackbar.make(item.getActionView(),"????",Snackbar.LENGTH_INDEFINITE).show();
+    return super.onOptionsItemSelected(item);
+  }
+
+  @Override
   public void onBackPressed() {
     if (drawerLayout.isDrawerOpen(GravityCompat.START))
       drawerLayout.closeDrawer(GravityCompat.START);
@@ -41,12 +56,12 @@ public class MainActivity extends Activity {
   }
 
   private void setToolBarAndDrawer() {
-    Toolbar toolbar = findViewById(R.id.toolbar);
-    setActionBar(toolbar);
+    MaterialToolbar toolbar = findViewById(R.id.toolbar);
+    setSupportActionBar(toolbar);
 
     drawerLayout = findViewById(R.id.drawer_layout);
     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-            this, drawerLayout, R.drawable.ic_dashboard_black_24dp,
+            this, drawerLayout, toolbar,
             R.string.app_name, R.string.appbar_scrolling_view_behavior);
     drawerLayout.addDrawerListener(toggle);
     toggle.syncState();
