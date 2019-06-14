@@ -1,4 +1,4 @@
-package net.fzyz.jerryc05.fzyz_app.bottom_nav_bar;
+package net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar;
 
 
 import android.os.Bundle;

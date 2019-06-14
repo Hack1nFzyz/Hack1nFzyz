@@ -1,4 +1,4 @@
-package net.fzyz.jerryc05.fzyz_app;
+package net.fzyz.jerryc05.fzyz_app.ui.activities;
 
 import android.os.Bundle;
 
@@ -11,15 +11,15 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import android.app.Fragment;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
-import net.fzyz.jerryc05.fzyz_app.bottom_nav_bar.DashboardFragment;
-import net.fzyz.jerryc05.fzyz_app.bottom_nav_bar.HomeFragment;
-import net.fzyz.jerryc05.fzyz_app.bottom_nav_bar.ProfileFragment;
+import net.fzyz.jerryc05.fzyz_app.R;
+import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.DashboardFragment;
+import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.HomeFragment;
+import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileFragment;
 
 
 public class MainActivity extends AppCompatActivity {
