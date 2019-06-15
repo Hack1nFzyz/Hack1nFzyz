@@ -1,14 +1,18 @@
 package net.fzyz.jerryc05.fzyz_app.core;
 
+import android.util.Base64;
+
 @SuppressWarnings({"SpellCheckingInspection", "unused", "WeakerAccess"})
 public class Websites {
 
   private static final String
-          URL_GET_NEWS_PREFIX      = "L2Rvb25lL2hvbWUvcG9ydGFsL2dldE5ld3Muc2h0bWw/",
-          URL_SCHOOL_NEWS_PREFIX_1 = URL_GET_NEWS_PREFIX
+          URL_GET_NEWS_PREFIX       = "L2Rvb25lL2hvbWUvcG9ydGFsL2dldE5ld3Muc2h0bWw/",
+          URL_SCHOOL_NEWS_PREFIX_1  = URL_GET_NEWS_PREFIX
                   + "bmV3c19sZXZlbHRhZz0wJmlzX291dHNpZGU9MSZuZXdudW1zPTEwJnR5cGVzPT",
-          URL_SCHOOL_NEWS_PREFIX_2 = URL_SCHOOL_NEWS_PREFIX_1.replace(
-                  "Ew", "Ex");
+          URL_SCHOOL_NEWS_PREFIX_2  = URL_SCHOOL_NEWS_PREFIX_1.replace(
+                  "Ew", "Ex"),
+          URL_INDEX_RES_LIST_PREFIX = "" +
+                  "L2Rvb25lL2tub3dsZWRnZS9pbmZvL2luZGV4cmVzbGlzdC5zaHRtbD9rdHlwZWlkPT";
 
   public static final String
           URL_BASE                              = "aHR0cDovL3d3dy5menl6Lm5ldA==",
@@ -38,5 +42,18 @@ public class Websites {
           URL_CAMPUS_PICTURE_XiaoYuanChuanZhen  =
                   "L2Rvb25lL2hvbWUvcG9ydGFsL2dldFRvcFBpY3Muc2h0bWw/cGljX3R5cGU9Mw==",
           URL_YEARS_PASSED_SuiYueLiuYing        =
-                  URL_CAMPUS_PICTURE_XiaoYuanChuanZhen.replace("Mw", "NA");
+                  URL_CAMPUS_PICTURE_XiaoYuanChuanZhen.replace("Mw", "NA"),
+          URL_PRINCIPAL_FORUM_XiaoZhangLunTan   =
+                  "L2Rvb25lLWVkdS9zY2hvb2wvaG9tZS9zY2hvb2xGb3J1bUluZGV4QWN0aW9uLnNodG1s",
+          URL_TUO_FENG_ONLINE_TuoFengZaiXian    = URL_INDEX_RES_LIST_PREFIX + "EyNDMmdHlwZV9pZD0x",
+          URL_3M_FATE_SanMuYuan                 = URL_INDEX_RES_LIST_PREFIX + "EyNDQmdHlwZV9pZD0y",
+          URL_WINDOW_OF_HEART_XinYuZhiChuang    = URL_INDEX_RES_LIST_PREFIX + "IyNjEmdHlwZV9pZD0z";
+
+  public static final String
+          URL_INDEPENDENT_RECRUITMENT_PUBLICITY_ZiZhuZhaoShengGongShi =
+          URL_GET_NEWS_PREFIX + "bmV3bnVtcz02JnR5cGVzPTU4MiZpc19vdXRzaWRlPTE=";
+
+  public static String of(String url) {
+    return new String(Base64.decode(url, Base64.DEFAULT));
+  }
 }
