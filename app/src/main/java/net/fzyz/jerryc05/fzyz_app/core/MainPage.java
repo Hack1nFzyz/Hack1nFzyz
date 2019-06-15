@@ -3,13 +3,13 @@ package net.fzyz.jerryc05.fzyz_app.core;
 import android.util.Log;
 
 public class MainPage {
-  public static final String
+  private static final String
           TAG = "MainPage";
 
   public static void test() {
     try {
       MyURLRequestBuilder req = new MyURLRequestBuilder(
-"http://www.fzyz.net").buildRequest();
+              "http://www.fzyz.net").buildRequest();
 
       new Thread(() -> {
         try {
@@ -17,7 +17,7 @@ public class MainPage {
           req.connect();
         } catch (Exception e) {
           Log.e(TAG, "test: ", e);
-        }finally {
+        } finally {
           req.disconnect();
         }
       }).start();

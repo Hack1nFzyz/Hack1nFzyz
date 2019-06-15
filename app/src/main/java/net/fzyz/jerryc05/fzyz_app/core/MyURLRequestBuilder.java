@@ -1,5 +1,6 @@
 package net.fzyz.jerryc05.fzyz_app.core;
 
+import android.util.ArrayMap;
 import android.util.Log;
 
 import androidx.annotation.IntRange;
@@ -54,7 +55,7 @@ public class MyURLRequestBuilder {
   private boolean
           useCache = true,
           isHTTP;
-  private HashMap<String, String>
+  private ArrayMap<String, String>
           requestPropertyMap;
   private URLConnection
           urlConnection;
@@ -171,7 +172,7 @@ public class MyURLRequestBuilder {
 
   public MyURLRequestBuilder putRequestPropertyMap(String key, String value) {
     if (requestPropertyMap == null)
-      requestPropertyMap = new HashMap<>();
+      requestPropertyMap = new ArrayMap<>();
     requestPropertyMap.put(key, value);
     return this;
   }
