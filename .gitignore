@@ -15,3 +15,8 @@
 /captures
 .externalNativeBuild
 .cxx
+
+
+*.lnk
+*.js
+*.jsp

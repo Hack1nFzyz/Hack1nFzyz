@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void setFragment(@NonNull Fragment fragment) {
+    // todo getFragmentManager() is deprecated
     getFragmentManager().beginTransaction().replace(
             R.id.frame_layout, fragment).commit();
   }
