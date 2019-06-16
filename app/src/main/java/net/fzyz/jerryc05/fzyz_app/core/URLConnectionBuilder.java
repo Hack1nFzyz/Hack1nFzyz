@@ -14,19 +14,19 @@ import java.io.InputStream;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class MyURLRequestBuilder {
+public class URLConnectionBuilder {
 
   private final static String
-          TAG            = "MyURLRequestBuilder";
+          TAG            = "URLConnectionBuilder";
   public final static  String
           METHOD_GET     = "GET",
           METHOD_POST    = "POST",
@@ -42,63 +42,32 @@ public class MyURLRequestBuilder {
   public @interface RequestMethods {
   }
 
-  @NonNull
-  private String
-          baseURL,
-          requestMethod = METHOD_GET;
-  @Nullable
-  private String
-          result;
-  private int
-          connectTimeout = 5 * 1000,
-          readTimeout    = 5 * 1000;
-  private boolean
-          useCache = true,
-          isHTTP;
-  private ArrayMap<String, String>
-          requestPropertyMap;
-  private URLConnection
-          urlConnection;
+  private boolean       isHTTP;
+  private String        result;
+  private URLConnection urlConnection;
 
 
-  public MyURLRequestBuilder(@NonNull String _baseURL) {
+  public URLConnectionBuilder(@NonNull String _baseURL) throws IOException {
     _baseURL = _baseURL.trim();
     if (!_baseURL.startsWith("http://") && !_baseURL.startsWith("https://"))
       throw new UnsupportedOperationException(
               "${baseURL} prefix not recognized: " + _baseURL);
 
-    baseURL = _baseURL;
+    urlConnection = new URL(_baseURL).openConnection();
+    urlConnection.setConnectTimeout(5 * 1000);
+    urlConnection.setReadTimeout(5 * 1000);
   }
 
-  public MyURLRequestBuilder buildRequest() throws IOException {
-    try {
-      URL url = new URL(baseURL);
-      urlConnection = url.openConnection();
-      urlConnection.setConnectTimeout(connectTimeout);
-      urlConnection.setReadTimeout(readTimeout);
-      urlConnection.setUseCaches(useCache);
+  public static URLConnectionBuilder get(String _baseURL) throws IOException {
+    URLConnectionBuilder builder = new URLConnectionBuilder(_baseURL);
+    builder.setRequestMethod(METHOD_GET);
+    return builder;
+  }
 
-      {
-        final char ch = baseURL.charAt(4);
-        if (ch == ':')
-          isHTTP = true;
-        else if (ch != 's') throw new UnsupportedOperationException(
-                "Cannot determine request type of " + baseURL);
-      }
-
-      (isHTTP ? (HttpURLConnection) urlConnection
-              : (HttpsURLConnection) urlConnection)
-              .setRequestMethod(requestMethod);
-      if (requestPropertyMap != null)
-        for (Map.Entry<String, String> entry : requestPropertyMap.entrySet())
-          urlConnection.setRequestProperty(
-                  entry.getKey(), entry.getValue());
-      return this;
-
-    } catch (Exception e) {
-      Log.e(TAG, "buildRequest: ", e);
-      throw e;
-    }
+  public static URLConnectionBuilder post(String _baseURL) throws IOException {
+    URLConnectionBuilder builder = new URLConnectionBuilder(_baseURL);
+    builder.setRequestMethod(METHOD_POST);
+    return builder;
   }
 
   public String connect() throws IOException {
@@ -138,42 +107,42 @@ public class MyURLRequestBuilder {
     (isHTTP ? (HttpURLConnection) urlConnection
             : (HttpsURLConnection) urlConnection)
             .disconnect();
-    urlConnection = null;
-    Log.d(TAG, "disconnect: " + baseURL + " disconnected!");
+
+    Log.d(TAG, "disconnect: " + urlConnection.getURL() + " disconnected!");
   }
 
-  public MyURLRequestBuilder setBaseURL(String _baseURL) {
-    baseURL = _baseURL;
-    return this;
-  }
-
-  public MyURLRequestBuilder setRequestMethod(
+  public URLConnectionBuilder setRequestMethod(
           @RequestMethods String _requestMethod) {
-    requestMethod = _requestMethod;
+    try {
+      (isHTTP ? (HttpURLConnection) urlConnection
+              : (HttpsURLConnection) urlConnection)
+              .setRequestMethod(_requestMethod);
+    } catch (java.net.ProtocolException e) {
+      Log.e(TAG, "setRequestMethod: ", e);
+    }
     return this;
   }
 
-  public MyURLRequestBuilder setConnectTimeout(
+  public URLConnectionBuilder setConnectTimeout(
           @IntRange(from = 0) int _connectTimeout) {
-    connectTimeout = _connectTimeout;
+    urlConnection.setConnectTimeout(_connectTimeout);
     return this;
   }
 
-  public MyURLRequestBuilder setReadTimeout(
+  public URLConnectionBuilder setReadTimeout(
           @IntRange(from = 0) int _readTimeout) {
-    readTimeout = _readTimeout;
+    urlConnection.setReadTimeout(_readTimeout);
     return this;
   }
 
-  public MyURLRequestBuilder setUseCache(boolean _useCache) {
-    useCache = _useCache;
+  public URLConnectionBuilder setUseCache(boolean _useCache) {
+    urlConnection.setUseCaches(_useCache);
     return this;
   }
 
-  public MyURLRequestBuilder putRequestPropertyMap(String key, String value) {
-    if (requestPropertyMap == null)
-      requestPropertyMap = new ArrayMap<>();
-    requestPropertyMap.put(key, value);
+  public URLConnectionBuilder setRequestProperty(
+          @NonNull String key, @NonNull String value) {
+    urlConnection.setRequestProperty(key, value);
     return this;
   }
 
