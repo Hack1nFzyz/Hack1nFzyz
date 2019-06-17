@@ -38,3 +38,5 @@
     public static int d(...);
     public static int e(...);
 }
+
+-keep class net.fzyz.jerryc05.fzyz_app.core.Websites {*;}

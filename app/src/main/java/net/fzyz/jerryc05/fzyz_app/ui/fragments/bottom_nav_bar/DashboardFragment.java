@@ -1,7 +1,6 @@
 package net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar;
 
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +8,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import net.fzyz.jerryc05.fzyz_app.R;
 

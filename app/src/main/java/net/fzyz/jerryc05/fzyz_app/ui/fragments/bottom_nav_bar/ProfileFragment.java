@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 import net.fzyz.jerryc05.fzyz_app.R;
 

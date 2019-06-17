@@ -7,8 +7,8 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 
-import android.app.Fragment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,8 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-    Log.d(TAG, "onOptionsItemSelected: ");
-    MainPage.test(this);//, findViewById(R.id.text_home));
+    MainPage.test(this,item.getTitle().toString());
     return super.onOptionsItemSelected(item);
   }
 
@@ -96,8 +95,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void setFragment(@NonNull Fragment fragment) {
-    // todo getFragmentManager() is deprecated
-    getFragmentManager().beginTransaction().replace(
+    getSupportFragmentManager().beginTransaction().replace(
             R.id.frame_layout, fragment).commit();
   }
 }

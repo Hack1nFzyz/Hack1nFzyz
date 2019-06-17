@@ -10,17 +10,124 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/nav_dashboard"
-        android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="@string/title_dashboard"
-        app:iconTint="?android:colorForeground"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/ic_person_black_24dp"
         android:title="@string/title_profile"
         app:iconTint="?android:colorForeground"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/URL_ROLLING_NEWS_GunDongXinWen"
+        android:title="URL_ROLLING_NEWS_GunDongXinWen"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/URL_OFFICE_ANNOUNCEMENT_ChuShiGongGao"
+        android:title="URL_OFFICE_ANNOUNCEMENT_ChuShiGongGao"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/URL_SCHOOL_AFFAIRS_XiaoWuGongKai"
+        android:title="URL_SCHOOL_AFFAIRS_XiaoWuGongKai"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/URL_HEADLINE_NEWS_ZuiXinXinWenNeiRong"
+        android:title="URL_HEADLINE_NEWS_ZuiXinXinWenNeiRong"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/URL_LATEST_NEWS_ZuiXinXinWen"
+        android:title="URL_LATEST_NEWS_ZuiXinXinWen"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/URL_SCHOOL_NEWS_MIXED_XiaoYuanXinWen"
+        android:title="URL_SCHOOL_NEWS_MIXED_XiaoYuanXinWen"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/URL_SCHOOL_NEWS_HIGH_GaoZhongXinWen"
+        android:title="URL_SCHOOL_NEWS_HIGH_GaoZhongXinWen"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/URL_SCHOOL_NEWS_MIDDLE_ChuZhongXinWen"
+        android:title="URL_SCHOOL_NEWS_MIDDLE_ChuZhongXinWen"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/URL_EDUCATION_NEWS_JiaoYuDongTai"
+        android:title="URL_EDUCATION_NEWS_JiaoYuDongTai"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/URL_ENTRANCE_EXAMS_ZhongKaoGaoKao"
+        android:title="URL_ENTRANCE_EXAMS_ZhongKaoGaoKao"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/URL_ENTRANCE_HIGH_GaoKaoDongTai"
+        android:title="URL_ENTRANCE_HIGH_GaoKaoDongTai"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/URL_ENTRANCE_MIDDLE_ZhongKaoDongTai"
+        android:title="URL_ENTRANCE_MIDDLE_ZhongKaoDongTai"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/URL_STUDENTS_CHANNEL_XueShengPinDao"
+        android:title="URL_STUDENTS_CHANNEL_XueShengPinDao"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/URL_ALUMNI_CHANNEL_XiaoYouPinDao"
+        android:title="URL_ALUMNI_CHANNEL_XiaoYouPinDao"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/URL_SPECIAL_TOPIC_NEWS_XinWenZhuanTi"
+        android:title="URL_SPECIAL_TOPIC_NEWS_XinWenZhuanTi"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/URL_EDUCATION_BLOG_JiaoYuBoKe"
+        android:title="URL_EDUCATION_BLOG_JiaoYuBoKe"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/URL_CAMPUS_PICTURE_XiaoYuanChuanZhen"
+        android:title="URL_CAMPUS_PICTURE_XiaoYuanChuanZhen"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/URL_YEARS_PASSED_SuiYueLiuYing"
+        android:title="URL_YEARS_PASSED_SuiYueLiuYing"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/URL_PRINCIPAL_FORUM_XiaoZhangLunTan"
+        android:title="URL_PRINCIPAL_FORUM_XiaoZhangLunTan"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/URL_TUO_FENG_ONLINE_TuoFengZaiXian"
+        android:title="URL_TUO_FENG_ONLINE_TuoFengZaiXian"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/URL_3M_FATE_SanMuYuan"
+        android:title="URL_3M_FATE_SanMuYuan"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/URL_WINDOW_OF_HEART_XinYuZhiChuang"
+        android:title="URL_WINDOW_OF_HEART_XinYuZhiChuang"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/URL_INDEPENDENT_RECRUITMENT_PUBLICITY_ZiZhuZhaoShengGongShi"
+        android:title="URL_INDEPENDENT_RECRUITMENT_PUBLICITY_ZiZhuZhaoShengGongShi"
+        app:showAsAction="never" />
 </menu>
