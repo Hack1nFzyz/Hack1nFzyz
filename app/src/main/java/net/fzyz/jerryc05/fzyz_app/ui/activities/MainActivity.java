@@ -25,7 +25,7 @@ import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileFragment;
 
 
 public class MainActivity extends AppCompatActivity {
-  private final static String TAG = "MainActivity";
+  private final static String TAG = MainActivity.class.getName();
 
   private DrawerLayout drawerLayout;
 
@@ -47,10 +47,8 @@ public class MainActivity extends AppCompatActivity {
 
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-    Snackbar.make(findViewById(R.id.drawer_layout),
-            "????", Snackbar.LENGTH_INDEFINITE).show();
     Log.d(TAG, "onOptionsItemSelected: ");
-    MainPage.test();
+    MainPage.test(this);//, findViewById(R.id.text_home));
     return super.onOptionsItemSelected(item);
   }
 

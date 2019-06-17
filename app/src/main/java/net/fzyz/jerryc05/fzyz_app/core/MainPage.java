@@ -1,29 +1,36 @@
 package net.fzyz.jerryc05.fzyz_app.core;
 
+import android.app.Activity;
 import android.util.Log;
+import android.widget.TextView;
+
+import com.google.android.material.snackbar.Snackbar;
+
+import net.fzyz.jerryc05.fzyz_app.R;
 
 public class MainPage {
-  private static final String TAG = "MainPage";
+  private static final String TAG = MainPage.class.getName();
 
-  public static void test() {
-    try {
-      URLConnectionBuilder req =
-              URLConnectionBuilder.get("http://www.fzyz.net");
+  public static void test(Activity activity) {
+    new Thread(() -> {
+      final String url =
+              Websites.of(Websites.URL_EDUCATION_NEWS_JiaoYuDongTai);
+      try (URLConnectionBuilder req = URLConnectionBuilder.get(url)) {
+        String result = req.connect().getResult("gbk");
 
-      new Thread(() -> {
-        try {
-          req.connect();
-        } catch (Exception e) {
-          Log.e(TAG, "test: ", e);
-        } finally {
-          req.disconnect();
-        }
-      }).start();
-    } catch (Exception e) {
-      Log.e(TAG, "test: ", e);
-    }
+        activity.runOnUiThread(() -> {
+          Snackbar.make(activity.findViewById(R.id.container_main_activity),
+                  url, Snackbar.LENGTH_LONG).show();
+          ((TextView) activity.findViewById(R.id.text_home))
+                  .setText(result);
+        });
+      } catch (Exception e) {
+        Log.e(TAG, "test: ", e);
+      }
+    }).start();
   }
 }
+
 /*
 <form action="/sys/login.shtml" method="post" name="form1" id="form1">
     <span>

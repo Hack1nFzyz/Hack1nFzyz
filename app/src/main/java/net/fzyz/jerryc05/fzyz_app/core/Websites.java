@@ -1,11 +1,13 @@
 package net.fzyz.jerryc05.fzyz_app.core;
 
 import android.util.Base64;
+import android.util.Log;
 
 @SuppressWarnings({"SpellCheckingInspection", "unused", "WeakerAccess"})
 public class Websites {
 
   private static final String
+          TAG                       = Websites.class.getName(),
           URL_GET_NEWS_PREFIX       = "L2Rvb25lL2hvbWUvcG9ydGFsL2dldE5ld3Muc2h0bWw/",
           URL_SCHOOL_NEWS_PREFIX_1  = URL_GET_NEWS_PREFIX
                   + "bmV3c19sZXZlbHRhZz0wJmlzX291dHNpZGU9MSZuZXdudW1zPTEwJnR5cGVzPT",
@@ -15,20 +17,20 @@ public class Websites {
                   "L2Rvb25lL2tub3dsZWRnZS9pbmZvL2luZGV4cmVzbGlzdC5zaHRtbD9rdHlwZWlkPT";
 
   public static final String
-          URL_BASE                              = "aHR0cDovL3d3dy5menl6Lm5ldA==",
-          URL_ROLLING_NEWS_GunDongXinWen        = "L25ld3MvbmV3c21nci9nZXRNb3ZlSW1nLnNodG1s",
+          URL_BASE                              = "aHR0cDovL3d3dy5menl6Lm5ldA==",//
+          URL_ROLLING_NEWS_GunDongXinWen        = "L25ld3MvbmV3c21nci9nZXRNb3ZlSW1nLnNodG1s",//
           URL_OFFICE_ANNOUNCEMENT_ChuShiGongGao = URL_GET_NEWS_PREFIX
-                  + "bmV3bnVtcz0zJnR5cGVzPTEsNSw2LDcmaXNfb3V0c2lkZT0x",
+                  + "bmV3bnVtcz0zJnR5cGVzPTEsNSw2LDcmaXNfb3V0c2lkZT0x",//
           URL_SCHOOL_AFFAIRS_XiaoWuGongKai      = URL_GET_NEWS_PREFIX
-                  + "bmV3bnVtcz01JnR5cGVzPTE5MSZpc19vdXRzaWRlPTE=",
+                  + "bmV3bnVtcz01JnR5cGVzPTE5MSZpc19vdXRzaWRlPTE=",//
           URL_HEADLINE_NEWS_ZuiXinXinWenNeiRong =
                   "L2Rvb25lL2hvbWUvcG9ydGFsL2dldE5ld3NDb250ZW50LnNodG1sP2lzX291"
-                          + "dHNpZGU9MSZuZXdzX2xldmVsdGFnPTEmdF9uZXdzX2xldmVsPTI=",
+                          + "dHNpZGU9MSZuZXdzX2xldmVsdGFnPTEmdF9uZXdzX2xldmVsPTI=",//
           URL_LATEST_NEWS_ZuiXinXinWen          = URL_GET_NEWS_PREFIX
-                  + "aXNfb3V0c2lkZT0xJm5ld251bXM9OCZpc0ZpcnN0PWlzRmlyc3QmbmV3c19sZXZlbHRhZz0x",
-          URL_SCHOOL_NEWS_MIXED_XiaoYuanXinWen  = URL_SCHOOL_NEWS_PREFIX_1 + "EyLDEw",
-          URL_SCHOOL_NEWS_HIGH_GaoZhongXinWen   = URL_SCHOOL_NEWS_PREFIX_1 + "Ey",
-          URL_SCHOOL_NEWS_MIDDLE_ChuZhongXinWen = URL_SCHOOL_NEWS_PREFIX_1 + "Ew",
+                  + "aXNfb3V0c2lkZT0xJm5ld251bXM9OCZpc0ZpcnN0PWlzRmlyc3QmbmV3c19sZXZlbHRhZz0x",//
+          URL_SCHOOL_NEWS_MIXED_XiaoYuanXinWen  = URL_SCHOOL_NEWS_PREFIX_1 + "EyLDEw",//
+          URL_SCHOOL_NEWS_HIGH_GaoZhongXinWen   = URL_SCHOOL_NEWS_PREFIX_1 + "Ey",//
+          URL_SCHOOL_NEWS_MIDDLE_ChuZhongXinWen = URL_SCHOOL_NEWS_PREFIX_1 + "Ew",//
           URL_EDUCATION_NEWS_JiaoYuDongTai      = URL_SCHOOL_NEWS_PREFIX_2 + "Q=",
           URL_ENTRANCE_EXAMS_ZhongKaoGaoKao     = URL_SCHOOL_NEWS_PREFIX_1 + "M=",
           URL_ENTRANCE_HIGH_GaoKaoDongTai       = URL_SCHOOL_NEWS_PREFIX_1 + "M4",
@@ -54,6 +56,14 @@ public class Websites {
           URL_GET_NEWS_PREFIX + "bmV3bnVtcz02JnR5cGVzPTU4MiZpc19vdXRzaWRlPTE=";
 
   public static String of(String url) {
-    return new String(Base64.decode(url, Base64.DEFAULT));
+    String decoded = (url.equals(URL_BASE)
+            ? "" : new String(Base64.decode(URL_BASE, Base64.DEFAULT)))
+            + new String(Base64.decode(url, Base64.DEFAULT));
+    Log.d(TAG, "of: " + decoded);
+    return decoded;
+  }
+
+
+  private Websites() {
   }
 }

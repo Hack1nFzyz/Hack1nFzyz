@@ -8,10 +8,9 @@
     tools:showIn="@layout/app_bar_main">
 
     <RelativeLayout
-        android:id="@+id/container"
+        android:id="@+id/container_main_activity"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="?android:attr/actionBarSize">
+        android:layout_height="match_parent">
 
         <FrameLayout
             android:id="@+id/frame_layout"

@@ -22,4 +22,5 @@
         android:title="@string/title_profile"
         app:iconTint="?android:colorForeground"
         app:showAsAction="ifRoom" />
+
 </menu>

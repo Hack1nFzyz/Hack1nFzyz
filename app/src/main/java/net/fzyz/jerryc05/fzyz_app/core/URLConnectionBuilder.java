@@ -1,6 +1,5 @@
 package net.fzyz.jerryc05.fzyz_app.core;
 
-import android.util.ArrayMap;
 import android.util.Log;
 
 import androidx.annotation.IntRange;
@@ -14,19 +13,17 @@ import java.io.InputStream;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class URLConnectionBuilder {
+public class URLConnectionBuilder implements AutoCloseable{
 
   private final static String
-          TAG            = "URLConnectionBuilder";
+          TAG            = URLConnectionBuilder.class.getName();
   public final static  String
           METHOD_GET     = "GET",
           METHOD_POST    = "POST",
@@ -36,6 +33,11 @@ public class URLConnectionBuilder {
           METHOD_DELETE  = "DELETE",
           METHOD_TRACE   = "TRACE";
 
+  @Override
+  public void close() {
+    disconnect();
+  }
+
   @StringDef({METHOD_GET, METHOD_POST, METHOD_HEAD, METHOD_OPTIONS,
           METHOD_PUT, METHOD_DELETE, METHOD_TRACE})
   @Retention(RetentionPolicy.SOURCE)
@@ -43,11 +45,10 @@ public class URLConnectionBuilder {
   }
 
   private boolean       isHTTP;
-  private String        result;
   private URLConnection urlConnection;
 
 
-  public URLConnectionBuilder(@NonNull String _baseURL) throws IOException {
+  private URLConnectionBuilder(@NonNull String _baseURL) throws IOException {
     _baseURL = _baseURL.trim();
     if (!_baseURL.startsWith("http://") && !_baseURL.startsWith("https://"))
       throw new UnsupportedOperationException(
@@ -56,24 +57,27 @@ public class URLConnectionBuilder {
     urlConnection = new URL(_baseURL).openConnection();
     urlConnection.setConnectTimeout(5 * 1000);
     urlConnection.setReadTimeout(5 * 1000);
+    isHTTP = _baseURL.charAt(4) == ':';
   }
 
   public static URLConnectionBuilder get(String _baseURL) throws IOException {
-    URLConnectionBuilder builder = new URLConnectionBuilder(_baseURL);
-    builder.setRequestMethod(METHOD_GET);
-    return builder;
+    return new URLConnectionBuilder(_baseURL);
   }
 
   public static URLConnectionBuilder post(String _baseURL) throws IOException {
-    URLConnectionBuilder builder = new URLConnectionBuilder(_baseURL);
-    builder.setRequestMethod(METHOD_POST);
-    return builder;
+    return new URLConnectionBuilder(_baseURL).setRequestMethod(METHOD_POST);
   }
 
-  public String connect() throws IOException {
+  public URLConnectionBuilder connect() throws IOException {
     checkNullUrlConnection("run");
+    urlConnection.connect();
+    return this;
+  }
+
+  @Nullable
+  public String getResult(@Nullable String charset) throws IOException {
     try {
-      urlConnection.connect();
+      String result;
       {
         InputStream           inputStream  = urlConnection.getInputStream();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -83,7 +87,8 @@ public class URLConnectionBuilder {
         while ((length = inputStream.read(buffer)) != -1)
           outputStream.write(buffer, 0, length);
 
-        result = outputStream.toString(StandardCharsets.UTF_8.name());
+        result = outputStream.toString(charset == null
+                ? StandardCharsets.UTF_8.name() : charset);
         inputStream.close();
       }
 
@@ -108,7 +113,7 @@ public class URLConnectionBuilder {
             : (HttpsURLConnection) urlConnection)
             .disconnect();
 
-    Log.d(TAG, "disconnect: " + urlConnection.getURL() + " disconnected!");
+    Log.d(TAG, "disconnect: " + urlConnection.getURL());
   }
 
   public URLConnectionBuilder setRequestMethod(
@@ -154,11 +159,6 @@ public class URLConnectionBuilder {
   @Nullable
   public URLConnection _getUrlConnection() {
     return urlConnection;
-  }
-
-  @Nullable
-  public String getResult() {
-    return result;
   }
 
   private void checkNullUrlConnection(@NonNull String action) {
