@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.google.android.material.snackbar.Snackbar;
 
 import net.fzyz.jerryc05.fzyz_app.R;
+
 
 public class MainPage {
   private static final String TAG = MainPage.class.getName();
@@ -14,19 +14,19 @@ public class MainPage {
   public static void test(Activity activity, String url) {
     new Thread(() -> {
       try {
-        String uurl = (String) Websites.class.getDeclaredField(url).get(null);
+        String uurl = (String) WebsiteCollection.class.getDeclaredField(url).get(null);
         assert uurl != null;
-        String new_url = Websites.of(uurl);
+        String new_url = WebsiteCollection.of(uurl);
+        TextView tv= activity.findViewById(R.id.text_home);
+
         activity.runOnUiThread(() ->
-                Snackbar.make(activity.findViewById(R.id.container_main_activity),
-                        new_url, Snackbar.LENGTH_LONG).show());
+               tv.setText(new_url+"\n"));
 
         try (URLConnectionBuilder req = URLConnectionBuilder.get(new_url)) {
           String result = req.connect().getResult("gbk");
 
           activity.runOnUiThread(() -> {
-            ((TextView) activity.findViewById(R.id.text_home))
-                    .setText(result);
+           tv.setText(tv.getText()+result);
           });
         } catch (Exception e) {
           Log.e(TAG, "test: ", e);
@@ -37,42 +37,6 @@ public class MainPage {
     }).start();
   }
 }
-
-/*
-<form action="/sys/login.shtml" method="post" name="form1" id="form1">
-    <span>
-        用户名：<input name="staffCode" size="15" type="text"/>
-        密码：<input size="15" name="password" type="password"/>
-        身份：
-        <select id="loginRole" name="loginRole">
-            <option selected="selected" value="1">教师</option>
-            <option value="2">学生</option>
-            <option value="3">社会人士</option>
-        </select>
-        <input type="checkbox" name="cookietype"/>
-        免登录<input type="submit" value="登 录"/>
-        <input type="button" onclick="javascript:myregist();" value="注 册"/>
-    </span>
-</form>
- */
-
-/*
-//进入我的主页
-function online(){
-  var loginRole = '';
-  var url ='';
-  if(loginRole == '1'){
-     url = '/sys/main.shtml';
-  }else if(loginRole == '2'){
-     url = '/doone-edu/student/stuinfo/loadStuInfoAction.shtml';
-  }else if(loginRole == '3'){
-     url = '/doone-edu/family/familyinfo/comfindFamilyInfoAction.shtml';
-  }else{
-     url = '/home/family/familyInfo_list.jsp';
-  }
-  location.href= url;
-}
- */
 
 // http://www.fzyz.net/school/calendar/getSchoolCalendar.shtml?cal.CALENDAR_DAY=2019-06-15
 

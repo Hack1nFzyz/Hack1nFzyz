@@ -39,4 +39,4 @@
     public static int e(...);
 }
 
--keep class net.fzyz.jerryc05.fzyz_app.core.Websites {*;}
+-keep class net.fzyz.jerryc05.fzyz_app.core.WebsiteCollection {*;}
