@@ -4,4 +4,7 @@
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="frag_profile_login_avatar_diameter">100dp</dimen>
+    <dimen name="frag_profile_login_text_margin">50dp</dimen>
 </resources>

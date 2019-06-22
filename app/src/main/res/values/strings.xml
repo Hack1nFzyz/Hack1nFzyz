@@ -3,4 +3,9 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_profile">Profile</string>
+
+    <string name="i_am_a_teacher">I AM A TEACHER</string>
+    <string name="i_am_a_student">I AM A STUDENT</string>
+    <string name="public_login">PUBLIC LOGIN</string>
+    <string name="register">REGISTER</string>
 </resources>

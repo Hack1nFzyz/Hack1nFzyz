@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.Menu;
@@ -15,7 +16,6 @@ import android.view.MenuItem;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.snackbar.Snackbar;
 
 import net.fzyz.jerryc05.fzyz_app.R;
 import net.fzyz.jerryc05.fzyz_app.core.MainPage;
@@ -25,16 +25,17 @@ import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileFragment;
 
 
 public class MainActivity extends AppCompatActivity {
-  private final static String TAG = MainActivity.class.getName();
 
-  private DrawerLayout drawerLayout;
+  private final static String       TAG = MainActivity.class.getName();
+  private              DrawerLayout drawerLayout;
+  private              Fragment     currentFragment;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    setFragment(new HomeFragment());
+    setFragment(HomeFragment.class);
     setBottomNavView();
     setToolBarAndDrawer();
   }
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-    MainPage.test(this,item.getTitle().toString());
+    MainPage.test(this, item.getTitle().toString());
     return super.onOptionsItemSelected(item);
   }
 
@@ -72,30 +73,62 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void setBottomNavView() {
-    BottomNavigationView bottomNavView = findViewById(R.id.bottom_nav_view);
-    bottomNavView.setOnNavigationItemSelectedListener(
-            item -> {
-              Fragment fragment;
+
+    ((BottomNavigationView) findViewById(R.id.bottom_nav_view))
+            .setOnNavigationItemSelectedListener(item -> {
+
+              Class<? extends Fragment> clazz;
+
               switch (item.getItemId()) {
                 case R.id.nav_home:
-                  fragment = new HomeFragment();
+                  clazz = HomeFragment.class;
                   break;
                 case R.id.nav_dashboard:
-                  fragment = new DashboardFragment();
+                  clazz = DashboardFragment.class;
                   break;
                 case R.id.nav_profile:
-                  fragment = new ProfileFragment();
+                  clazz = ProfileFragment.class;
                   break;
                 default:
                   return false;
               }
-              setFragment(fragment);
+              setFragment(clazz);
               return true;
             });
   }
 
-  private void setFragment(@NonNull Fragment fragment) {
-    getSupportFragmentManager().beginTransaction().replace(
-            R.id.frame_layout, fragment).commit();
+  private void setFragment(@NonNull Class<? extends Fragment> clazz) {
+
+    Fragment fragment;
+
+    if ((fragment = getSupportFragmentManager().findFragmentByTag(
+            clazz.getName())) == null)
+      try {
+        fragment = clazz.newInstance();
+      } catch (Exception e) {
+        Log.e(TAG, "setFragment: ", e);
+        throw new UnsupportedOperationException("Cannot create new instance of "
+                + clazz.getName());
+      }
+
+    if (currentFragment != fragment) {
+
+      FragmentTransaction transaction =
+              getSupportFragmentManager().beginTransaction();
+
+      if (currentFragment != null)
+        transaction.hide(currentFragment);
+
+      if (fragment.isAdded()) {
+        transaction.show(fragment);
+        Log.d(TAG, "setFragment: Reusing " + fragment.getTag());
+      } else {
+        transaction.add(R.id.frame_layout, fragment, fragment.getClass().getName());
+        Log.d(TAG, "setFragment: Creating " + fragment.getTag());
+      }
+      transaction.commit();
+      currentFragment = fragment;
+    } else
+      Log.d(TAG, "setFragment: Same fragment " + fragment.getTag());
   }
 }

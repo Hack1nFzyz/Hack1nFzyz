@@ -59,10 +59,10 @@ public class WebsiteCollection {
           URL_GET_NEWS_PREFIX + "bmV3bnVtcz02JnR5cGVzPTU4MiZpc19vdXRzaWRlPTE=";
 
   public static final String
-          URL_TEACHER_LOGIN = "L3N5cy9tYWluLnNodG1s",
-          URL_STUDENT_LOGIN = "L2Rvb25lLWVkdS9zdHVkZW50L3N0dWluZm8vbG9hZFN0dUluZm9BY3Rpb24uc2h0bWw=",
-          URL_PUBLIC_LOGIN  =
-                  "L2Rvb25lLWVkdS9mYW1pbHkvZmFtaWx5aW5mby9jb21maW5kRmFtaWx5SW5mb0FjdGlvbi5zaHRtbA==";
+          URL_STUDENT_LOGIN = "L2Rvb25lLWVkdS9zdHVkZW50L3N0dWluZm8vbG9hZFN0dUluZm9BY3Rpb24uc2h0bWw=";
+//          URL_TEACHER_LOGIN = "L3N5cy9tYWluLnNodG1s",
+//          URL_PUBLIC_LOGIN  =
+//                  "L2Rvb25lLWVkdS9mYW1pbHkvZmFtaWx5aW5mby9jb21maW5kRmFtaWx5SW5mb0FjdGlvbi5zaHRtbA==";
 //          URL_OTHER_LOGIN   = "L2hvbWUvZmFtaWx5L2ZhbWlseUluZm9fbGlzdC5qc3A=";
 
   /**
@@ -84,12 +84,15 @@ public class WebsiteCollection {
    * @param date Date of form yyyy-mm-dd
    */
   public static String ofCalendarDate(String date) {
-    String decoded = new String(Base64.decode(URL_CALENDAR_DETAIL
-            , Base64.DEFAULT)) + date;
+    String decoded = new String(Base64.decode(URL_BASE, Base64.DEFAULT))
+            + new String(Base64.decode(URL_CALENDAR_DETAIL, Base64.DEFAULT))
+            + date;
     Log.d(TAG, "of: " + decoded);
     return decoded;
   }
 
   private WebsiteCollection() {
+    throw new UnsupportedOperationException("Cannot create new instance of "
+            + WebsiteCollection.class.getName());
   }
 }

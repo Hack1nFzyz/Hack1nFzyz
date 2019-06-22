@@ -5,28 +5,30 @@ import android.util.Log;
 import android.widget.TextView;
 
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import net.fzyz.jerryc05.fzyz_app.R;
 
-
 public class MainPage {
+
   private static final String TAG = MainPage.class.getName();
 
-  public static void test(Activity activity, String url) {
+  public static void test(AppCompatActivity activity, String url) {
     new Thread(() -> {
       try {
         String uurl = (String) WebsiteCollection.class.getDeclaredField(url).get(null);
         assert uurl != null;
-        String new_url = WebsiteCollection.of(uurl);
-        TextView tv= activity.findViewById(R.id.text_home);
+        String   new_url = WebsiteCollection.of(uurl);
+        TextView tv      = activity.findViewById(R.id.text_home);
 
         activity.runOnUiThread(() ->
-               tv.setText(new_url+"\n"));
+                tv.setText(new_url + "\n"));
 
         try (URLConnectionBuilder req = URLConnectionBuilder.get(new_url)) {
           String result = req.connect().getResult("gbk");
 
           activity.runOnUiThread(() -> {
-           tv.setText(tv.getText()+result);
+            tv.setText(tv.getText() + result);
           });
         } catch (Exception e) {
           Log.e(TAG, "test: ", e);

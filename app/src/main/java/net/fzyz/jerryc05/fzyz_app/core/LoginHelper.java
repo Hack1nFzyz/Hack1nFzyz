@@ -1,37 +1,48 @@
 package net.fzyz.jerryc05.fzyz_app.core;
 
 
+import android.util.Log;
+
+import java.io.IOException;
+
 public class LoginHelper {
 
-  private static void loginHelper(String username, String password,
-                                  int loginRole, String loginURL) {
-  }
+  private static final String TAG = LoginHelper.class.getName();
 
-  public static void loginAsTeacher(String username, String password) {
-    loginHelper(username, password, 1,WebsiteCollection.of(
-            WebsiteCollection.URL_TEACHER_LOGIN));
+  private static void loginHelper(String username, String password, String loginURL) {
+    try {
+      URLConnectionBuilder.post(loginURL).connect().close();
+    } catch (IOException e) {
+      Log.e(TAG, "loginHelper: ", e);
+    }
   }
 
   public static void loginAsStudent(String username, String password) {
-    loginHelper(username, password, 2,WebsiteCollection.of(
+    loginHelper(username, password, WebsiteCollection.of(
             WebsiteCollection.URL_STUDENT_LOGIN));
   }
 
-  public static void loginAsPublic(String username, String password) {
-    loginHelper(username, password, 3,WebsiteCollection.of(
-            WebsiteCollection.URL_PUBLIC_LOGIN));
-  }
+//  public static void loginAsTeacher(String username, String password) {
+//    loginHelper(username, password, WebsiteCollection.of(
+//            WebsiteCollection.URL_TEACHER_LOGIN));
+//  }
+
+//  public static void loginAsPublic(String username, String password) {
+//    loginHelper(username, password, WebsiteCollection.of(
+//            WebsiteCollection.URL_PUBLIC_LOGIN));
+//  }
 
 //  /**
 //   * Idk why this shit exists, but I found it inside the js code.
 //   */
 //  public static void loginAsOther(String username, String password) {
-//  //                                ↓ Any value except 1~3
-//    loginHelper(username, password, 0, WebsiteCollection.of(
+//    loginHelper(username, password, WebsiteCollection.of(
 //            WebsiteCollection.URL_OTHER_LOGIN));
 //  }
 
   private LoginHelper() {
+    throw new UnsupportedOperationException("Cannot create new instance of "
+            + LoginHelper.class.getName());
   }
 }
-//todo add greyed out register/public_login button.
+// todo add greyed out register/public_login button.

@@ -10,4 +10,8 @@
     <color name="colorTextSecondary">#757575</color>
 
     <color name="colorDivider">#BDBDBD</color>
+
+    <color name="grey">#808080</color>
+    <color name="gold">#ffd700</color>
+    <color name="living_coral">#ff6d70</color>
 </resources>

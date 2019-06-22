@@ -75,7 +75,7 @@ public class URLConnectionBuilder implements AutoCloseable{
   }
 
   @Nullable
-  public String getResult(@Nullable String charset) throws IOException {
+  public String getResult(@NonNull String charset) throws IOException {
     try {
       String result;
       {
@@ -87,12 +87,11 @@ public class URLConnectionBuilder implements AutoCloseable{
         while ((length = inputStream.read(buffer)) != -1)
           outputStream.write(buffer, 0, length);
 
-        result = outputStream.toString(charset == null
-                ? StandardCharsets.UTF_8.name() : charset);
+        result = outputStream.toString(charset);
         inputStream.close();
       }
 
-      Log.d(TAG, "connect: Response Code " + (isHTTP
+      Log.d(TAG, "connect: Response code = " + (isHTTP
               ? (HttpURLConnection) urlConnection
               : (HttpsURLConnection) urlConnection)
               .getResponseCode()
@@ -105,6 +104,11 @@ public class URLConnectionBuilder implements AutoCloseable{
       Log.e(TAG, "connect: ", e);
       throw e;
     }
+  }
+
+  @Nullable
+  public String getResult() throws IOException{
+    return getResult(StandardCharsets.UTF_8.name());
   }
 
   public void disconnect() {

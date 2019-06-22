@@ -15,7 +15,9 @@ import net.fzyz.jerryc05.fzyz_app.R;
 public class HomeFragment extends Fragment {
   @Nullable
   @Override
-  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+  public View onCreateView(@NonNull LayoutInflater inflater,
+                           @Nullable ViewGroup container,
+                           @Nullable Bundle savedInstanceState) {
     return inflater.inflate(R.layout.frag_home,container,false);
   }
 }
