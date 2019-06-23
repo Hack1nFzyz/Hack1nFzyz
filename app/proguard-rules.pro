@@ -30,6 +30,8 @@
 
 -dontpreverify
 
+#-dontobfuscate
+
 -assumenosideeffects class android.util.Log {
     public static boolean isLoggable(...);
     public static int v(...);

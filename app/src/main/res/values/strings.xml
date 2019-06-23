@@ -8,4 +8,7 @@
     <string name="i_am_a_student">I AM A STUDENT</string>
     <string name="public_login">PUBLIC LOGIN</string>
     <string name="register">REGISTER</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="logging_in">Logging in...</string>
 </resources>

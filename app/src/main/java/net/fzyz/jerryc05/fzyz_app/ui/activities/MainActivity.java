@@ -1,6 +1,9 @@
 package net.fzyz.jerryc05.fzyz_app.ui.activities;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -9,10 +12,6 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -35,9 +34,11 @@ public class MainActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    setFragment(HomeFragment.class);
-    setBottomNavView();
-    setToolBarAndDrawer();
+    new Thread(() -> {
+      setToolBarAndDrawer();
+      setFragment(new HomeFragment());
+      setBottomNavView();
+    }).start();
   }
 
   @Override
@@ -73,46 +74,36 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void setBottomNavView() {
-
     ((BottomNavigationView) findViewById(R.id.bottom_nav_view))
             .setOnNavigationItemSelectedListener(item -> {
-
-              Class<? extends Fragment> clazz;
+              Fragment fragment;
 
               switch (item.getItemId()) {
                 case R.id.nav_home:
-                  clazz = HomeFragment.class;
+                  fragment = new HomeFragment();
                   break;
                 case R.id.nav_dashboard:
-                  clazz = DashboardFragment.class;
+                  fragment = new DashboardFragment();
                   break;
                 case R.id.nav_profile:
-                  clazz = ProfileFragment.class;
+                  fragment = new ProfileFragment();
                   break;
                 default:
                   return false;
               }
-              setFragment(clazz);
+              setFragment(fragment);
               return true;
             });
   }
 
-  private void setFragment(@NonNull Class<? extends Fragment> clazz) {
+  private void setFragment(@NonNull Fragment fragment) {
+    Fragment existingFragment;
 
-    Fragment fragment;
+    if ((existingFragment = getSupportFragmentManager().findFragmentByTag(
+            fragment.getClass().getName())) != null)
+      fragment = existingFragment;
 
-    if ((fragment = getSupportFragmentManager().findFragmentByTag(
-            clazz.getName())) == null)
-      try {
-        fragment = clazz.newInstance();
-      } catch (Exception e) {
-        Log.e(TAG, "setFragment: ", e);
-        throw new UnsupportedOperationException("Cannot create new instance of "
-                + clazz.getName());
-      }
-
-    if (currentFragment != fragment) {
-
+    if (!fragment.equals(currentFragment)) {
       FragmentTransaction transaction =
               getSupportFragmentManager().beginTransaction();
 
@@ -121,14 +112,14 @@ public class MainActivity extends AppCompatActivity {
 
       if (fragment.isAdded()) {
         transaction.show(fragment);
-        Log.d(TAG, "setFragment: Reusing " + fragment.getTag());
+        Log.d(TAG, "setFragment: Reusing   " + fragment.getTag());
       } else {
         transaction.add(R.id.frame_layout, fragment, fragment.getClass().getName());
-        Log.d(TAG, "setFragment: Creating " + fragment.getTag());
+        Log.d(TAG, "setFragment: Creating  " + fragment.getTag());
       }
       transaction.commit();
       currentFragment = fragment;
     } else
-      Log.d(TAG, "setFragment: Same fragment " + fragment.getTag());
+      Log.d(TAG, "setFragment: Unchanged " + fragment.getTag());
   }
 }

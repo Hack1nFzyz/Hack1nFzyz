@@ -1,6 +1,5 @@
 package net.fzyz.jerryc05.fzyz_app.core;
 
-import android.app.Activity;
 import android.util.Log;
 import android.widget.TextView;
 
