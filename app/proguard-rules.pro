@@ -20,7 +20,7 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--optimizationpasses 9
+-optimizationpasses 2333
 
 -allowaccessmodification
 
@@ -30,7 +30,7 @@
 
 -dontpreverify
 
--dontobfuscate
+#-dontobfuscate
 
 -assumenosideeffects class android.util.Log {
     public static boolean isLoggable(...);
