@@ -3,7 +3,10 @@ package net.fzyz.jerryc05.fzyz_app.core;
 import android.util.Base64;
 import android.util.Log;
 
+import androidx.annotation.WorkerThread;
+
 @SuppressWarnings({"SpellCheckingInspection", "unused", "WeakerAccess"})
+@WorkerThread
 public class WebsiteCollection {
 
   private static final String TAG = WebsiteCollection.class.getName();

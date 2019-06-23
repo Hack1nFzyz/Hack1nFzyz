@@ -3,11 +3,12 @@ package net.fzyz.jerryc05.fzyz_app.core;
 import android.util.Log;
 import android.widget.TextView;
 
-
+import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.AppCompatActivity;
 
 import net.fzyz.jerryc05.fzyz_app.R;
 
+@WorkerThread
 public class MainPage {
 
   private static final String TAG = MainPage.class.getName();
@@ -18,7 +19,7 @@ public class MainPage {
         String uurl = (String) WebsiteCollection.class.getDeclaredField(url).get(null);
         assert uurl != null;
         String   new_url = WebsiteCollection.of(uurl);
-        TextView tv      = activity.findViewById(R.id.text_home);
+        TextView tv      = activity.findViewById(R.id.frag_home_textView);
 
         activity.runOnUiThread(() ->
                 tv.setText(new_url + "\n"));

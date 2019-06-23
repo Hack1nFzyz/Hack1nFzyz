@@ -6,6 +6,7 @@ import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringDef;
+import androidx.annotation.WorkerThread;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -20,11 +21,13 @@ import java.nio.charset.StandardCharsets;
 import javax.net.ssl.HttpsURLConnection;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class URLConnectionBuilder implements AutoCloseable{
+@WorkerThread
+public class URLConnectionBuilder implements AutoCloseable {
 
   private final static String
-          TAG            = URLConnectionBuilder.class.getName();
-  public final static  String
+          TAG = URLConnectionBuilder.class.getName();
+
+  public final static String
           METHOD_GET     = "GET",
           METHOD_POST    = "POST",
           METHOD_HEAD    = "HEAD",
@@ -107,7 +110,7 @@ public class URLConnectionBuilder implements AutoCloseable{
   }
 
   @Nullable
-  public String getResult() throws IOException{
+  public String getResult() throws IOException {
     return getResult(StandardCharsets.UTF_8.name());
   }
 

@@ -8,10 +8,10 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
-        versionName '0.0.2'
+        versionName '0.0.3-a1'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         resConfigs "xxhdpi"
-
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
