@@ -3,8 +3,8 @@ package net.fzyz.jerryc05.fzyz_app;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import net.fzyz.jerryc05.fzyz_app.core.URLConnectionBuilder;
 
@@ -13,7 +13,8 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -36,9 +37,11 @@ public class ExampleInstrumentedTest {
   @Test
   public void testURLConnection() {
     try {
-      URLConnectionBuilder.get("https://httpbin.org/get").connect();
+      assertNotNull(URLConnectionBuilder.get("https://httpbin.org/get")
+              .connect()
+              .getResult());
     } catch (IOException e) {
-      e.printStackTrace();
+      Log.e(TAG, "testURLConnection: ", e);
     }
   }
 }
