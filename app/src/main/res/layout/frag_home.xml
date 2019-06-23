@@ -21,4 +21,18 @@
             android:text="@string/title_home"
             android:textSize="20sp" />
     </ScrollView>
+
+    <!-- todo remove round icon -->
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/frag_profile_login_avatar"
+        android:layout_width="@dimen/frag_profile_login_avatar_diameter"
+        android:layout_height="@dimen/frag_profile_login_avatar_diameter"
+        android:src="@mipmap/ic_launcher_fzyz_round"
+        app:civ_border_color="@color/living_coral"
+        app:civ_border_width="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias=".1" />
 </androidx.constraintlayout.widget.ConstraintLayout>

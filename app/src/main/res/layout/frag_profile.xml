@@ -19,7 +19,7 @@
         app:layout_constraintVertical_bias=".1" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/frag_profile_username_text_layout"
+        android:id="@+id/frag_profile_username_textLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/frag_profile_login_text_margin"
@@ -41,7 +41,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/frag_profile_password_text_layout"
+        android:id="@+id/frag_profile_password_textLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/frag_profile_login_text_margin"
@@ -51,7 +51,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/frag_profile_username_text_layout"
+        app:layout_constraintTop_toBottomOf="@+id/frag_profile_username_textLayout"
         app:layout_constraintVertical_bias=".05"
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/colorPrimaryDark"
@@ -60,7 +60,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:imeOptions="actionNext"
+            android:imeOptions="actionDone"
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -73,7 +73,7 @@
         app:layout_constraintEnd_toStartOf="@+id/frag_profile_student_login_button"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/frag_profile_password_text_layout"
+        app:layout_constraintTop_toBottomOf="@+id/frag_profile_password_textLayout"
         app:layout_constraintVertical_bias=".25" />
 
     <com.google.android.material.button.MaterialButton
@@ -113,27 +113,27 @@
         app:rippleColor="@android:color/transparent" />
 
     <androidx.core.widget.ContentLoadingProgressBar
-        android:id="@+id/progressBar"
+        android:id="@+id/frag_profile_progressBar"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/appCompatTextView6"
+        app:layout_constraintEnd_toStartOf="@+id/frag_profile_logging_in_textView"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.6" />
 
     <TextView
-        android:id="@+id/appCompatTextView6"
+        android:id="@+id/frag_profile_logging_in_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="@string/logging_in"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/progressBar"
+        app:layout_constraintBottom_toBottomOf="@+id/frag_profile_progressBar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/progressBar"
-        app:layout_constraintTop_toTopOf="@+id/progressBar" />
+        app:layout_constraintStart_toEndOf="@+id/frag_profile_progressBar"
+        app:layout_constraintTop_toTopOf="@+id/frag_profile_progressBar" />
 </androidx.constraintlayout.widget.ConstraintLayout>

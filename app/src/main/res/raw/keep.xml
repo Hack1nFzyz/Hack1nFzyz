@@ -1,3 +1,11 @@
-<resources
-xmlns:tools="http://schemas.android.com/tools"
-tools:shrinkMode="strict"/>
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="
+    @drawable/design_password_eye,
+    @drawable/design_ic_visibility,
+    @drawable/design_ic_visibility_off,
+    @drawable/avd_show_password,
+    @drawable/avd_hide_password
+"
+    tools:shrinkMode="strict" />
+
+<!--Do not delete drawables above if you are using textView with password toggle-->
