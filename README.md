@@ -25,14 +25,14 @@ Please see [Contributing](#user-content-contributing) tab for more info if you w
 
 ## Installation
 
-### Android devices:
+### Android devices
 -   Download from **[release page here.](<https://github.com/jerryc05/fzyz-app/releases>)**
 
-### iOS devices:
+### iOS devices
 -   **No development in plan.** You are more than welcome to FORK this repository and implement an iOS client.
 -   Implementation suggestion: [*Flutter*](<https://flutter.dev/>), [*React Native*](<https://facebook.github.io/react-native/>).
 
-### Desktop:
+### Desktop
 -   **No development in plan.** You are more than welcome to FORK this repository and implement an desktop client.
 -   Implementation suggestion: [*Electron*](<https://electronjs.org/>).
 
@@ -56,14 +56,17 @@ However, I still prefer to maintain issues together on [GitHub Issue](<https://g
 ## Authors
 
 -   **[@jerryc05](<https://github.com/jerryc05>)**
-    - *Core developer*
+    -   *Core developer*
+
 -   **[@yihanwu1024](<https://github.com/yihanwu1024>)**
-    - *Feature designer*
-    - *UI designer*
+    -   *Feature designer*
+    -   *UI designer*
+
 -   **@FOCLHS**
-	- *UI designer*
+	-    *UI designer*
+
 -   **[@Michael](<https://github.com/Michaeldaiminqi>)**
-	- *Tester*
+	-    *Tester*
 
 ## License
 
