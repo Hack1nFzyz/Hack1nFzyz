@@ -65,7 +65,7 @@ However, I still prefer to maintain issues together on [GitHub Issue](<https://g
 -   **@FOCLHS**
 	-    *UI designer*
 
--   **[@Michael](<https://github.com/Michaeldaiminqi>)**
+-   **[@Michaeldaiminqi](<https://github.com/Michaeldaiminqi>)**
 	-    *Tester*
 
 ## License
