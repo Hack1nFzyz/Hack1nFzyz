@@ -62,7 +62,7 @@ However, I still prefer to maintain issues together on [GitHub Issue](<https://g
     -   *Feature designer*
     -   *UI designer*
 
--   **@FOCLHS**
+-   **[@focss](<https://github.com/focss>)**
 	-    *UI designer*
 
 -   **[@Michaeldaiminqi](<https://github.com/Michaeldaiminqi>)**
