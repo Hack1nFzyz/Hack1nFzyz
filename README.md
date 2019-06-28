@@ -34,7 +34,7 @@ Please see [Contributing](#user-content-contributing) tab for more info if you w
 -   Implementation suggestion: [*Flutter*](<https://flutter.dev/>), [*React Native*](<https://facebook.github.io/react-native/>).
 
 ### Desktop
--   **No development in plan.** You are more than welcome to FORK this repository and implement an desktop client.
+-   **No development in plan.** You are more than welcome to FORK this repository and implement a desktop client.
 -   Implementation suggestion: [*Electron*](<https://electronjs.org/>).
 
 ## How To Use

@@ -11,6 +11,4 @@
     </style>
 
     <style name="MyLibraryThemeAppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
-
-    <style name="MyLibraryThemePopupOverlay" parent="ThemeOverlay.MaterialComponents.Light" />
 </resources>

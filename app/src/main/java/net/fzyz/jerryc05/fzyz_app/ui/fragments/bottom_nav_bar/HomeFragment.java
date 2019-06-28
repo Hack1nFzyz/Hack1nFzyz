@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.WorkerThread;
+import androidx.annotation.UiThread;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -44,7 +44,7 @@ public class HomeFragment extends Fragment {
     new Thread(this::setSwipeRefreshLayout).start();
   }
 
-  @WorkerThread
+  @UiThread
   private void setSwipeRefreshLayout() {
     swipeRefreshLayout.setColorSchemeColors(ContextCompat
             .getColor(activity, R.color.colorPrimary));
