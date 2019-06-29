@@ -17,7 +17,8 @@ public class LoginHelper {
             + LoginHelper.class.getName());
   }
 
-  private static void loginHelper(String username, String password, String loginURL) {
+  private static void loginHelper(String username, String password,
+                                  String loginURL) {
     try {
       URLConnectionBuilder.post(loginURL).connect().close();
     } catch (IOException e) {

@@ -1,10 +1,12 @@
 package net.fzyz.jerryc05.fzyz_app.core;
 
+import android.Manifest;
 import android.util.Log;
 
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresPermission;
 import androidx.annotation.StringDef;
 import androidx.annotation.WorkerThread;
 
@@ -50,7 +52,7 @@ public class URLConnectionBuilder implements AutoCloseable {
   private boolean       isHTTP;
   private URLConnection urlConnection;
 
-
+  @RequiresPermission(Manifest.permission.INTERNET)
   private URLConnectionBuilder(@NonNull String _baseURL) throws IOException {
     _baseURL = _baseURL.trim();
     if (!_baseURL.startsWith("http://") && !_baseURL.startsWith("https://"))

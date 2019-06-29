@@ -17,11 +17,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import net.fzyz.jerryc05.fzyz_app.R;
 
+@SuppressWarnings("WeakerAccess")
 public class HomeFragment extends Fragment {
 
-  private Activity           activity;
-  private SwipeRefreshLayout swipeRefreshLayout;
-  private TextView           textView;
+  Activity           activity;
+  SwipeRefreshLayout swipeRefreshLayout;
+  TextView           textView;
 
   @Nullable
   @Override
@@ -32,35 +33,58 @@ public class HomeFragment extends Fragment {
   }
 
   @Override
-  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    //f:off
-    if (swipeRefreshLayout == null)
-        swipeRefreshLayout = view.findViewById(R.id.frag_home_swipeRefreshLayout);
-    if (textView           == null)
-        textView           = view.findViewById(R.id.frag_home_textView);
-    while (activity        == null)
-           activity        = getActivity();
-    //f:on
-    new Thread(this::setSwipeRefreshLayout).start();
+  public void onViewCreated(@NonNull View view,
+                            @Nullable Bundle savedInstanceState) { //f:off
+    if (swipeRefreshLayout  == null)
+        swipeRefreshLayout  = view.findViewById(R.id.frag_home_swipeRefreshLayout);
+    if (textView            == null)
+        textView            = view.findViewById(R.id.frag_home_textView);
+    while (activity         == null)
+           activity         = getActivity(); //f:on
+
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        setSwipeRefreshLayout();
+      }
+    }).start();
   }
 
   @UiThread
-  private void setSwipeRefreshLayout() {
+  void setSwipeRefreshLayout() {
     swipeRefreshLayout.setColorSchemeColors(ContextCompat
             .getColor(activity, R.color.colorPrimary));
-    swipeRefreshLayout.setOnRefreshListener(() -> new Thread(() -> {
 
-      activity.runOnUiThread(() ->
-              textView.setText("Refreshing..."));
-      try {
-        Thread.sleep(2000);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-      activity.runOnUiThread(() -> {
-        textView.setText("You just refreshed!");
-        swipeRefreshLayout.setRefreshing(false);
-      });
-    }).start());
+    swipeRefreshLayout.setOnRefreshListener(
+            new SwipeRefreshLayout.OnRefreshListener() {
+              @Override
+              public void onRefresh() {
+
+                new Thread(new Runnable() {
+                  @Override
+                  public void run() {
+
+                    activity.runOnUiThread(new Runnable() {
+                      @Override
+                      public void run() {
+                        textView.setText("Refreshing...");
+                      }
+                    });
+                    try {
+                      Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                      e.printStackTrace();
+                    }
+                    activity.runOnUiThread(new Runnable() {
+                      @Override
+                      public void run() {
+                        textView.setText("You just refreshed!");
+                        swipeRefreshLayout.setRefreshing(false);
+                      }
+                    });
+                  }
+                }).start();
+              }
+            });
   }
 }

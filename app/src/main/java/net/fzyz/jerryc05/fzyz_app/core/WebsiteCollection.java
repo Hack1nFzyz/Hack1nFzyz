@@ -15,14 +15,15 @@ public class WebsiteCollection {
           URL_GET_NEWS_PREFIX       = "L2Rvb25lL2hvbWUvcG9ydGFsL2dldE5ld3Muc2h0bWw/",
           URL_SCHOOL_NEWS_PREFIX_1  = URL_GET_NEWS_PREFIX
                   + "bmV3c19sZXZlbHRhZz0wJmlzX291dHNpZGU9MSZuZXdudW1zPTEwJnR5cGVzPT",
-          URL_SCHOOL_NEWS_PREFIX_2  = URL_SCHOOL_NEWS_PREFIX_1.replaceFirst(
-                  "Ew", "Ex"),
+          URL_SCHOOL_NEWS_PREFIX_2  = URL_GET_NEWS_PREFIX
+                  + "bmV3c19sZXZlbHRhZz0wJmlzX291dHNpZGU9MSZuZXdudW1zPTExJnR5cGVzPT",
           URL_INDEX_RES_LIST_PREFIX =
                   "L2Rvb25lL2tub3dsZWRnZS9pbmZvL2luZGV4cmVzbGlzdC5zaHRtbD9rdHlwZWlkPT";
 
   public static final String
           URL_BASE                              = "aHR0cDovL3d3dy5menl6Lm5ldA==",
-          URL_ROLLING_NEWS_GunDongXinWen        = "L25ld3MvbmV3c21nci9nZXRNb3ZlSW1nLnNodG1s",
+          URL_ROLLING_NEWS_GunDongXinWen        =
+                  "L25ld3MvbmV3c21nci9nZXRNb3ZlSW1nLnNodG1s",
           URL_OFFICE_ANNOUNCEMENT_ChuShiGongGao = URL_GET_NEWS_PREFIX
                   + "bmV3bnVtcz0zJnR5cGVzPTEsNSw2LDcmaXNfb3V0c2lkZT0x",
           URL_SCHOOL_AFFAIRS_XiaoWuGongKai      = URL_GET_NEWS_PREFIX
@@ -48,12 +49,15 @@ public class WebsiteCollection {
           URL_CAMPUS_PICTURE_XiaoYuanChuanZhen  =
                   "L2Rvb25lL2hvbWUvcG9ydGFsL2dldFRvcFBpY3Muc2h0bWw/cGljX3R5cGU9Mw==",
           URL_YEARS_PASSED_SuiYueLiuYing        =
-                  URL_CAMPUS_PICTURE_XiaoYuanChuanZhen.replaceFirst("Mw", "NA"),
+                  "L2Rvb25lL2hvbWUvcG9ydGFsL2dldFRvcFBpY3Muc2h0bWw/cGljX3R5cGU9NA==",
           URL_PRINCIPAL_FORUM_XiaoZhangLunTan   =
                   "L2Rvb25lLWVkdS9zY2hvb2wvaG9tZS9zY2hvb2xGb3J1bUluZGV4QWN0aW9uLnNodG1s",
-          URL_TUO_FENG_ONLINE_TuoFengZaiXian    = URL_INDEX_RES_LIST_PREFIX + "EyNDMmdHlwZV9pZD0x",
-          URL_3M_FATE_SanMuYuan                 = URL_INDEX_RES_LIST_PREFIX + "EyNDQmdHlwZV9pZD0y",
-          URL_WINDOW_OF_HEART_XinYuZhiChuang    = URL_INDEX_RES_LIST_PREFIX + "IyNjEmdHlwZV9pZD0z",
+          URL_TUO_FENG_ONLINE_TuoFengZaiXian    =
+                  URL_INDEX_RES_LIST_PREFIX + "EyNDMmdHlwZV9pZD0x",
+          URL_3M_FATE_SanMuYuan                 =
+                  URL_INDEX_RES_LIST_PREFIX + "EyNDQmdHlwZV9pZD0y",
+          URL_WINDOW_OF_HEART_XinYuZhiChuang    =
+                  URL_INDEX_RES_LIST_PREFIX + "IyNjEmdHlwZV9pZD0z",
           URL_CALENDAR_DETAIL                   =
                   "L3NjaG9vbC9jYWxlbmRhci9nZXRTY2hvb2xDYWxlbmRhci5zaHRtbD9jYWwuQ0FMRU5EQVJfREFZPQ==";
 
@@ -69,7 +73,7 @@ public class WebsiteCollection {
 //          URL_OTHER_LOGIN   = "L2hvbWUvZmFtaWx5L2ZhbWlseUluZm9fbGlzdC5qc3A=";
 
   /**
-   * Decoded url and concat with base url.
+   * Return decoded url and appended to base url.
    *
    * @param url Encoded url
    */

@@ -1,5 +1,6 @@
 package net.fzyz.jerryc05.fzyz_app.ui.activities;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -29,19 +30,22 @@ import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileLoggedInFra
 
 public class MainActivity extends AppCompatActivity {
 
-  private final static String       TAG = MainActivity.class.getName();
-  private              DrawerLayout drawerLayout;
-  private              Fragment     currentFragment;
+  final static String TAG = MainActivity.class.getName();
+  DrawerLayout drawerLayout;
+  Fragment     currentFragment;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    new Thread(() -> {
-      setToolBarAndDrawer();
-      setFragment(new HomeFragment());
-      setBottomNavView();
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        setToolBarAndDrawer();
+        setFragment(new HomeFragment());
+        setBottomNavView();
+      }
     }).start();
   }
 
@@ -68,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   @WorkerThread
-  private void setToolBarAndDrawer() {
+  void setToolBarAndDrawer() {
     MaterialToolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
@@ -76,33 +80,42 @@ public class MainActivity extends AppCompatActivity {
     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
             this, drawerLayout, toolbar,
             R.string.app_name, R.string.appbar_scrolling_view_behavior);
-    runOnUiThread(() -> drawerLayout.addDrawerListener(toggle));
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        drawerLayout.addDrawerListener(toggle);
+      }
+    });
 
     toggle.syncState();
   }
 
   @WorkerThread
-  private void setBottomNavView() {
+  void setBottomNavView() {
     ((BottomNavigationView) findViewById(R.id.activity_main_bottomNavView))
-            .setOnNavigationItemSelectedListener(item -> {
-              Fragment fragment;
+            .setOnNavigationItemSelectedListener(
+                    new BottomNavigationView.OnNavigationItemSelectedListener() {
+                      @Override
+                      public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        Fragment fragment;
 
-              switch (item.getItemId()) {
-                case R.id.nav_home:
-                  fragment = new HomeFragment();
-                  break;
-                case R.id.nav_dashboard:
-                  fragment = new DashboardFragment();
-                  break;
-                case R.id.nav_profile:
-                  fragment = new ProfileFragment();
-                  break;
-                default:
-                  return false;
-              }
-              setFragment(fragment);
-              return true;
-            });
+                        switch (item.getItemId()) {
+                          case R.id.nav_home:
+                            fragment = new HomeFragment();
+                            break;
+                          case R.id.nav_dashboard:
+                            fragment = new DashboardFragment();
+                            break;
+                          case R.id.nav_profile:
+                            fragment = new ProfileFragment();
+                            break;
+                          default:
+                            return false;
+                        }
+                        setFragment(fragment);
+                        return true;
+                      }
+                    });
   }
 
   @WorkerThread
@@ -135,7 +148,8 @@ public class MainActivity extends AppCompatActivity {
         transaction.show(fragment);
         Log.d(TAG, "setFragment: Reusing   " + fragment.getTag());
       } else {
-        transaction.add(R.id.activity_main_frameLayout, fragment, fragment.getClass().getName());
+        transaction.add(R.id.activity_main_frameLayout, fragment,
+                fragment.getClass().getName());
         Log.d(TAG, "setFragment: Creating  " + fragment.getTag());
       }
       transaction.commit();
@@ -153,21 +167,37 @@ public class MainActivity extends AppCompatActivity {
             {"育人八大支柱第三句", "服务意识", "国际视野"},
             {"育人八大支柱第四句", "实践能力", "自力自治"}
     };
-    final String[] test = testBank[(int) (System.currentTimeMillis() % testBank.length)];
+    final String[] test = testBank[
+            (int) (System.currentTimeMillis() % testBank.length)];
 
     new AlertDialog.Builder(this)
             .setTitle("听说你想退出 App?")
             .setIcon(R.mipmap.ic_launcher_fzyz_round)
             .setMessage("福州一中的" + test[0] + "是什么？")
             .setCancelable(false)
-            .setNeutralButton("不知道", (dialogInterface, i) ->
-                    Snackbar.make(drawerLayout, test[0] + "：" + test[1] +
-                            (test[2].equals(testBank[1][2]) ? "" : "，") +
-                            test[2] + "。", Snackbar.LENGTH_LONG).show())
-            .setNegativeButton(test[1], (dialogInterface, i) ->
-                    super.onBackPressed())
-            .setPositiveButton(test[2], (dialogInterface, i) ->
-                    super.onBackPressed())
+            .setNeutralButton("不知道",
+                    new DialogInterface.OnClickListener() {
+                      @Override
+                      public void onClick(DialogInterface dialogInterface, int i) {
+                        Snackbar.make(drawerLayout, test[0] + "：" + test[1] +
+                                (test[2].equals(testBank[1][2]) ? "" : "，") +
+                                test[2] + "。", Snackbar.LENGTH_LONG).show();
+                      }
+                    })
+            .setNegativeButton(test[1],
+                    new DialogInterface.OnClickListener() {
+                      @Override
+                      public void onClick(DialogInterface dialogInterface, int i) {
+                        MainActivity.super.onBackPressed();
+                      }
+                    })
+            .setPositiveButton(test[2],
+                    new DialogInterface.OnClickListener() {
+                      @Override
+                      public void onClick(DialogInterface dialogInterface, int i) {
+                        MainActivity.super.onBackPressed();
+                      }
+                    })
             .create()
             .show();
   }

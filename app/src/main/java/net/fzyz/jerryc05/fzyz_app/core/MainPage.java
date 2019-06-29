@@ -11,30 +11,41 @@ import net.fzyz.jerryc05.fzyz_app.R;
 @WorkerThread
 public class MainPage {
 
-  private static final String TAG = MainPage.class.getName();
+  static final String TAG = MainPage.class.getName();
 
   public static void test(AppCompatActivity activity, String url) {
-    new Thread(() -> {
-      try {
-        String uurl = (String) WebsiteCollection.class.getDeclaredField(url).get(null);
-        assert uurl != null;
-        String   new_url = WebsiteCollection.of(uurl);
-        TextView tv      = activity.findViewById(R.id.frag_home_textView);
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          String uurl = (String) WebsiteCollection.class
+                  .getDeclaredField(url).get(null);
+          assert uurl != null;
+          String   new_url = WebsiteCollection.of(uurl);
+          TextView tv      = activity.findViewById(R.id.frag_home_textView);
 
-        activity.runOnUiThread(() ->
-                tv.setText(new_url + "\n"));
-
-        try (URLConnectionBuilder req = URLConnectionBuilder.get(new_url)) {
-          String result = req.connect().getResult("gbk");
-
-          activity.runOnUiThread(() -> {
-            tv.setText(tv.getText() + result);
+          activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+              tv.setText(new_url + "\n");
+            }
           });
+
+          try (URLConnectionBuilder req = URLConnectionBuilder.get(new_url)) {
+            String result = req.connect().getResult("gbk");
+
+            activity.runOnUiThread(new Runnable() {
+              @Override
+              public void run() {
+                tv.setText(tv.getText() + result);
+              }
+            });
+          } catch (Exception e) {
+            Log.e(TAG, "test: ", e);
+          }
         } catch (Exception e) {
           Log.e(TAG, "test: ", e);
         }
-      } catch (Exception e) {
-        Log.e(TAG, "test: ", e);
       }
     }).start();
   }
