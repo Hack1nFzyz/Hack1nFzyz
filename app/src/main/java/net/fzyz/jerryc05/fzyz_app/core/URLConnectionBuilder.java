@@ -149,24 +149,24 @@ public class URLConnectionBuilder implements AutoCloseable {
    *
    * @param url Encoded url
    */
-  public static String of(String url) {
+  public static String decodeURL(String url) {
     String decoded = (url.equals(URL_BASE)
             ? "" : new String(Base64.decode(URL_BASE, Base64.DEFAULT)))
             + new String(Base64.decode(url, Base64.DEFAULT));
-    Log.d(TAG, "of: " + decoded);
+    Log.d(TAG, "decodeURL: " + decoded);
     return decoded;
   }
 
   /**
    * Parse data to formatted calendar url.
    *
-   * @param date Date of form yyyy-mm-dd
+   * @param date Date decodeURL form yyyy-mm-dd
    */
-  public static String ofCalendarDate(String date) {
+  public static String decodeCalendarDateURL(String date) {
     String decoded = new String(Base64.decode(URL_BASE, Base64.DEFAULT))
             + new String(Base64.decode(URL_CALENDAR_DETAIL, Base64.DEFAULT))
             + date;
-    Log.d(TAG, "of: " + decoded);
+    Log.d(TAG, "decodeURL: " + decoded);
     return decoded;
   }
 
@@ -218,6 +218,6 @@ public class URLConnectionBuilder implements AutoCloseable {
   private void checkNullUrlConnection(@NonNull String action) {
     if (urlConnection == null)
       throw new UnsupportedOperationException(
-              "Cannot " + action + " null instance of ${urlConnection}!");
+              "Cannot " + action + " null instance decodeURL ${urlConnection}!");
   }
 }

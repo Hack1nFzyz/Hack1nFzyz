@@ -21,7 +21,7 @@ public class MainPage {
           String uurl = (String) WebsiteCollection.class
                   .getDeclaredField(url).get(null);
           assert uurl != null;
-          String   new_url = WebsiteCollection.of(uurl);
+          String   new_url = URLConnectionBuilder.decodeURL(uurl);
           TextView tv      = activity.findViewById(R.id.frag_home_textView);
 
           activity.runOnUiThread(new Runnable() {
