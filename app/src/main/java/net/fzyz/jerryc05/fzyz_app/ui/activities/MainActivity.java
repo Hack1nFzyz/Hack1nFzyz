@@ -8,17 +8,22 @@ import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 
 import net.fzyz.jerryc05.fzyz_app.R;
 import net.fzyz.jerryc05.fzyz_app.core.MainPage;
@@ -31,8 +36,10 @@ import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileLoggedInFra
 public class MainActivity extends AppCompatActivity {
 
   final static String TAG = MainActivity.class.getName();
-  DrawerLayout drawerLayout;
-  Fragment     currentFragment;
+  Drawer          drawer;
+  //  DrawerLayout drawerLayout;
+  Fragment        currentFragment;
+  MaterialToolbar toolbar;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +70,10 @@ public class MainActivity extends AppCompatActivity {
 
   @Override
   public void onBackPressed() {
-    if (drawerLayout.isDrawerOpen(GravityCompat.START))
-      drawerLayout.closeDrawer(GravityCompat.START);
+//    if (drawerLayout.isDrawerOpen(GravityCompat.START))
+//      drawerLayout.closeDrawer(GravityCompat.START);
+    if (drawer.isDrawerOpen())
+      drawer.closeDrawer();
     else {
       Log.d(TAG, "onBackPressed: Ready to quit.");
       setExitDialog();
@@ -73,21 +82,72 @@ public class MainActivity extends AppCompatActivity {
 
   @WorkerThread
   void setToolBarAndDrawer() {
-    MaterialToolbar toolbar = findViewById(R.id.toolbar);
+    toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
-    drawerLayout = findViewById(R.id.drawer_layout);
-    ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-            this, drawerLayout, toolbar,
-            R.string.app_name, R.string.appbar_scrolling_view_behavior);
+    final AccountHeader accountHeader = new AccountHeaderBuilder()
+            .withActivity(MainActivity.this)
+//            .withHeaderBackground(
+//                    R.drawable.ic_launcher_fzyz_background)
+            .addProfiles(new ProfileDrawerItem()
+                    .withName("FZYZ Student")
+                    .withEmail("31000000000")
+                    .withIcon(getResources()
+                            .getDrawable(
+                                    R.drawable.ic_launcher_fzyz_background)))
+//            .withOnAccountHeaderListener(
+//                    new AccountHeader.OnAccountHeaderListener() {
+//                      @Override
+//                      public boolean onProfileChanged(
+//                              View view,
+//                              IProfile profile,
+//                              boolean currentProfile) {
+//                        return false;
+//                      }
+//                    })
+            .build();
+
     runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        drawerLayout.addDrawerListener(toggle);
+        drawer = new DrawerBuilder()
+                .withActivity(MainActivity.this)
+                .withToolbar(toolbar)
+                .withAccountHeader(accountHeader)
+                .addDrawerItems(
+                        new PrimaryDrawerItem()
+                                .withIdentifier(1)
+                                .withIcon(R.drawable.ic_home_black_24dp)
+                                .withName(R.string.app_name)
+                                .withDescription(R.string.dashboard),
+                        new DividerDrawerItem(),
+                        new SecondaryDrawerItem()
+                                .withIdentifier(2)
+                                .withName(R.string.nav_header_username),
+                        new SecondaryDrawerItem()
+                                .withName(R.string.i_am_a_student))
+                .addStickyDrawerItems(new SecondaryDrawerItem()
+                        .withIdentifier(3)
+                        .withName(R.string.nav_header_username),
+                        new SecondaryDrawerItem()
+                        .withIdentifier(4)
+                        .withName(R.string.nav_header_username))
+                .build();
       }
     });
 
-    toggle.syncState();
+//    drawerLayout = findViewById(R.id.drawer_layout);
+//    ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+//            this, drawerLayout, toolbar,
+//            R.string.app_name, R.string.appbar_scrolling_view_behavior);
+//    runOnUiThread(new Runnable() {
+//      @Override
+//      public void run() {
+//        drawerLayout.addDrawerListener(toggle);
+//      }
+//    });
+//
+//    toggle.syncState();
   }
 
   @WorkerThread
@@ -159,14 +219,14 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void setExitDialog() {
-    final String[][] testBank = {
-            {"校训", "植基立本", "成德达材"},
-            {"办学宗旨", "为天下人", "谋永福"},
+    final String[][] testBank = {//f:off
+            {"校训",            "植基立本", "成德达材"},
+            {"办学宗旨",         "为天下人", "谋永福"},
             {"育人八大支柱第一句", "国家责任", "独立人格"},
             {"育人八大支柱第二句", "学会学习", "健体怡情"},
             {"育人八大支柱第三句", "服务意识", "国际视野"},
             {"育人八大支柱第四句", "实践能力", "自力自治"}
-    };
+    };//f:on
     final String[] test = testBank[
             (int) (System.currentTimeMillis() % testBank.length)];
 
@@ -179,9 +239,10 @@ public class MainActivity extends AppCompatActivity {
                     new DialogInterface.OnClickListener() {
                       @Override
                       public void onClick(DialogInterface dialogInterface, int i) {
-                        Snackbar.make(drawerLayout, test[0] + "：" + test[1] +
-                                (test[2].equals(testBank[1][2]) ? "" : "，") +
-                                test[2] + "。", Snackbar.LENGTH_LONG).show();
+                        Snackbar.make(drawer.getDrawerLayout(),
+                                test[0] + "：" + test[1] +
+                                        (test[2].equals(testBank[1][2]) ? "" : "，") +
+                                        test[2] + "。", Snackbar.LENGTH_LONG).show();
                       }
                     })
             .setNegativeButton(test[1],
