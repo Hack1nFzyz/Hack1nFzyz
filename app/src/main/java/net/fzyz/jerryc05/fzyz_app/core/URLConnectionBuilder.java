@@ -1,6 +1,7 @@
 package net.fzyz.jerryc05.fzyz_app.core;
 
 import android.Manifest;
+import android.util.Base64;
 import android.util.Log;
 
 import androidx.annotation.IntRange;
@@ -22,6 +23,24 @@ import java.nio.charset.StandardCharsets;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import static net.fzyz.jerryc05.fzyz_app.core.WebsiteCollection.URL_BASE;
+import static net.fzyz.jerryc05.fzyz_app.core.WebsiteCollection.URL_CALENDAR_DETAIL;
+
+/**
+ * A builder for URLConnection class.
+ *
+ * @author \
+ * \           d88b d88888b d8888b. d8888b. db    db  .o88b.  .d88b.    ooooo
+ * \           `8P' 88'     88  `8D 88  `8D `8b  d8' d8P  Y8 .8P  88.  8P~~~~
+ * \            88  88ooooo 88oobY' 88oobY'  `8bd8'  8P      88  d'88 dP
+ * \            88  88~~~~~ 88`8b   88`8b      88    8b      88 d' 88 V8888b.
+ * \        db. 88  88.     88 `88. 88 `88.    88    Y8b  d8 `88  d8'     `8D
+ * \        Y8888P  Y88888P 88   YD 88   YD    YP     `Y88P'  `Y88P'  88oobY'
+ * @see java.net.URLConnection
+ * @see java.net.HttpURLConnection
+ * @see javax.net.ssl.HttpsURLConnection
+ * @see net.fzyz.jerryc05.fzyz_app.core.WebsiteCollection
+ */
 @SuppressWarnings({"WeakerAccess", "unused"})
 @WorkerThread
 public class URLConnectionBuilder implements AutoCloseable {
@@ -123,6 +142,32 @@ public class URLConnectionBuilder implements AutoCloseable {
             .disconnect();
 
     Log.d(TAG, "disconnect: " + urlConnection.getURL());
+  }
+
+  /**
+   * Return decoded url and appended to base url.
+   *
+   * @param url Encoded url
+   */
+  public static String of(String url) {
+    String decoded = (url.equals(URL_BASE)
+            ? "" : new String(Base64.decode(URL_BASE, Base64.DEFAULT)))
+            + new String(Base64.decode(url, Base64.DEFAULT));
+    Log.d(TAG, "of: " + decoded);
+    return decoded;
+  }
+
+  /**
+   * Parse data to formatted calendar url.
+   *
+   * @param date Date of form yyyy-mm-dd
+   */
+  public static String ofCalendarDate(String date) {
+    String decoded = new String(Base64.decode(URL_BASE, Base64.DEFAULT))
+            + new String(Base64.decode(URL_CALENDAR_DETAIL, Base64.DEFAULT))
+            + date;
+    Log.d(TAG, "of: " + decoded);
+    return decoded;
   }
 
   public URLConnectionBuilder setRequestMethod(
