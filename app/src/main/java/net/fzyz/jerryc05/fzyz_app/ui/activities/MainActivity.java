@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener;
 import com.google.android.material.snackbar.Snackbar;
 
 import net.fzyz.jerryc05.fzyz_app.R;
@@ -92,30 +93,32 @@ public class MainActivity extends AppCompatActivity {
 
   @WorkerThread
   void setBottomNavView() {
-    ((BottomNavigationView) findViewById(R.id.activity_main_bottomNavView))
-            .setOnNavigationItemSelectedListener(
-                    new BottomNavigationView.OnNavigationItemSelectedListener() {
-                      @Override
-                      public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        Fragment fragment;
+    final OnNavigationItemSelectedListener onNavigationItemSelectedListener =
+            new OnNavigationItemSelectedListener() {
+              @Override
+              public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Fragment fragment;
 
-                        switch (item.getItemId()) {
-                          case R.id.nav_home:
-                            fragment = new HomeFragment();
-                            break;
-                          case R.id.nav_dashboard:
-                            fragment = new DashboardFragment();
-                            break;
-                          case R.id.nav_profile:
-                            fragment = new ProfileFragment();
-                            break;
-                          default:
-                            return false;
-                        }
-                        setFragment(fragment);
-                        return true;
-                      }
-                    });
+                switch (item.getItemId()) {
+                  case R.id.nav_home:
+                    fragment = new HomeFragment();
+                    break;
+                  case R.id.nav_dashboard:
+                    fragment = new DashboardFragment();
+                    break;
+                  case R.id.nav_profile:
+                    fragment = new ProfileFragment();
+                    break;
+                  default:
+                    return false;
+                }
+                setFragment(fragment);
+                return true;
+              }
+            };
+
+    ((BottomNavigationView) findViewById(R.id.activity_main_bottomNavView))
+            .setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
   }
 
   @WorkerThread

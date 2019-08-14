@@ -1,6 +1,11 @@
 package net.fzyz.jerryc05.fzyz_app.core;
 
 import android.Manifest;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
+import android.os.Build;
 import android.util.Base64;
 import android.util.Log;
 
@@ -22,6 +27,8 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 
 import javax.net.ssl.HttpsURLConnection;
+
+import jerryc05.unlockme.helpers.UserInterface;
 
 import static net.fzyz.jerryc05.fzyz_app.core.WebsiteCollection.URL_BASE;
 import static net.fzyz.jerryc05.fzyz_app.core.WebsiteCollection.URL_CALENDAR_DETAIL;
@@ -46,7 +53,11 @@ import static net.fzyz.jerryc05.fzyz_app.core.WebsiteCollection.URL_CALENDAR_DET
 public class URLConnectionBuilder implements AutoCloseable {
 
   private final static String
-          TAG = URLConnectionBuilder.class.getName();
+          TAG = URLConnectionBuilder.class.getSimpleName();
+
+  public final static int
+          TRANSPORT_CELLULAR = 0,
+          TRANSPORT_WIFI     = 1;
 
   public final static String
           METHOD_GET     = "GET",
@@ -57,10 +68,8 @@ public class URLConnectionBuilder implements AutoCloseable {
           METHOD_DELETE  = "DELETE",
           METHOD_TRACE   = "TRACE";
 
-  @Override
-  public void close() {
-    disconnect();
-  }
+  private boolean       isHTTP, wifiOnly = false;
+  private URLConnection urlConnection;
 
   @StringDef({METHOD_GET, METHOD_POST, METHOD_HEAD, METHOD_OPTIONS,
           METHOD_PUT, METHOD_DELETE, METHOD_TRACE})
@@ -68,10 +77,6 @@ public class URLConnectionBuilder implements AutoCloseable {
   public @interface RequestMethods {
   }
 
-  private boolean       isHTTP;
-  private URLConnection urlConnection;
-
-  @RequiresPermission(Manifest.permission.INTERNET)
   private URLConnectionBuilder(@NonNull String _baseURL) throws IOException {
     _baseURL = _baseURL.trim();
     if (!_baseURL.startsWith("http://") && !_baseURL.startsWith("https://"))
@@ -92,10 +97,54 @@ public class URLConnectionBuilder implements AutoCloseable {
     return new URLConnectionBuilder(_baseURL).setRequestMethod(METHOD_POST);
   }
 
+  @RequiresPermission(Manifest.permission.INTERNET)
   public URLConnectionBuilder connect() throws IOException {
     checkNullUrlConnection("run");
-    urlConnection.connect();
+    (isHTTP ? urlConnection
+            : (HttpsURLConnection) urlConnection).connect();
     return this;
+  }
+
+  @Override
+  public void close() {
+    disconnect();
+  }
+
+  public static int getNetworkType(Context context)
+          throws IllegalStateException {
+    final ConnectivityManager mConnectivityManager = (ConnectivityManager)
+            context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    assert mConnectivityManager != null;
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+      final NetworkInfo mNetworkInfo =
+              mConnectivityManager.getActiveNetworkInfo();
+      assert mNetworkInfo != null;
+
+      if (mNetworkInfo.isConnected())
+        return mNetworkInfo.getType();
+      else {
+        final String content = "Network disconnected!";
+        UserInterface.showExceptionToNotification(
+                content, "getNetworkType()");
+        throw new IllegalStateException(content);
+      }
+
+    } else {
+      final NetworkCapabilities networkCapabilities =
+              mConnectivityManager.getNetworkCapabilities(
+                      mConnectivityManager.getActiveNetwork());
+      assert networkCapabilities != null;
+      if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR))
+        return NetworkCapabilities.TRANSPORT_CELLULAR;
+      if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI))
+        return NetworkCapabilities.TRANSPORT_WIFI;
+
+      final String content = "TransportInfo unrecognized!";
+      UserInterface.showExceptionToNotification(
+              content, "getNetworkType()");
+      throw new IllegalStateException(content);
+    }
   }
 
   @Nullable
@@ -103,7 +152,9 @@ public class URLConnectionBuilder implements AutoCloseable {
     try {
       String result;
       {
-        InputStream           inputStream  = urlConnection.getInputStream();
+        InputStream           inputStream  = (isHTTP
+                ? urlConnection
+                : (HttpsURLConnection) urlConnection).getInputStream();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         byte[]                buffer       = new byte[1024];
         int                   length;
@@ -132,7 +183,9 @@ public class URLConnectionBuilder implements AutoCloseable {
 
   @Nullable
   public String getResult() throws IOException {
-    return getResult(StandardCharsets.UTF_8.name());
+     return getResult(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+            ? StandardCharsets.UTF_8.name()
+            : "utf-8");
   }
 
   public void disconnect() {
