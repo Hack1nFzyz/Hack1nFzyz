@@ -8,7 +8,7 @@
 
 **IMPORTANT!!!** This repo is only actively maintained on [GitHub](<https://github.com/jerryc05/fzyz-app>).
 
-**For faster access from Mainland China**, there is a mirror sites: [Tencent Dev](<https://dev.tencent.com/u/jerryc05/p/fzyz-app/git>).
+**For faster access from Mainland China**, there is a mirror site: [Tencent Dev](<https://dev.tencent.com/u/jerryc05/p/fzyz-app/git>).
 
 Please see [Contributing](#user-content-contributing) tab for more info if you want to report anything.
 
