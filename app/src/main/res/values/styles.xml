@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="MyLibraryThemeNoActionbar" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="MyThemeNoActionbar" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -10,5 +10,5 @@
         <!--        <item name="android:listDivider">@color/colorDivider</item>-->
     </style>
 
-    <style name="MyLibraryThemeAppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
+    <style name="MyThemeAppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
 </resources>

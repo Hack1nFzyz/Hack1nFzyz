@@ -3,16 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/nav_home"
+        android:id="@+id/nav_feed"
         android:icon="@drawable/ic_home_black_24dp"
         android:title="@string/nav_header_home"
         app:iconTint="?android:colorForeground"
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/nav_profile"
+        android:id="@+id/nav_activity"
         android:icon="@drawable/ic_person_black_24dp"
-        android:title="@string/profile"
+        android:title="@string/activity"
         app:iconTint="?android:colorForeground"
         app:showAsAction="ifRoom" />
 

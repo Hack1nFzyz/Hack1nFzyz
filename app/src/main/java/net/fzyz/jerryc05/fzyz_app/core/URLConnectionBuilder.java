@@ -1,20 +1,17 @@
 package net.fzyz.jerryc05.fzyz_app.core;
 
-import android.Manifest;
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.util.Base64;
 import android.util.Log;
 
-import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresPermission;
 import androidx.annotation.StringDef;
-import androidx.annotation.WorkerThread;
+
+import net.fzyz.jerryc05.fzyz_app.BuildConfig;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,8 +24,6 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 
 import javax.net.ssl.HttpsURLConnection;
-
-import jerryc05.unlockme.helpers.UserInterface;
 
 import static net.fzyz.jerryc05.fzyz_app.core.WebsiteCollection.URL_BASE;
 import static net.fzyz.jerryc05.fzyz_app.core.WebsiteCollection.URL_CALENDAR_DETAIL;
@@ -46,19 +41,22 @@ import static net.fzyz.jerryc05.fzyz_app.core.WebsiteCollection.URL_CALENDAR_DET
  * @see java.net.URLConnection
  * @see java.net.HttpURLConnection
  * @see javax.net.ssl.HttpsURLConnection
- * @see net.fzyz.jerryc05.fzyz_app.core.WebsiteCollection
  */
-@SuppressWarnings({"WeakerAccess", "unused"})
-@WorkerThread
-public class URLConnectionBuilder implements AutoCloseable {
+public final class URLConnectionBuilder implements AutoCloseable {
 
   private final static String
-          TAG = URLConnectionBuilder.class.getSimpleName();
+          TAG = "URLConnectionBuilder";
 
+  public final static String
+          WIFI_ONLY_EXCEPTION_PROMPT =
+          "Wifi-only mode is on. Cannot connect through cellular data!";
+
+  @SuppressWarnings({"unused", "WeakerAccess", "RedundantSuppression"})
   public final static int
           TRANSPORT_CELLULAR = 0,
           TRANSPORT_WIFI     = 1;
 
+  @SuppressWarnings({"WeakerAccess", "RedundantSuppression"})
   public final static String
           METHOD_GET     = "GET",
           METHOD_POST    = "POST",
@@ -68,95 +66,72 @@ public class URLConnectionBuilder implements AutoCloseable {
           METHOD_DELETE  = "DELETE",
           METHOD_TRACE   = "TRACE";
 
-  private boolean       isHTTP, wifiOnly = false;
+  private boolean isHTTP, wifiOnly = true;
   private URLConnection urlConnection;
 
+  @SuppressWarnings("WeakerAccess")
   @StringDef({METHOD_GET, METHOD_POST, METHOD_HEAD, METHOD_OPTIONS,
           METHOD_PUT, METHOD_DELETE, METHOD_TRACE})
   @Retention(RetentionPolicy.SOURCE)
   public @interface RequestMethods {
   }
 
-  private URLConnectionBuilder(@NonNull String _baseURL) throws IOException {
-    _baseURL = _baseURL.trim();
-    if (!_baseURL.startsWith("http://") && !_baseURL.startsWith("https://"))
-      throw new UnsupportedOperationException(
-              "${baseURL} prefix not recognized: " + _baseURL);
+  private URLConnectionBuilder(@NonNull String baseURL)
+          throws IOException {
+    baseURL = baseURL.trim();
 
-    urlConnection = new URL(_baseURL).openConnection();
-    urlConnection.setConnectTimeout(5 * 1000);
-    urlConnection.setReadTimeout(5 * 1000);
-    isHTTP = _baseURL.charAt(4) == ':';
-  }
+    if (baseURL.startsWith("http")) {
+      if (baseURL.startsWith("://", 4))
+        isHTTP = true;
+      else if (baseURL.startsWith("s://", 4))
+        isHTTP = false;
+      else
+        throw new UnsupportedOperationException(
+                "URL scheme prefix not recognized: " + baseURL);
 
-  public static URLConnectionBuilder get(String _baseURL) throws IOException {
-    return new URLConnectionBuilder(_baseURL);
-  }
-
-  public static URLConnectionBuilder post(String _baseURL) throws IOException {
-    return new URLConnectionBuilder(_baseURL).setRequestMethod(METHOD_POST);
-  }
-
-  @RequiresPermission(Manifest.permission.INTERNET)
-  public URLConnectionBuilder connect() throws IOException {
-    checkNullUrlConnection("run");
-    (isHTTP ? urlConnection
-            : (HttpsURLConnection) urlConnection).connect();
-    return this;
-  }
-
-  @Override
-  public void close() {
-    disconnect();
-  }
-
-  public static int getNetworkType(Context context)
-          throws IllegalStateException {
-    final ConnectivityManager mConnectivityManager = (ConnectivityManager)
-            context.getSystemService(Context.CONNECTIVITY_SERVICE);
-    assert mConnectivityManager != null;
-
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-      final NetworkInfo mNetworkInfo =
-              mConnectivityManager.getActiveNetworkInfo();
-      assert mNetworkInfo != null;
-
-      if (mNetworkInfo.isConnected())
-        return mNetworkInfo.getType();
-      else {
-        final String content = "Network disconnected!";
-        UserInterface.showExceptionToNotification(
-                content, "getNetworkType()");
-        throw new IllegalStateException(content);
-      }
-
-    } else {
-      final NetworkCapabilities networkCapabilities =
-              mConnectivityManager.getNetworkCapabilities(
-                      mConnectivityManager.getActiveNetwork());
-      assert networkCapabilities != null;
-      if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR))
-        return NetworkCapabilities.TRANSPORT_CELLULAR;
-      if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI))
-        return NetworkCapabilities.TRANSPORT_WIFI;
-
-      final String content = "TransportInfo unrecognized!";
-      UserInterface.showExceptionToNotification(
-              content, "getNetworkType()");
-      throw new IllegalStateException(content);
+      urlConnection = new URL(baseURL).openConnection();
+      urlConnection.setConnectTimeout(5 * 1000);
+      urlConnection.setReadTimeout(5 * 1000);
     }
   }
 
-  @Nullable
-  public String getResult(@NonNull String charset) throws IOException {
+  public static URLConnectionBuilder get(@NonNull final String baseURL)
+          throws IOException {
+    return new URLConnectionBuilder(baseURL);
+  }
+
+  @SuppressWarnings("unused")
+  public static URLConnectionBuilder post(@NonNull final String baseURL)
+          throws IOException {
+    return new URLConnectionBuilder(baseURL)
+            .setRequestMethod(METHOD_POST);
+  }
+
+  public URLConnectionBuilder connect(@NonNull final Context context)
+          throws IOException {
+
+    checkNullUrlConnection("run");
+    if (!wifiOnly || getNetworkType(context) == TRANSPORT_WIFI) {
+      if (BuildConfig.DEBUG)
+        Log.d(TAG, "connect: " + urlConnection.getURL());
+
+      (isHTTP ? urlConnection
+              : (HttpsURLConnection) urlConnection).connect();
+    } else
+      throw new IllegalStateException(WIFI_ONLY_EXCEPTION_PROMPT);
+    return this;
+  }
+
+  @SuppressWarnings("WeakerAccess")
+  public String getResult(@NonNull final String charset) throws IOException {
     try {
       String result;
       {
-        InputStream           inputStream  = (isHTTP
+        InputStream inputStream = (isHTTP
                 ? urlConnection
                 : (HttpsURLConnection) urlConnection).getInputStream();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        byte[]                buffer       = new byte[1024];
+        byte[]                buffer       = new byte[4 * 1024];
         int                   length;
 
         while ((length = inputStream.read(buffer)) != -1)
@@ -166,35 +141,79 @@ public class URLConnectionBuilder implements AutoCloseable {
         inputStream.close();
       }
 
-      Log.d(TAG, "connect: Response code = " + (isHTTP
-              ? (HttpURLConnection) urlConnection
-              : (HttpsURLConnection) urlConnection)
-              .getResponseCode()
-              + "\n================ Respond content ================\n"
-              + result);
+      if (BuildConfig.DEBUG)
+        Log.v(TAG, "connect: Response code = " + (isHTTP
+                ? (HttpURLConnection) urlConnection
+                : (HttpsURLConnection) urlConnection)
+                .getResponseCode()
+                + "\n================ Respond content ================\n"
+                + result);
 
       return result;
 
-    } catch (Exception e) {
-      Log.e(TAG, "connect: ", e);
+    } catch (final Exception e) {
+      if (BuildConfig.DEBUG)
+        Log.e(TAG, "connect: ", e);
       throw e;
     }
   }
 
-  @Nullable
   public String getResult() throws IOException {
-     return getResult(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+    return getResult(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
             ? StandardCharsets.UTF_8.name()
             : "utf-8");
   }
 
-  public void disconnect() {
-    checkNullUrlConnection("disconnect");
+  @Override
+  public void close() {
+    if (BuildConfig.DEBUG)
+      Log.d(TAG, "close: " + urlConnection.getURL());
+
+    checkNullUrlConnection("close");
     (isHTTP ? (HttpURLConnection) urlConnection
             : (HttpsURLConnection) urlConnection)
             .disconnect();
+  }
 
-    Log.d(TAG, "disconnect: " + urlConnection.getURL());
+  private static int getNetworkType(@NonNull final Context context)
+          throws IllegalStateException {
+    final ConnectivityManager mConnectivityManager = (ConnectivityManager)
+            context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    assert mConnectivityManager != null;
+
+//    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) { // deprecated API
+    final NetworkInfo mNetworkInfo =
+            mConnectivityManager.getActiveNetworkInfo();
+    assert mNetworkInfo != null;
+
+    if (mNetworkInfo.isConnected()) {
+      final int networkType = mNetworkInfo.getType();
+
+      if (BuildConfig.DEBUG)
+        Log.d(TAG, "getNetworkType: " + networkType);
+
+      return networkType;
+    } else
+      throw new IllegalStateException("Network disconnected!");
+
+//    } else {
+//      final Network network = mConnectivityManager.getActiveNetwork();
+//      if (network == null)
+//        throw new IllegalStateException("No active network!");
+//
+//      final NetworkCapabilities networkCapabilities =
+//              mConnectivityManager.getNetworkCapabilities(network);
+//      assert networkCapabilities != null;
+//      if (networkCapabilities.hasTransport(
+//              NetworkCapabilities.TRANSPORT_WIFI))
+//        return TRANSPORT_WIFI;
+//      if (networkCapabilities.hasTransport(
+//              NetworkCapabilities.TRANSPORT_CELLULAR))
+//        return TRANSPORT_CELLULAR;
+//
+//      throw new IllegalStateException("TransportInfo unrecognized!");
+//    }
+    // commented out because hard to use and unstable
   }
 
   /**
@@ -223,52 +242,60 @@ public class URLConnectionBuilder implements AutoCloseable {
     return decoded;
   }
 
+  @SuppressWarnings("WeakerAccess")
   public URLConnectionBuilder setRequestMethod(
-          @RequestMethods String _requestMethod) {
+          @RequestMethods final String _requestMethod) {
     try {
       (isHTTP ? (HttpURLConnection) urlConnection
               : (HttpsURLConnection) urlConnection)
               .setRequestMethod(_requestMethod);
-    } catch (java.net.ProtocolException e) {
-      Log.e(TAG, "setRequestMethod: ", e);
+    } catch (final Exception e) {
+      if (BuildConfig.DEBUG)
+        Log.e(TAG, "setRequestMethod: ", e);
     }
     return this;
   }
 
-  public URLConnectionBuilder setConnectTimeout(
-          @IntRange(from = 0) int _connectTimeout) {
-    urlConnection.setConnectTimeout(_connectTimeout);
+  public URLConnectionBuilder setConnectTimeout(int connectTimeout) {
+    urlConnection.setConnectTimeout(connectTimeout);
     return this;
   }
 
-  public URLConnectionBuilder setReadTimeout(
-          @IntRange(from = 0) int _readTimeout) {
-    urlConnection.setReadTimeout(_readTimeout);
+  public URLConnectionBuilder setReadTimeout(int readTimeout) {
+    urlConnection.setReadTimeout(readTimeout);
     return this;
   }
 
-  public URLConnectionBuilder setUseCache(boolean _useCache) {
-    urlConnection.setUseCaches(_useCache);
+  @SuppressWarnings("unused")
+  public URLConnectionBuilder setWifiOnly(final boolean _wifiOnly) {
+    wifiOnly = _wifiOnly;
     return this;
   }
 
+  public URLConnectionBuilder setUseCache(final boolean useCache) {
+    urlConnection.setUseCaches(useCache);
+    return this;
+  }
+
+  @SuppressWarnings("unused")
   public URLConnectionBuilder setRequestProperty(
-          @NonNull String key, @NonNull String value) {
+          @NonNull final String key, @Nullable final String value) {
     urlConnection.setRequestProperty(key, value);
     return this;
   }
 
+  @SuppressWarnings("unused")
   public URLConnection getUrlConnection() {
     checkNullUrlConnection("get");
     return urlConnection;
   }
 
-  @Nullable
+  @SuppressWarnings("unused")
   public URLConnection _getUrlConnection() {
     return urlConnection;
   }
 
-  private void checkNullUrlConnection(@NonNull String action) {
+  private void checkNullUrlConnection(@NonNull final String action) {
     if (urlConnection == null)
       throw new UnsupportedOperationException(
               "Cannot " + action + " null instance decodeURL ${urlConnection}!");

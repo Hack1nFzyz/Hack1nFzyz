@@ -3,9 +3,11 @@
     <string name="nav_header_home">Home</string>
     <string name="nav_header_username">Hello Guest!</string>
 
-    <string name="home">Home</string>
-    <string name="dashboard">Dashboard</string>
-    <string name="profile">Profile</string>
+    <string name="feed">Feed</string>
+    <string name="academic">Academic</string>
+    <string name="activity">Activity</string>
+    <string name="expense">Expense</string>
+    <string name="misc">Misc</string>
 
     <string name="i_am_a_teacher">I AM A TEACHER</string>
     <string name="i_am_a_student">I AM A STUDENT</string>

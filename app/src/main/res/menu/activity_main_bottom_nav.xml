@@ -2,17 +2,27 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/nav_home"
+        android:id="@+id/nav_feed"
         android:icon="@drawable/ic_home_black_24dp"
-        android:title="@string/home" />
+        android:title="@string/feed" />
 
     <item
-        android:id="@+id/nav_dashboard"
+        android:id="@+id/nav_academic"
         android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="@string/dashboard" />
+        android:title="@string/academic" />
 
     <item
-        android:id="@+id/nav_profile"
+        android:id="@+id/nav_activity"
         android:icon="@drawable/ic_person_black_24dp"
-        android:title="@string/profile" />
+        android:title="@string/activity" />
+
+    <item
+        android:id="@+id/nav_expense"
+        android:icon="@drawable/ic_person_black_24dp"
+        android:title="@string/expense" />
+
+    <item
+        android:id="@+id/nav_misc"
+        android:icon="@drawable/ic_person_black_24dp"
+        android:title="@string/misc" />
 </menu>

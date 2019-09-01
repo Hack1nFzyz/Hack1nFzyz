@@ -17,7 +17,7 @@
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/profile"
+        android:contentDescription="@string/activity"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:src="@mipmap/ic_launcher_fzyz_round"
         app:civ_border_color="#FFF"

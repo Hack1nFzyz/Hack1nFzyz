@@ -1,8 +1,10 @@
 package net.fzyz.jerryc05.fzyz_app.core;
 
 
+import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
 import java.io.IOException;
@@ -30,9 +32,9 @@ public class LoginHelper {
   }
 
   private static void loginHelper(String username, String password,
-                                  String loginURL) {
+                                  String loginURL, final @NonNull Context context) {
     try {
-      URLConnectionBuilder.post(loginURL).connect().close();
+      URLConnectionBuilder.post(loginURL).connect(context).close();
     } catch (IOException e) {
       Log.e(TAG, "loginHelper: ", e);
     }
@@ -56,9 +58,9 @@ public class LoginHelper {
 //            WebsiteCollection.URL_OTHER_LOGIN));
 //  }
 
-  public static void loginAsStudent(String username, String password) {
+  public static void loginAsStudent(String username, String password, final @NonNull Context context) {
     loginHelper(username, password, URLConnectionBuilder.decodeURL(
-            WebsiteCollection.URL_STUDENT_LOGIN));
+            WebsiteCollection.URL_STUDENT_LOGIN),context);
   }
 }
 // todo add greyed out register/public_login button.
