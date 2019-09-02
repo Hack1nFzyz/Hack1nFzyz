@@ -3,7 +3,6 @@ package net.fzyz.jerryc05.fzyz_app.core;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.util.Base64;
 import android.util.Log;
 
@@ -159,9 +158,7 @@ public final class URLConnectionBuilder implements AutoCloseable {
   }
 
   public String getResult() throws IOException {
-    return getResult(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-            ? StandardCharsets.UTF_8.name()
-            : "utf-8");
+    return getResult(StandardCharsets.UTF_8.name());
   }
 
   @Override
@@ -181,7 +178,7 @@ public final class URLConnectionBuilder implements AutoCloseable {
             context.getSystemService(Context.CONNECTIVITY_SERVICE);
     assert mConnectivityManager != null;
 
-//    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) { // deprecated API
+//  deprecated API
     final NetworkInfo mNetworkInfo =
             mConnectivityManager.getActiveNetworkInfo();
     assert mNetworkInfo != null;
@@ -225,7 +222,8 @@ public final class URLConnectionBuilder implements AutoCloseable {
     String decoded = (url.equals(URL_BASE)
             ? "" : new String(Base64.decode(URL_BASE, Base64.DEFAULT)))
             + new String(Base64.decode(url, Base64.DEFAULT));
-    Log.d(TAG, "decodeURL: " + decoded);
+    if (BuildConfig.DEBUG)
+      Log.d(TAG, "decodeURL: " + decoded);
     return decoded;
   }
 
@@ -238,7 +236,8 @@ public final class URLConnectionBuilder implements AutoCloseable {
     String decoded = new String(Base64.decode(URL_BASE, Base64.DEFAULT))
             + new String(Base64.decode(URL_CALENDAR_DETAIL, Base64.DEFAULT))
             + date;
-    Log.d(TAG, "decodeURL: " + decoded);
+    if (BuildConfig.DEBUG)
+      Log.d(TAG, "decodeURL: " + decoded);
     return decoded;
   }
 

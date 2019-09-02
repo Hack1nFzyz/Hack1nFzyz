@@ -46,7 +46,7 @@ See GitHub pages from <https://jerryc05.github.io/fzyz-app/>.
 
 ### Option 1: Submit via GitHub Issue (recommended)
 
-It is strongly encouraged to submit bug reports and feature requests through [GitHub Issue](https://github.com/jerryc05/fzyz-app/issues) page. It makes things a lot easier to manage all requests in one place, and every issue is *guaranteed* to get a response.
+It is strongly encouraged to submit bug reports and feature requests through [GitHub Issue](https://github.com/jerryc05/fzyz-app/issues) page. It makes things a lot easier to manage when they are in one place, and every issue is *guaranteed* to get a response.
 
 **IMPORTANT!!!** Do not use issue pages in Tencent Dev. It is painful to maintain separate issue pages, and your request might not get any response if you do so.
 

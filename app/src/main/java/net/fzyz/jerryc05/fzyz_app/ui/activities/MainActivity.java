@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -79,6 +78,7 @@ public class MainActivity extends _BaseActivity {
             this, drawerLayout, toolbar,
             R.string.app_name, R.string.appbar_scrolling_view_behavior);
 
+    toggle.syncState();
     runOnUiThread(() -> drawerLayout.addDrawerListener(toggle));
   }
 

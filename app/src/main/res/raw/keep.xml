@@ -1,11 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools"
-    tools:keep="
-    @drawable/design_password_eye,
-    @drawable/design_ic_visibility,
-    @drawable/design_ic_visibility_off,
-    @drawable/avd_show_password,
-    @drawable/avd_hide_password
-"
     tools:shrinkMode="strict" />
 
-<!--Do not delete drawables above if you are using textView with password toggle-->
+    <!--Keep resources below for bottom navigation bar:
+    @layout/design_bottom_navigation_item,-->
+
+    <!--Keep resources below for snack bar:
+    @layout/mtrl_layout_snackbar_include,-->
+
+    <!--Keep resources below for popup menu:
+    @layout/abc_popup_menu_item_layout,-->
+
+    <!--Keep resources below for textView with password toggle:
+        @drawable/design_password_eye,
+        @drawable/design_ic_visibility,
+        @drawable/design_ic_visibility_off,
+        @drawable/avd_show_password,
+        @drawable/avd_hide_password-->

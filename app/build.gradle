@@ -10,7 +10,7 @@ android {
         versionCode 1
         versionName '0.0.3-a2'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        resConfigs "xxhdpi"
+        resConfigs "xxhdpi", 'en'
     }
     buildTypes {
         release {
@@ -18,6 +18,10 @@ android {
             shrinkResources true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            applicationIdSuffix ".debug"
+            debuggable true
         }
     }
     compileOptions {
