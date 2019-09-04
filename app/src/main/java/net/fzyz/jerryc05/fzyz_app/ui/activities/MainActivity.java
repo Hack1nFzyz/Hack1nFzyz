@@ -39,11 +39,9 @@ public class MainActivity extends _BaseActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    getThreadPoolExecutor().execute(() -> {
-      setToolBarAndDrawer();
-      setFragment(new HomeFragment());
-      setBottomNavView();
-    });
+    getThreadPoolExecutor().execute(this::setToolBarAndDrawer);
+    getThreadPoolExecutor().execute(this::setBottomNavView);
+    getThreadPoolExecutor().execute(() -> setFragment(new HomeFragment()));
   }
 
   @Override
@@ -74,12 +72,11 @@ public class MainActivity extends _BaseActivity {
     setSupportActionBar(toolbar);
 
     drawerLayout = findViewById(R.id.drawer_layout);
-    final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+    final ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(
             this, drawerLayout, toolbar,
             R.string.app_name, R.string.appbar_scrolling_view_behavior);
-
-    toggle.syncState();
-    runOnUiThread(() -> drawerLayout.addDrawerListener(toggle));
+    actionBarDrawerToggle.syncState();
+    runOnUiThread(() -> drawerLayout.addDrawerListener(actionBarDrawerToggle));
   }
 
   @SuppressLint("WrongThread")
@@ -116,8 +113,8 @@ public class MainActivity extends _BaseActivity {
               ? new ProfileLoggedInFragment()
               : fragment;
 
-    final Fragment existingFragment = getSupportFragmentManager().findFragmentByTag(
-            fragment.getClass().getSimpleName());
+    final Fragment existingFragment = getSupportFragmentManager()
+            .findFragmentByTag(fragment.getClass().getSimpleName());
 
     if (existingFragment != null)
       fragment = existingFragment;

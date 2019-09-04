@@ -1,12 +1,15 @@
 package net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar;
 
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -30,12 +33,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.threadPoolExecutor;
 
 @SuppressWarnings("WeakerAccess")
-public class ProfileFragment extends Fragment implements View.OnClickListener {
+public class ProfileFragment extends Fragment implements
+        View.OnClickListener, TextView.OnEditorActionListener {
 
   static final String TAG = ProfileFragment.class.getName();
 
   public static boolean isLoggedIn;
-
   MainActivity              activity;
   CircleImageView           avatar;
   TextInputLayout           usernameLayout;
@@ -51,16 +54,30 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
   @Nullable
   @Override
-  public View onCreateView(@NonNull LayoutInflater inflater,
-                           @Nullable ViewGroup container,
-                           @Nullable Bundle savedInstanceState) {
+  public View onCreateView(@NonNull final LayoutInflater inflater,
+                           @Nullable final ViewGroup container,
+                           @Nullable final Bundle savedInstanceState) {
     return inflater.inflate(R.layout.frag_profile, container, false);
   }
 
   @Override
-  public void onViewCreated(@NonNull View view,
-                            @Nullable Bundle savedInstanceState) {
-    threadPoolExecutor.execute(() -> { //f:off
+  public void onViewCreated(@NonNull final View view,
+                            @Nullable final Bundle savedInstanceState) {
+    threadPoolExecutor.execute(() -> {
+      while (activity == null)
+        activity = (MainActivity) getActivity();
+      final MaterialAlertDialogBuilder alertDialogBuilder =
+              new MaterialAlertDialogBuilder(activity)
+                      .setTitle("Just a note")
+                      .setMessage("Login process is still under construction. " +
+                              "Typing in real credential makes no sense.")
+                      .setCancelable(false)
+                      .setPositiveButton("OKAY", null);
+      activity.runOnUiThread(alertDialogBuilder::show);
+    });
+
+    threadPoolExecutor.execute(() -> {
+      //f:off
       if (avatar          == null)
           avatar          = view.findViewById(R.id.frag_profile_avatar);
       if (usernameLayout  == null)
@@ -83,32 +100,19 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
           progressBar     = view.findViewById(R.id.frag_profile_progressBar);
       if (loggingIn       == null)
           loggingIn       = view.findViewById(R.id.frag_profile_logging_in_textView);
-      while (activity     == null)
-             activity     = (MainActivity) getActivity(); //f:on
-
-      activity.runOnUiThread(() -> {
-        new MaterialAlertDialogBuilder(activity)
-                .setTitle("Just a note")
-                .setMessage("Login process is still under construction. " +
-                        "Typing in real credential makes no sense.")
-                .setCancelable(false)
-                .setPositiveButton("OKAY", null)
-                .create()
-                .show();
-        //f:off
-        avatar      .setOnClickListener(ProfileFragment.this);
-        teacherLogin.setOnClickListener(ProfileFragment.this);
-        studentLogin.setOnClickListener(ProfileFragment.this);
-         publicLogin.setOnClickListener(ProfileFragment.this);
-        register    .setOnClickListener(ProfileFragment.this);
-        //f:on
-      });
+      avatar      .setOnClickListener(ProfileFragment.this);
+      teacherLogin.setOnClickListener(ProfileFragment.this);
+      studentLogin.setOnClickListener(ProfileFragment.this);
+       publicLogin.setOnClickListener(ProfileFragment.this);
+      register    .setOnClickListener(ProfileFragment.this);
+      passwordText.setOnEditorActionListener(ProfileFragment.this);
+      //f:on
     });
   }
 
   @WorkerThread
   @Override
-  public void onClick(View view) {
+  public void onClick(@NonNull final View view) {
     threadPoolExecutor.execute(() -> {
 
       switch (view.getId()) {
@@ -156,10 +160,20 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     });
   }
 
-  void loginSucceed(View view) {
+  @Override
+  public boolean onEditorAction(@NonNull final TextView textView,
+                                int actionId, @NonNull final KeyEvent keyEvent) {
+    if (textView == passwordText && actionId == EditorInfo.IME_ACTION_DONE) {
+      studentLogin.performClick();
+      return true;
+    }
+    return false;
+  }
+
+  void loginSucceed(@NonNull final View view) {
     try {
       Thread.sleep(2500);
-    } catch (InterruptedException e) {
+    } catch (final InterruptedException e) {
       Log.e(TAG, "onClick: Sleeping 2500ms on frag_profile_student_login_button.", e);
     }
     Snackbar.make(view, "Okayyyyy, you are logged in.",

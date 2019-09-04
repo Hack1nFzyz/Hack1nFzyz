@@ -20,6 +20,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/frag_profile_username_textLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/frag_profile_login_text_margin"
@@ -31,6 +32,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/frag_profile_avatar"
+        app:endIconMode="clear_text"
         app:layout_constraintVertical_bias=".15">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -43,20 +45,19 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/frag_profile_password_textLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/frag_profile_login_text_margin"
         android:layout_marginEnd="@dimen/frag_profile_login_text_margin"
         android:hint="@string/password"
         app:errorEnabled="true"
+        app:endIconMode="password_toggle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/frag_profile_username_textLayout"
-        app:layout_constraintVertical_bias=".05"
-        app:passwordToggleEnabled="true"
-        app:passwordToggleTint="@color/colorPrimaryDark"
-        app:passwordToggleTintMode="multiply">
+        app:layout_constraintVertical_bias=".05">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/Frag_profile_password_text"
