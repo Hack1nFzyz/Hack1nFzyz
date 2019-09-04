@@ -36,7 +36,7 @@
         app:layout_constraintVertical_bias=".15">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/Frag_profile_username_text"
+            android:id="@+id/frag_profile_username_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:imeOptions="actionNext"
@@ -60,7 +60,7 @@
         app:layout_constraintVertical_bias=".05">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/Frag_profile_password_text"
+            android:id="@+id/frag_profile_password_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:imeOptions="actionDone"

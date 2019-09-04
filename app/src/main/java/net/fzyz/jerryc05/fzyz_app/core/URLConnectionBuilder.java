@@ -65,7 +65,8 @@ public final class URLConnectionBuilder implements AutoCloseable {
           METHOD_DELETE  = "DELETE",
           METHOD_TRACE   = "TRACE";
 
-  private boolean isHTTP, wifiOnly = true;
+  private boolean isHTTP,
+          wifiOnly = true;
   private URLConnection urlConnection;
 
   @SuppressWarnings("WeakerAccess")

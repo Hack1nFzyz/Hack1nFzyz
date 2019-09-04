@@ -1,7 +1,7 @@
 package net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar;
 
 
-import android.app.Activity;
+import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -83,11 +83,11 @@ public class ProfileFragment extends Fragment implements
       if (usernameLayout  == null)
           usernameLayout  = view.findViewById(R.id.frag_profile_username_textLayout);
       if (usernameText    == null)
-          usernameText    = view.findViewById(R.id.Frag_profile_username_text);
+          usernameText    = view.findViewById(R.id.frag_profile_username_text);
       if (passwordLayout  == null)
           passwordLayout  = view.findViewById(R.id.frag_profile_password_textLayout);
       if (passwordText    == null)
-          passwordText    = view.findViewById(R.id.Frag_profile_password_text);
+          passwordText    = view.findViewById(R.id.frag_profile_password_text);
       if (teacherLogin    == null)
           teacherLogin    = view.findViewById(R.id.frag_profile_teacher_login_button);
       if (studentLogin    == null)
@@ -156,6 +156,8 @@ public class ProfileFragment extends Fragment implements
                   Snackbar.LENGTH_LONG).show();
           break;
         }
+
+        default:
       }
     });
   }
@@ -163,7 +165,8 @@ public class ProfileFragment extends Fragment implements
   @Override
   public boolean onEditorAction(@NonNull final TextView textView,
                                 int actionId, @NonNull final KeyEvent keyEvent) {
-    if (textView == passwordText && actionId == EditorInfo.IME_ACTION_DONE) {
+    if (textView.getId() == R.id.frag_profile_password_text
+            && actionId == EditorInfo.IME_ACTION_DONE) {
       studentLogin.performClick();
       return true;
     }
