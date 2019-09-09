@@ -1,6 +1,6 @@
 package net.fzyz.jerryc05.fzyz_app.core;
 
-@SuppressWarnings("SpellCheckingInspection")
+@SuppressWarnings({"SpellCheckingInspection", "unused"})
 public interface WebsiteCollection {
 
   String
