@@ -52,7 +52,7 @@ public class MainActivity extends _BaseActivity {
 
   @Override
   public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
-    MainPage.test(this, item.getTitle().toString(), getApplicationContext());
+    MainPage.test(this, item.getTitle().toString());
     return super.onOptionsItemSelected(item);
   }
 
