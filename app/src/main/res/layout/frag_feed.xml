@@ -8,15 +8,26 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:tabMode="scrollable">
 
             <com.google.android.material.tabs.TabItem
-                android:text="@string/app_name"
+                android:text="@string/rolling_news"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content" />
 
             <com.google.android.material.tabs.TabItem
-                android:text="@string/app_name"
+                android:text="@string/office_announcement"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content" />
+
+            <com.google.android.material.tabs.TabItem
+                android:text="@string/school_affairs"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content" />
+
+            <com.google.android.material.tabs.TabItem
+                android:text="@string/headline_news"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content" />
         </com.google.android.material.tabs.TabLayout>

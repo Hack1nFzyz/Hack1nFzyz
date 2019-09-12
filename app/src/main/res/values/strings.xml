@@ -8,9 +8,11 @@
     <string name="expense">Expense</string>
     <string name="misc">Misc</string>
 
-<!--    <string name=""></string>-->
-<!--    <string name=""></string>-->
-<!--    <string name=""></string>-->
+    <string name="rolling_news">ROLLING NEWS</string>
+    <string name="office_announcement">OFFICE ANNOUNCEMENT</string>
+    <string name="school_affairs">SCHOOL AFFAIRS</string>
+    <string name="headline_news">HEADLINE NEWS</string>
+
 
 
     <string name="i_am_a_teacher">I AM A TEACHER</string>
