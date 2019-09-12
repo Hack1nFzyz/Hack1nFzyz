@@ -5,7 +5,7 @@
     <item
         android:id="@+id/nav_feed"
         android:icon="@drawable/ic_home_black_24dp"
-        android:title="@string/nav_header_home"
+        android:title="@string/app_name"
         app:iconTint="?android:colorForeground"
         app:showAsAction="always" />
 

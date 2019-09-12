@@ -1,8 +1,11 @@
 package net.fzyz.jerryc05.fzyz_app.ui.activities;
 
+import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import net.fzyz.jerryc05.fzyz_app.BuildConfig;
 
@@ -14,6 +17,15 @@ public abstract class _BaseActivity extends AppCompatActivity {
 
   private static final String             TAG = "_BaseActivity";
   public static        ThreadPoolExecutor threadPoolExecutor;
+
+  @Override
+  protected void onCreate(@Nullable final Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+
+    // We knew this is deprecated, but we need it.
+    //noinspection deprecation
+    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_TIME);
+  }
 
   public static ThreadPoolExecutor getThreadPoolExecutor() {
     if (BuildConfig.DEBUG)

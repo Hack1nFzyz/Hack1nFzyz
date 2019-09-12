@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Hack-FZYZ</string>
-    <string name="nav_header_home">Home</string>
     <string name="nav_header_username">Hello Guest!</string>
 
     <string name="feed">Feed</string>
@@ -8,6 +7,11 @@
     <string name="activity">Activity</string>
     <string name="expense">Expense</string>
     <string name="misc">Misc</string>
+
+<!--    <string name=""></string>-->
+<!--    <string name=""></string>-->
+<!--    <string name=""></string>-->
+
 
     <string name="i_am_a_teacher">I AM A TEACHER</string>
     <string name="i_am_a_student">I AM A STUDENT</string>

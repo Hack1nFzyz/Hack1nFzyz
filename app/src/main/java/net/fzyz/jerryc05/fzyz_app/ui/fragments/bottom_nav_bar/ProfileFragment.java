@@ -1,7 +1,6 @@
 package net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar;
 
 
-import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -20,7 +19,6 @@ import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -63,19 +61,6 @@ public class ProfileFragment extends Fragment implements
   @Override
   public void onViewCreated(@NonNull final View view,
                             @Nullable final Bundle savedInstanceState) {
-    threadPoolExecutor.execute(() -> {
-      while (activity == null)
-        activity = (MainActivity) getActivity();
-      final MaterialAlertDialogBuilder alertDialogBuilder =
-              new MaterialAlertDialogBuilder(activity)
-                      .setTitle("Just a note")
-                      .setMessage("Login process is still under construction. " +
-                              "Typing in real credential makes no sense.")
-                      .setCancelable(false)
-                      .setPositiveButton("OKAY", null);
-      activity.runOnUiThread(alertDialogBuilder::show);
-    });
-
     threadPoolExecutor.execute(() -> {
       //f:off
       if (avatar          == null)
@@ -190,7 +175,7 @@ public class ProfileFragment extends Fragment implements
       avatar     .setVisibility(View.INVISIBLE);
       progressBar.setVisibility(View.INVISIBLE);
       loggingIn  .setVisibility(View.INVISIBLE);
-      activity   .setFragment(new ProfileLoggedInFragment()); //f:on
+      activity   .setFragment(ProfileLoggedInFragment.class); //f:on
 
       ((TextView) activity.findViewById(R.id.nav_header_username))
               .setText(username);

@@ -13,6 +13,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.appbar.MaterialToolbar;
@@ -23,8 +24,8 @@ import com.google.android.material.snackbar.Snackbar;
 
 import net.fzyz.jerryc05.fzyz_app.R;
 import net.fzyz.jerryc05.fzyz_app.core.MainPage;
-import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.DashboardFragment;
-import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.HomeFragment;
+import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.AcademicFragment;
+import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.FeedFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileLoggedInFragment;
 
@@ -41,7 +42,7 @@ public class MainActivity extends _BaseActivity {
 
     getThreadPoolExecutor().execute(this::setToolBarAndDrawer);
     getThreadPoolExecutor().execute(this::setBottomNavView);
-    getThreadPoolExecutor().execute(() -> setFragment(new HomeFragment()));
+    getThreadPoolExecutor().execute(() -> setFragment(FeedFragment.class));
   }
 
   @Override
@@ -84,21 +85,21 @@ public class MainActivity extends _BaseActivity {
   void setBottomNavView() {
     final OnNavigationItemSelectedListener onNavigationItemSelectedListener =
             item -> {
-              Fragment fragment;
+              Class fragmentClass;
 
               switch (item.getItemId()) {
                 case R.id.nav_feed:
-                  fragment = new HomeFragment();
+                  fragmentClass = FeedFragment.class;
                   break;
                 case R.id.nav_academic:
-                  fragment = new DashboardFragment();
+                  fragmentClass = AcademicFragment.class;
                   break;
                 case R.id.nav_activity:
                 default:
-                  fragment = new ProfileFragment();
+                  fragmentClass = ProfileFragment.class;
                   break;
               }
-              setFragment(fragment);
+              setFragment(fragmentClass);
               return true;
             };
 
@@ -107,42 +108,50 @@ public class MainActivity extends _BaseActivity {
   }
 
   @WorkerThread
-  public void setFragment(@NonNull Fragment fragment) {
-    if (fragment instanceof ProfileFragment)
-      fragment = ProfileFragment.isLoggedIn
-              ? new ProfileLoggedInFragment()
-              : fragment;
+  public void setFragment(@NonNull Class fragmentClass) {
+    if (fragmentClass.equals(ProfileFragment.class))
+      fragmentClass = ProfileFragment.isLoggedIn
+              ? ProfileLoggedInFragment.class
+              : fragmentClass;
 
-    final Fragment existingFragment = getSupportFragmentManager()
-            .findFragmentByTag(fragment.getClass().getSimpleName());
+    final FragmentManager fragmentManager = getSupportFragmentManager();
+    final Fragment existingFragment = fragmentManager.findFragmentByTag(
+            fragmentClass.getSimpleName());
 
-    if (existingFragment != null)
-      fragment = existingFragment;
+    if (existingFragment == null || !existingFragment.equals(currentFragment)) {
+      final FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-    if (!fragment.equals(currentFragment)) {
-      final FragmentTransaction transaction =
-              getSupportFragmentManager().beginTransaction();
       if (currentFragment instanceof ProfileFragment
-              && fragment instanceof ProfileLoggedInFragment) {
+              && fragmentClass.equals(ProfileLoggedInFragment.class)) {
         Log.d(TAG, "setFragment: Removing  " + currentFragment.getTag());
         transaction.remove(currentFragment);
+
       } else if (currentFragment != null) {
         Log.d(TAG, "setFragment: Hiding    " + currentFragment.getTag());
         transaction.hide(currentFragment);
       }
 
-      if (fragment.isAdded()) {
-        transaction.show(fragment);
-        Log.d(TAG, "setFragment: Reusing   " + fragment.getTag());
+      if (existingFragment != null) {
+        transaction.show(existingFragment);
+        currentFragment = existingFragment;
+        Log.d(TAG, "setFragment: Reusing   " + existingFragment.getTag());
+
       } else {
-        transaction.add(R.id.activity_main_frameLayout, fragment,
-                fragment.getClass().getSimpleName());
-        Log.d(TAG, "setFragment: Creating  " + fragment.getTag());
+        try {
+          final Fragment newFragment = (Fragment) fragmentClass.newInstance();
+          transaction.add(R.id.activity_main_frameLayout, newFragment,
+                  fragmentClass.getSimpleName());
+          currentFragment = newFragment;
+          Log.d(TAG, "setFragment: Creating  "
+                  + fragmentClass.getSimpleName());
+        } catch (final Exception e) {
+          throw new IllegalStateException("Cannot instantiate "
+                  + fragmentClass.getSimpleName());
+        }
       }
       transaction.commit();
-      currentFragment = fragment;
     } else
-      Log.d(TAG, "setFragment: Unchanged " + fragment.getTag());
+      Log.d(TAG, "setFragment: Unchanged " + fragmentClass.getSimpleName());
   }
 
   private void setExitDialog() {

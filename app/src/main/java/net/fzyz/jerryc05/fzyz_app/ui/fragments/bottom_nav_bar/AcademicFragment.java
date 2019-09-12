@@ -12,12 +12,12 @@ import androidx.fragment.app.Fragment;
 
 import net.fzyz.jerryc05.fzyz_app.R;
 
-public class DashboardFragment extends Fragment {
+public class AcademicFragment extends Fragment {
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater,
                            @Nullable ViewGroup container,
                            @Nullable Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.frag_dashboard, container, false);
+    return inflater.inflate(R.layout.frag_academic, container, false);
   }
 }

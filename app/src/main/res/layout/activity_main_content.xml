@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingTop="?android:actionBarSize"
-    tools:showIn="@layout/app_bar_main">
+    tools:showIn="@layout/activity_main_app_bar">
 
     <FrameLayout
         android:id="@+id/activity_main_frameLayout"
