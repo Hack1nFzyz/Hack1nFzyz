@@ -12,20 +12,20 @@ public interface WebsiteCollection {
                   + "bmV3c19sZXZlbHRhZz0wJmlzX291dHNpZGU9MSZuZXdudW1zPTExJnR5cGVzPT",
           URL_INDEX_RES_LIST_PREFIX                                   =
                   "L2Rvb25lL2tub3dsZWRnZS9pbmZvL2luZGV4cmVzbGlzdC5zaHRtbD9rdHlwZWlkPT",
-          URL_BASE                                                    = "aHR0cDovL3d3dy5menl6Lm5ldA==",
-          URL_ROLLING_NEWS_GunDongXinWen                              =
+          URL_BASE                              = "aHR0cDovL3d3dy5menl6Lm5ldA==",
+          URL_ROLLING_NEWS_GunDongXinWen        =
                   "L25ld3MvbmV3c21nci9nZXRNb3ZlSW1nLnNodG1s",
-          URL_OFFICE_ANNOUNCEMENT_ChuShiGongGao                       = URL_GET_NEWS_PREFIX
+          URL_OFFICE_ANNOUNCEMENT_ChuShiGongGao = URL_GET_NEWS_PREFIX
                   + "bmV3bnVtcz0zJnR5cGVzPTEsNSw2LDcmaXNfb3V0c2lkZT0x",
-          URL_SCHOOL_AFFAIRS_XiaoWuGongKai                            = URL_GET_NEWS_PREFIX
+          URL_SCHOOL_AFFAIRS_XiaoWuGongKai      = URL_GET_NEWS_PREFIX
                   + "bmV3bnVtcz01JnR5cGVzPTE5MSZpc19vdXRzaWRlPTE=",
-          URL_HEADLINE_NEWS_ZuiXinXinWenNeiRong                       =
+          URL_HEADLINE_NEWS_ZuiXinXinWenTouTiao =
                   "L2Rvb25lL2hvbWUvcG9ydGFsL2dldE5ld3NDb250ZW50LnNodG1sP2lzX291"
                           + "dHNpZGU9MSZuZXdzX2xldmVsdGFnPTEmdF9uZXdzX2xldmVsPTI=",
-          URL_LATEST_NEWS_ZuiXinXinWen                                = URL_GET_NEWS_PREFIX
+          URL_LATEST_NEWS_ZuiXinXinWen          = URL_GET_NEWS_PREFIX
                   + "aXNfb3V0c2lkZT0xJm5ld251bXM9OCZpc0ZpcnN0PWlzRmlyc3QmbmV3c19sZXZlbHRhZz0x",
-          URL_SCHOOL_NEWS_MIXED_XiaoYuanXinWen                        = URL_SCHOOL_NEWS_PREFIX_1 + "EyLDEw",
-          URL_SCHOOL_NEWS_HIGH_GaoZhongXinWen                         = URL_SCHOOL_NEWS_PREFIX_1 + "Ey",
+          URL_SCHOOL_NEWS_MIXED_XiaoYuanXinWen  = URL_SCHOOL_NEWS_PREFIX_1 + "EyLDEw",
+          URL_SCHOOL_NEWS_HIGH_GaoZhongXinWen   = URL_SCHOOL_NEWS_PREFIX_1 + "Ey",
           URL_SCHOOL_NEWS_MIDDLE_ChuZhongXinWen                       = URL_SCHOOL_NEWS_PREFIX_1 + "Ew",
           URL_EDUCATION_NEWS_JiaoYuDongTai                            = URL_SCHOOL_NEWS_PREFIX_2 + "Q=",
           URL_ENTRANCE_EXAMS_ZhongKaoGaoKao                           = URL_SCHOOL_NEWS_PREFIX_1 + "M=",
@@ -45,7 +45,7 @@ public interface WebsiteCollection {
                   "L2Rvb25lLWVkdS9zY2hvb2wvaG9tZS9zY2hvb2xGb3J1bUluZGV4QWN0aW9uLnNodG1s",
           URL_TUO_FENG_ONLINE_TuoFengZaiXian                          =
                   URL_INDEX_RES_LIST_PREFIX + "EyNDMmdHlwZV9pZD0x",
-          URL_3M_FATE_SanMuYuan                                       =
+          URL_THREE_MS_FATE_SanMuYuan                                       =
                   URL_INDEX_RES_LIST_PREFIX + "EyNDQmdHlwZV9pZD0y",
           URL_WINDOW_OF_HEART_XinYuZhiChuang                          =
                   URL_INDEX_RES_LIST_PREFIX + "IyNjEmdHlwZV9pZD0z",

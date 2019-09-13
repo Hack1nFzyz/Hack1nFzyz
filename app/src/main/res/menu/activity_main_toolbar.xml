@@ -3,16 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/nav_feed"
-        android:icon="@drawable/ic_home_black_24dp"
-        android:title="@string/app_name"
-        app:iconTint="?android:colorForeground"
-        app:showAsAction="always" />
-
-    <item
-        android:id="@+id/nav_activity"
-        android:icon="@drawable/ic_person_black_24dp"
-        android:title="@string/activity"
+        android:id="@+id/toolbar_notification"
+        android:icon="@drawable/ic_notifications_black_24px"
+        android:title="@string/notification"
         app:iconTint="?android:colorForeground"
         app:showAsAction="ifRoom" />
 
@@ -33,7 +26,7 @@
 
     <item
         android:id="@+id/URL_HEADLINE_NEWS_ZuiXinXinWenNeiRong"
-        android:title="URL_HEADLINE_NEWS_ZuiXinXinWenNeiRong"
+        android:title="URL_HEADLINE_NEWS_ZuiXinXinWenTouTiao"
         app:showAsAction="never" />
 
     <item
@@ -118,7 +111,7 @@
 
     <item
         android:id="@+id/URL_3M_FATE_SanMuYuan"
-        android:title="URL_3M_FATE_SanMuYuan"
+        android:title="URL_THREE_MS_FATE_SanMuYuan "
         app:showAsAction="never" />
 
     <item

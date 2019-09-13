@@ -10,7 +10,7 @@ android {
         versionCode 1
         versionName '0.0.3-a2'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        resConfigs "xxhdpi", 'en'
+        resConfigs "xxhdpi", 'en', 'zh-rCN'
     }
     buildTypes {
         release {

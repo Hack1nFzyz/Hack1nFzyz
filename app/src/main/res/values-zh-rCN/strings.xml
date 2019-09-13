@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <string name="feed">首页</string>
+    <string name="academic">学业</string>
+    <string name="activity">活动</string>
+    <string name="expense">消费</string>
+    <string name="misc">杂项</string>
+
+    <string name="rolling_news">滚动新闻</string>
+    <string name="office_announcement">处室公告</string>
+    <string name="school_affairs">校务公开</string>
+    <string name="headline_news">头条新闻</string>
+    <string name="latest_news">最新新闻</string>
+    <string name="school_news_mixed">校园新闻</string>
+    <string name="school_news_high">高中新闻</string>
+    <string name="school_news_middle">初中新闻</string>
+    <string name="education_news">教育动态</string>
+    <string name="entrance_exams">中考高考</string>
+    <string name="entrance_high">高考动态</string>
+    <string name="entrance_middle">中考动态</string>
+    <string name="students_channel">学生频道</string>
+    <string name="alumni_channel">校友频道</string>
+    <string name="special_topic_news">新闻专题</string>
+    <string name="education_blog">教育博客</string>
+    <string name="campus_picture">校园传真</string>
+    <string name="years_passed">岁月留影</string>
+    <string name="principal_forum">校长论坛</string>
+    <string name="tuo_feng_online">拓风在线</string>
+    <string name="three_ms_fate">三牧缘</string>
+    <string name="window_of_heart">心语之窗</string>
+    <string name="independent_recruitment_publicity">自主招生公示</string>
+</resources>

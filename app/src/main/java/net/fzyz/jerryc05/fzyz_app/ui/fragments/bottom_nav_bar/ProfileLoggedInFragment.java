@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 
 import net.fzyz.jerryc05.fzyz_app.R;
 
-public class ProfileLoggedInFragment extends Fragment {
+public final class ProfileLoggedInFragment extends Fragment {
 
   @Nullable
   @Override

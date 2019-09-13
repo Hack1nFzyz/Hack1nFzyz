@@ -29,11 +29,12 @@ import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.FeedFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileLoggedInFragment;
 
-public class MainActivity extends _BaseActivity {
+public final class MainActivity extends _BaseActivity {
 
-  final static String TAG = "MainActivity";
-  DrawerLayout drawerLayout;
-  Fragment     currentFragment;
+  private final static String          TAG = "MainActivity";
+  private              DrawerLayout    drawerLayout;
+  private              Fragment        currentFragment;
+  private              FragmentManager fragmentManager;
 
   @Override
   protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -41,20 +42,14 @@ public class MainActivity extends _BaseActivity {
     setContentView(R.layout.activity_main);
 
     getThreadPoolExecutor().execute(this::setToolBarAndDrawer);
-    getThreadPoolExecutor().execute(this::setBottomNavView);
-    getThreadPoolExecutor().execute(() -> setFragment(FeedFragment.class));
+    threadPoolExecutor.execute(this::setBottomNavView);
+    threadPoolExecutor.execute(() -> setFragment(FeedFragment.class));
   }
 
   @Override
   public boolean onCreateOptionsMenu(@NonNull final Menu menu) {
     getMenuInflater().inflate(R.menu.activity_main_toolbar, menu);
     return true;
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
-    MainPage.test(this, item.getTitle().toString());
-    return super.onOptionsItemSelected(item);
   }
 
   @Override
@@ -68,7 +63,7 @@ public class MainActivity extends _BaseActivity {
   }
 
   @WorkerThread
-  void setToolBarAndDrawer() {
+  private void setToolBarAndDrawer() {
     final MaterialToolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
@@ -82,7 +77,7 @@ public class MainActivity extends _BaseActivity {
 
   @SuppressLint("WrongThread")
   @WorkerThread
-  void setBottomNavView() {
+  private void setBottomNavView() {
     final OnNavigationItemSelectedListener onNavigationItemSelectedListener =
             item -> {
               Class fragmentClass;
@@ -109,12 +104,14 @@ public class MainActivity extends _BaseActivity {
 
   @WorkerThread
   public void setFragment(@NonNull Class fragmentClass) {
+    if (fragmentManager == null)
+      fragmentManager = getSupportFragmentManager();
+
     if (fragmentClass.equals(ProfileFragment.class))
       fragmentClass = ProfileFragment.isLoggedIn
               ? ProfileLoggedInFragment.class
               : fragmentClass;
 
-    final FragmentManager fragmentManager = getSupportFragmentManager();
     final Fragment existingFragment = fragmentManager.findFragmentByTag(
             fragmentClass.getSimpleName());
 

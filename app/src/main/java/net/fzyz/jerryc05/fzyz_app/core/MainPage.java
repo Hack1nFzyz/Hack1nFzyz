@@ -2,7 +2,6 @@ package net.fzyz.jerryc05.fzyz_app.core;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -13,16 +12,16 @@ import net.fzyz.jerryc05.fzyz_app.R;
 
 import java.util.Objects;
 
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.getOkHttpClient;
 import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.threadPoolExecutor;
 
 @WorkerThread
 public class MainPage {
 
-  static final String TAG = MainPage.class.getName();
+  private static final String TAG = MainPage.class.getName();
 
   @SuppressLint("SetTextI18n")
   public static void test(@NonNull final Activity activity,
@@ -35,7 +34,7 @@ public class MainPage {
         final String url = URLConnectionBuilder
                 .decodeURL(encodedURL);
         final TextView textView = activity.findViewById(
-                R.id.frag_home_textView);
+                R.id.frag_feed_content_textView);
 
         activity.runOnUiThread(() -> textView.setText(url + "\n"));
 
@@ -47,13 +46,11 @@ public class MainPage {
 
 
          */
-        final OkHttpClient client = new OkHttpClient();
-
         final Request request = new Request.Builder()
                 .url(url)
                 .build();
 
-        try (final Response response = client.newCall(request).execute()) {
+        try (final Response response = getOkHttpClient().newCall(request).execute()) {
           final String result = Objects.requireNonNull(
                   response.body()).string();
 //        }

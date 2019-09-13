@@ -13,10 +13,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.OkHttpClient;
+
 public abstract class _BaseActivity extends AppCompatActivity {
 
-  private static final String             TAG = "_BaseActivity";
-  public static        ThreadPoolExecutor threadPoolExecutor;
+  private static final String TAG = "_BaseActivity";
+
+  public static ThreadPoolExecutor threadPoolExecutor;
+  public static OkHttpClient       okHttpClient;
 
   @Override
   protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -25,6 +29,19 @@ public abstract class _BaseActivity extends AppCompatActivity {
     // We knew this is deprecated, but we need it.
     //noinspection deprecation
     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_TIME);
+  }
+
+  @Override
+  protected void onDestroy() {
+    if (BuildConfig.DEBUG)
+      Log.d(TAG, "onDestroy: ");
+
+    super.onDestroy();
+
+    if (threadPoolExecutor != null) {
+      threadPoolExecutor.shutdownNow();
+      threadPoolExecutor = null;
+    }
   }
 
   public static ThreadPoolExecutor getThreadPoolExecutor() {
@@ -41,16 +58,9 @@ public abstract class _BaseActivity extends AppCompatActivity {
     return threadPoolExecutor;
   }
 
-  @Override
-  protected void onDestroy() {
-    if (BuildConfig.DEBUG)
-      Log.d(TAG, "onDestroy: ");
-
-    super.onDestroy();
-
-    if (threadPoolExecutor != null) {
-      threadPoolExecutor.shutdownNow();
-      threadPoolExecutor = null;
-    }
+  public static OkHttpClient getOkHttpClient() {
+    if (okHttpClient == null)
+      okHttpClient = new OkHttpClient();
+    return okHttpClient;
   }
 }

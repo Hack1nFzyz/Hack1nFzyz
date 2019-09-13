@@ -12,8 +12,25 @@
     <string name="office_announcement">OFFICE ANNOUNCEMENT</string>
     <string name="school_affairs">SCHOOL AFFAIRS</string>
     <string name="headline_news">HEADLINE NEWS</string>
-
-
+    <string name="latest_news">LATEST NEWS</string>
+    <string name="school_news_mixed">SCHOOL NEWS MIXED</string>
+    <string name="school_news_high">SCHOOL NEWS HIGH</string>
+    <string name="school_news_middle">SCHOOL NEWS MIDDLE</string>
+    <string name="education_news">EDUCATION NEWS</string>
+    <string name="entrance_exams">ENTRANCE EXAMS</string>
+    <string name="entrance_high">ENTRANCE HIGH</string>
+    <string name="entrance_middle">ENTRANCE MIDDLE</string>
+    <string name="students_channel">STUDENTS CHANNEL</string>
+    <string name="alumni_channel">ALUMNI CHANNEL</string>
+    <string name="special_topic_news">SPECIAL TOPIC NEWS</string>
+    <string name="education_blog">EDUCATION BLOG</string>
+    <string name="campus_picture">CAMPUS PICTURE</string>
+    <string name="years_passed">YEARS PASSED</string>
+    <string name="principal_forum">PRINCIPAL FORUM</string>
+    <string name="tuo_feng_online">TUO FENG ONLINE</string>
+    <string name="three_ms_fate">THREE M\'S FATE</string>
+    <string name="window_of_heart">WINDOW OF HEART</string>
+    <string name="independent_recruitment_publicity">INDEPENDENT RECRUITMENT PUBLICITY</string>
 
     <string name="i_am_a_teacher">I AM A TEACHER</string>
     <string name="i_am_a_student">I AM A STUDENT</string>
@@ -22,5 +39,7 @@
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="logging_in">Logging in……</string>
+
     <string name="nothing_here">Nothing here……</string>
+    <string name="notification">Notification</string>
 </resources>

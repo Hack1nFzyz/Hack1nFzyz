@@ -1,70 +1,96 @@
 package net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar;
 
-
-import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.tabs.TabLayout;
 
 import net.fzyz.jerryc05.fzyz_app.R;
+import net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity;
+import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.feed.FeedHeadlineNewsFragment;
+import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.feed.FeedLatestNewsFragment;
+import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.feed.FeedOfficeAnnouncementFragment;
+import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.feed.FeedRollingNewsFragment;
+import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.feed.FeedSchoolAffairsFragment;
 
-import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.threadPoolExecutor;
+import java.util.Arrays;
 
-@SuppressWarnings("WeakerAccess")
-public class FeedFragment extends Fragment {
+import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 
-  Activity           activity;
-//  SwipeRefreshLayout swipeRefreshLayout;
-  TextView           textView;
+
+public final class FeedFragment extends Fragment {
+
+  private final static String    TAG = "FeedFragment";
+  private              TabLayout tabLayout;
+  private              ViewPager viewPager;
 
   @Nullable
   @Override
-  public View onCreateView(@NonNull LayoutInflater inflater,
-                           @Nullable ViewGroup container,
-                           @Nullable Bundle savedInstanceState) {
+  public View onCreateView(@NonNull final LayoutInflater inflater,
+                           @Nullable final ViewGroup container,
+                           @Nullable final Bundle savedInstanceState) {
     return inflater.inflate(R.layout.frag_feed, container, false);
   }
 
   @Override
-  public void onViewCreated(@NonNull View view,
-                            @Nullable Bundle savedInstanceState) { //f:off
-//    if (swipeRefreshLayout  == null)
-//        swipeRefreshLayout  = view.findViewById(R.id.frag_home_swipeRefreshLayout);
-    if (textView            == null)
-        textView            = view.findViewById(R.id.frag_home_textView);
-    while (activity         == null)
-           activity         = getActivity(); //f:on
+  public void onViewCreated(@NonNull final View view,
+                            @Nullable final Bundle savedInstanceState) {
+    _BaseActivity.threadPoolExecutor.execute(() -> { //f:off
+    if (tabLayout == null)
+        tabLayout =  view.findViewById(R.id.frag_feed_tabLayout);
+    if (viewPager == null)
+        viewPager =  view.findViewById(R.id.frag_feed_viewPager); //f:on
 
-//    threadPoolExecutor.execute(this::setSwipeRefreshLayout);
+      final FragmentStatePagerAdapter adapter = new FragmentStatePagerAdapter(
+              getChildFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+
+        final Class[] fragmentClasses = new Class[]{
+                FeedRollingNewsFragment.class,
+                FeedOfficeAnnouncementFragment.class,
+                FeedSchoolAffairsFragment.class,
+                FeedHeadlineNewsFragment.class,
+                FeedLatestNewsFragment.class
+        };
+        final String[] fragmentNames = {
+                getString(FeedRollingNewsFragment.STRING_ID),
+                getString(FeedOfficeAnnouncementFragment.STRING_ID),
+                getString(FeedSchoolAffairsFragment.STRING_ID),
+                getString(FeedHeadlineNewsFragment.STRING_ID),
+                getString(FeedLatestNewsFragment.STRING_ID),
+        };
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+          return fragmentNames[position];
+        }
+
+        @NonNull
+        @Override
+        public Fragment getItem(int position) {
+          try {
+            return (Fragment) fragmentClasses[position].newInstance();
+          } catch (final Exception e) {
+            Log.e(TAG, "getItem: ", e);
+            throw new IllegalStateException(e);
+          }
+        }
+
+        @Override
+        public int getCount() {
+          return fragmentClasses.length;
+        }
+      };
+      viewPager.setAdapter(adapter);
+      tabLayout.setupWithViewPager(viewPager);
+    });
   }
-
-//  @UiThread
-//  void setSwipeRefreshLayout() {
-//    swipeRefreshLayout.setColorSchemeColors(
-//            ContextCompat.getColor(activity, R.color.colorPrimary));
-//
-//    swipeRefreshLayout.setOnRefreshListener(
-//            () -> threadPoolExecutor.execute(() -> {
-//
-//              activity.runOnUiThread(() -> textView.setText("Refreshing..."));
-//              try {
-//                Thread.sleep(2000);
-//              } catch (InterruptedException e) {
-//                e.printStackTrace();
-//              }
-//              activity.runOnUiThread(() -> {
-//                textView.setText("You just refreshed!");
-//                swipeRefreshLayout.setRefreshing(false);
-//              });
-//            }));
-//  }
 }

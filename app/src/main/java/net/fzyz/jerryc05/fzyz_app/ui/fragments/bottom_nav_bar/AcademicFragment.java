@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment;
 
 import net.fzyz.jerryc05.fzyz_app.R;
 
-public class AcademicFragment extends Fragment {
+public final class AcademicFragment extends Fragment {
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater,

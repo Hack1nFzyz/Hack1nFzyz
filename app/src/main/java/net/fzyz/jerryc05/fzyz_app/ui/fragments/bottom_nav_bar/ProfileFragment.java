@@ -30,8 +30,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.threadPoolExecutor;
 
-@SuppressWarnings("WeakerAccess")
-public class ProfileFragment extends Fragment implements
+public final class ProfileFragment extends Fragment implements
         View.OnClickListener, TextView.OnEditorActionListener {
 
   static final String TAG = ProfileFragment.class.getName();
@@ -92,6 +91,8 @@ public class ProfileFragment extends Fragment implements
       register    .setOnClickListener(ProfileFragment.this);
       passwordText.setOnEditorActionListener(ProfileFragment.this);
       //f:on
+      while (activity == null)
+        activity = (MainActivity) getActivity();
     });
   }
 
@@ -160,7 +161,7 @@ public class ProfileFragment extends Fragment implements
 
   void loginSucceed(@NonNull final View view) {
     try {
-      Thread.sleep(2500);
+      Thread.sleep(500);
     } catch (final InterruptedException e) {
       Log.e(TAG, "onClick: Sleeping 2500ms on frag_profile_student_login_button.", e);
     }

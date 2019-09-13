@@ -4,7 +4,7 @@
 
 ![Codacy grade](https://img.shields.io/codacy/grade/be5a76cf55794da0a69d8a9ce74a9454.svg) ![GitHub commit activity](https://img.shields.io/github/commit-activity/y/jerryc05/fzyz-app.svg) ![GitHub issues](https://img.shields.io/github/issues/jerryc05/fzyz-app.svg) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/jerryc05/fzyz-app.svg) ![GitHub License](https://img.shields.io/github/license/jerryc05/fzyz-app.svg)
 
-**FZYZ-App** - An unofficial android client for Fuzhou No.1 High School.
+**FZYZ-App** - A light-weight, material-designed unofficial Android client for Fuzhou No.1 High School.
 
 **IMPORTANT!!!** This repo is only actively maintained on [GitHub](<https://github.com/jerryc05/fzyz-app>).
 
