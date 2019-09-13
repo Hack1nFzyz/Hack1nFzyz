@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,7 +22,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import net.fzyz.jerryc05.fzyz_app.R;
-import net.fzyz.jerryc05.fzyz_app.core.MainPage;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.AcademicFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.FeedFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileFragment;

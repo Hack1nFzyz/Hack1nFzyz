@@ -22,8 +22,6 @@ import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.feed.FeedOfficeAnn
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.feed.FeedRollingNewsFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.feed.FeedSchoolAffairsFragment;
 
-import java.util.Arrays;
-
 import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 
 
