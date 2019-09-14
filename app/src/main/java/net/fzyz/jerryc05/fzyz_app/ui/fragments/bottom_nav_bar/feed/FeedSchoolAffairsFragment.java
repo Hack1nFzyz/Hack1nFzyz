@@ -13,7 +13,7 @@ import net.fzyz.jerryc05.fzyz_app.R;
 
 public final class FeedSchoolAffairsFragment extends Fragment {
 
-  public final static int STRING_ID = R.string.school_affairs;
+  public static final int STRING_ID = R.string.school_affairs;
 
   @Nullable
   @Override

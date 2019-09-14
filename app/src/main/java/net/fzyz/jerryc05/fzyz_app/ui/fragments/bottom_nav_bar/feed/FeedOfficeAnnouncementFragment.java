@@ -13,7 +13,7 @@ import net.fzyz.jerryc05.fzyz_app.R;
 
 public final class FeedOfficeAnnouncementFragment extends Fragment {
 
-  public final static int STRING_ID = R.string.office_announcement;
+  public static final int STRING_ID = R.string.office_announcement;
 
   @Nullable
   @Override

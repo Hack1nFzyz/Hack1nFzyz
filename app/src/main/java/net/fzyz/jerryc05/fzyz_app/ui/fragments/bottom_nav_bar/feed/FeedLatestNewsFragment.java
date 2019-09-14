@@ -13,7 +13,7 @@ import net.fzyz.jerryc05.fzyz_app.R;
 
 public final class FeedLatestNewsFragment extends Fragment {
 
-  public final static int STRING_ID = R.string.latest_news;
+  public static final int STRING_ID = R.string.latest_news;
 
   @Nullable
   @Override

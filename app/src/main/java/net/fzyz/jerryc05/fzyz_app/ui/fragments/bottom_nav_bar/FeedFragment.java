@@ -27,7 +27,7 @@ import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ON
 
 public final class FeedFragment extends Fragment {
 
-  private final static String    TAG = "FeedFragment";
+  private static final String    TAG = "FeedFragment";
   private              TabLayout tabLayout;
   private              ViewPager viewPager;
 

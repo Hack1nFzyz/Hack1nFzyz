@@ -29,7 +29,7 @@ import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.threadPoolE
 public final class FeedRollingNewsFragment extends Fragment
         implements SwipeRefreshLayout.OnRefreshListener {
 
-  public final static int STRING_ID = R.string.rolling_news;
+  public static final int STRING_ID = R.string.rolling_news;
 
   private TextView           textView;
   private SwipeRefreshLayout swipeRefreshLayout;

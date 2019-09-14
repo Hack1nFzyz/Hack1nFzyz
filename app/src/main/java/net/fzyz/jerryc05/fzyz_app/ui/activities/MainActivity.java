@@ -29,10 +29,11 @@ import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileLoggedInFra
 
 public final class MainActivity extends _BaseActivity {
 
-  private final static String          TAG = "MainActivity";
-  private              DrawerLayout    drawerLayout;
-  private              Fragment        currentFragment;
-  private              FragmentManager fragmentManager;
+  private static final String TAG = "MainActivity";
+
+  private DrawerLayout    drawerLayout;
+  private Fragment        currentFragment;
+  private FragmentManager fragmentManager;
 
   @Override
   protected void onCreate(@Nullable final Bundle savedInstanceState) {
