@@ -46,14 +46,13 @@ See GitHub pages from <https://jerryc05.github.io/fzyz-app/>.
 
 ### Option 1: Submit via GitHub Issue (recommended)
 
-It is strongly encouraged to submit bug reports and feature requests through [GitHub Issue](https://github.com/jerryc05/fzyz-app/issues) page. It makes things a lot easier to manage when they are in one place, and every issue is *guaranteed* to get a response.
+It is strongly encouraged to submit bug reports and feature requests through [GitHub Issue](https://github.com/jerryc05/fzyz-app/issues) page. It will help me organize and keep track of every issue reported.
 
-**IMPORTANT!!!** Do not use issue pages in Tencent Dev. It is painful to maintain separate issue pages, and your request might not get any response if you do so.
+**IMPORTANT!!!** Do not use issue pages in Tencent Dev. It's painful to maintain more than one issue page sitess, and I will ignore those issues 99.999% of times.
 
 ### Option 2: Contact Me via Direct Message Apps
 
-This feature only applies to friends of mine on *Telegram*, *QQ*, or *WeChat*.
-However, I still prefer to maintain issues together on [GitHub Issue](<https://github.com/jerryc05/fzyz-app/issues>) page.
+If we knew each other, it's fine. Otherwise, don't.
 
 ## Authors
 
@@ -62,13 +61,15 @@ However, I still prefer to maintain issues together on [GitHub Issue](<https://g
 
 -   **[@yihanwu1024](<https://github.com/yihanwu1024>)**
     -   *Feature designer*
+    -    *Bug Tester*
     -   *UI designer*
+
+-   **[@Lao-Liu233](<https://github.com/Lao-Liu233>)**
+    -   *Feature designer*
+    -    *Bug Tester*
 
 -   **[@focss](<https://github.com/focss>)**
 	-    *UI designer*
-
--   **[@Michaeldaiminqi](<https://github.com/Michaeldaiminqi>)**
-	-    *Tester*
 
 ## License
 
