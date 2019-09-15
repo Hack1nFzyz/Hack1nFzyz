@@ -26,15 +26,15 @@ Please see [Contributing](#user-content-contributing) tab for more info if you w
 
 ## Installation
 
-### Android devices
+### Android
 -   To download **stable/beta** releases, go to **[release page](<https://github.com/jerryc05/fzyz-app/releases>)**.
 -   To download **nightly** releases, go to **[action page](<https://github.com/jerryc05/fzyz-app/actions>)**, select the latest run, and click "**Upload to file.io**" section. You will find a temporary link there. **NOTE: YOU WILL NEED TO SIGN THE APK YOURSELF!**
 
-### iOS devices
+### iOS
 -   **No development in plan.** You are more than welcome to FORK this repository and implement an iOS client.
 -   Implementation suggestion: [*Flutter*](<https://flutter.dev/>), [*React Native*](<https://facebook.github.io/react-native/>).
 
-### Desktop
+### Windows/Mac OS
 -   **No development in plan.** You are more than welcome to FORK this repository and implement a desktop client.
 -   Implementation suggestion: [*Electron*](<https://electronjs.org/>).
 

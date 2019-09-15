@@ -3,11 +3,17 @@ package net.fzyz.jerryc05.fzyz_app.ui.activities;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.biometric.BiometricPrompt;
+import androidx.biometric.BiometricPrompt.AuthenticationCallback;
+import androidx.biometric.BiometricPrompt.AuthenticationResult;
+import androidx.biometric.BiometricPrompt.PromptInfo;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -26,6 +32,8 @@ import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.FeedFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileLoggedInFragment;
 
+import static android.widget.Toast.LENGTH_SHORT;
+
 public final class MainActivity extends _BaseActivity {
 
   private static final String TAG = "MainActivity";
@@ -33,6 +41,8 @@ public final class MainActivity extends _BaseActivity {
   private DrawerLayout    drawerLayout;
   private Fragment        currentFragment;
   private FragmentManager fragmentManager;
+  BiometricPrompt biometricPrompt; // Synthetic accessor in AuthenticationCallback
+  PromptInfo      promptInfo;
 
   @Override
   protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -48,6 +58,12 @@ public final class MainActivity extends _BaseActivity {
   public boolean onCreateOptionsMenu(@NonNull final Menu menu) {
     getMenuInflater().inflate(R.menu.activity_main_toolbar, menu);
     return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
+    getBiometricPrompt().authenticate(getPromptInfo());
+    return super.onOptionsItemSelected(item);
   }
 
   @Override
@@ -98,6 +114,54 @@ public final class MainActivity extends _BaseActivity {
     runOnUiThread(() -> ((BottomNavigationView)
             findViewById(R.id.activity_main_bottomNavView))
             .setOnNavigationItemSelectedListener(onNavigationItemSelectedListener));
+  }
+
+  private BiometricPrompt getBiometricPrompt() {
+    if (biometricPrompt == null) {
+      final AuthenticationCallback authenticationCallback =
+              new AuthenticationCallback() {
+                @Override
+                public void onAuthenticationError(int errorCode,
+                                                  @NonNull final CharSequence errString) {
+                  runOnUiThread(() -> Toast.makeText(MainActivity.this,
+                          errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON
+                                  ? "NegativeButton" : errString, LENGTH_SHORT).show());
+                  biometricPrompt = null;
+//                  promptInfo = null; // Set both to null will crash on MIUI.
+                }
+
+                @Override
+                public void onAuthenticationSucceeded(
+                        @NonNull final AuthenticationResult result) {
+                  runOnUiThread(() -> Toast.makeText(MainActivity.this,
+                          "SUCCESS", LENGTH_SHORT).show());
+                  biometricPrompt = null;
+//                  promptInfo = null; // Set both to null will crash on MIUI.
+                }
+
+                @Override
+                public void onAuthenticationFailed() {
+                  runOnUiThread(() -> Toast.makeText(MainActivity.this,
+                          "FAILED", LENGTH_SHORT).show());
+                }
+              };
+      biometricPrompt = new BiometricPrompt(this,
+              threadPoolExecutor, authenticationCallback);
+    }
+    return biometricPrompt;
+  }
+
+  private PromptInfo getPromptInfo() {
+    if (promptInfo == null)
+      promptInfo = new PromptInfo.Builder()
+              .setTitle("This is title")
+              .setSubtitle("This is subtitle")
+              .setDescription("This is description")
+//              .setNegativeButtonText("NegativeButton")
+              .setConfirmationRequired(true)
+              .setDeviceCredentialAllowed(true)
+              .build();
+    return promptInfo;
   }
 
   @WorkerThread
