@@ -31,14 +31,14 @@ public class LoginHelper {
             + LoginHelper.class.getName());
   }
 
-  private static void loginHelper(String username, String password,
-                                  String loginURL, final @NonNull Context context) {
-    try {
-      URLConnectionBuilder.post(loginURL).connect(context).close();
-    } catch (IOException e) {
-      Log.e(TAG, "loginHelper: ", e);
-    }
-  }
+//  private static void loginHelper(String username, String password,
+//                                  String loginURL, final @NonNull Context context) {
+//    try {
+//      URLConnectionBuilder.post(loginURL).connect(context).close();
+//    } catch (IOException e) {
+//      Log.e(TAG, "loginHelper: ", e);
+//    }
+//  }
 
 //  public static void loginAsTeacher(String username, String password) {
 //    loginHelper(username, password, WebsiteCollection.decodeURL(
@@ -58,9 +58,9 @@ public class LoginHelper {
 //            WebsiteCollection.URL_OTHER_LOGIN));
 //  }
 
-  public static void loginAsStudent(String username, String password, final @NonNull Context context) {
-    loginHelper(username, password, URLConnectionBuilder.decodeURL(
-            WebsiteCollection.URL_STUDENT_LOGIN),context);
-  }
+//  public static void loginAsStudent(String username, String password, final @NonNull Context context) {
+//    loginHelper(username, password, URLConnectionBuilder.decodeURL(
+//            WebsiteCollection.URL_STUDENT_LOGIN),context);
+//  }
 }
 // todo add greyed out register/public_login button.

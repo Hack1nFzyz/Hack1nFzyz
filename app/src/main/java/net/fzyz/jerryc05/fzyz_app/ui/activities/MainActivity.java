@@ -1,6 +1,5 @@
 package net.fzyz.jerryc05.fzyz_app.ui.activities;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -40,7 +39,7 @@ public final class MainActivity extends _BaseActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    getThreadPoolExecutor().execute(this::setToolBarAndDrawer);
+    threadPoolExecutor.execute(this::setToolBarAndDrawer);
     threadPoolExecutor.execute(this::setBottomNavView);
     threadPoolExecutor.execute(() -> setFragment(FeedFragment.class));
   }
@@ -74,7 +73,6 @@ public final class MainActivity extends _BaseActivity {
     runOnUiThread(() -> drawerLayout.addDrawerListener(actionBarDrawerToggle));
   }
 
-  @SuppressLint("WrongThread")
   @WorkerThread
   private void setBottomNavView() {
     final OnNavigationItemSelectedListener onNavigationItemSelectedListener =
@@ -97,8 +95,9 @@ public final class MainActivity extends _BaseActivity {
               return true;
             };
 
-    ((BottomNavigationView) findViewById(R.id.activity_main_bottomNavView))
-            .setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
+    runOnUiThread(() -> ((BottomNavigationView)
+            findViewById(R.id.activity_main_bottomNavView))
+            .setOnNavigationItemSelectedListener(onNavigationItemSelectedListener));
   }
 
   @WorkerThread
@@ -153,7 +152,15 @@ public final class MainActivity extends _BaseActivity {
   private void setExitDialog() {
     final String[][] testBank = {
             {"校训", "植基立本", "成德达材"},
+            {"校风", "勤奋、严谨", "竞取、活跃"},
+            {"教风", "严、实", "细、活"},
             {"办学宗旨", "为天下人", "谋永福"},
+            {"精神楷模前两句", "坚持真理", "嫉恶如仇"},
+            {"精神楷模后两句", "铁骨铮铮", "宁折不弯"},
+            {"育人目标前两句", "心术端正", "文行交修"},
+            {"育人目标后两句", "博通时务", "讲求实用"},
+            {"学子风范前两句", "基础扎实", "素质全面"},
+            {"学子风范后两句", "志向高远", "风仪端朴"},
             {"育人八大支柱第一句", "国家责任", "独立人格"},
             {"育人八大支柱第二句", "学会学习", "健体怡情"},
             {"育人八大支柱第三句", "服务意识", "国际视野"},
@@ -162,19 +169,22 @@ public final class MainActivity extends _BaseActivity {
     final String[] test = testBank[
             (int) (System.currentTimeMillis() % testBank.length)];
 
-    final MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(this)
-            .setTitle("听说你想退出 App?")
-            .setIcon(R.mipmap.ic_launcher_fzyz_round)
-            .setMessage("福州一中的" + test[0] + "是什么？")
-            .setCancelable(false)
-            .setNeutralButton("不知道", (dialogInterface, i) ->
-                    Snackbar.make(drawerLayout, test[0] + "：" + test[1] +
-                            (test[2].equals(testBank[1][2]) ? "" : "，") +
-                            test[2] + "。", Snackbar.LENGTH_LONG).show())
-            .setNegativeButton(test[1],
-                    (dialogInterface, i) -> MainActivity.super.onBackPressed())
-            .setPositiveButton(test[2],
-                    (dialogInterface, i) -> MainActivity.super.onBackPressed());
+    final MaterialAlertDialogBuilder alertDialogBuilder =
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("听说你想退出 App?")
+                    .setIcon(R.mipmap.ic_launcher_fzyz_round)
+                    .setMessage("福州一中的 " + test[0] + " 是什么？")
+                    .setCancelable(false)
+                    .setNeutralButton("不知道", (dialogInterface, i) ->
+                            Snackbar.make(drawerLayout,
+                                    test[0] + "：" + test[1]
+                                            + (test[2].equals(testBank[1][2]) ? "" : "，")
+                                            + test[2] + "。",
+                                    Snackbar.LENGTH_LONG).show())
+                    .setNegativeButton(test[1],
+                            (dialogInterface, i) -> MainActivity.super.onBackPressed())
+                    .setPositiveButton(test[2],
+                            (dialogInterface, i) -> MainActivity.super.onBackPressed());
     runOnUiThread(alertDialogBuilder::show);
   }
 }

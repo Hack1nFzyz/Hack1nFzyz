@@ -15,6 +15,7 @@ import java.util.Objects;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.decodeURL;
 import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.getOkHttpClient;
 import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.threadPoolExecutor;
 
@@ -31,8 +32,7 @@ public class MainPage {
         final String encodedURL = (String) WebsiteCollection.class
                 .getDeclaredField(title).get(null);
         assert encodedURL != null;
-        final String url = URLConnectionBuilder
-                .decodeURL(encodedURL);
+        final String url = decodeURL(encodedURL);
         final TextView textView = activity.findViewById(
                 R.id.frag_feed_content_textView);
 

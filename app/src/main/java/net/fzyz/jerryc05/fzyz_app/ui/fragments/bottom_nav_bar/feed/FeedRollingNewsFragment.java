@@ -9,13 +9,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import net.fzyz.jerryc05.fzyz_app.R;
-import net.fzyz.jerryc05.fzyz_app.core.URLConnectionBuilder;
 import net.fzyz.jerryc05.fzyz_app.core.WebsiteCollection;
 
 import java.util.Objects;
@@ -23,6 +23,7 @@ import java.util.Objects;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.decodeURL;
 import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.getOkHttpClient;
 import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.threadPoolExecutor;
 
@@ -60,21 +61,21 @@ public final class FeedRollingNewsFragment extends Fragment
     });
   }
 
+  @WorkerThread
   private void initSwipeRefreshLayout() {
     swipeRefreshLayout.setColorSchemeColors(
             ContextCompat.getColor(activity, R.color.colorPrimary));
     swipeRefreshLayout.setOnRefreshListener(this);
-    onRefresh();
+    activity.runOnUiThread(this::onRefresh);
   }
 
-  @WorkerThread
+  @UiThread
   @Override
   public void onRefresh() {
     swipeRefreshLayout.setRefreshing(true);
 
     threadPoolExecutor.execute(() -> {
-      final String url = URLConnectionBuilder
-              .decodeURL(WebsiteCollection.URL_ROLLING_NEWS_GunDongXinWen);
+      final String url = decodeURL(WebsiteCollection.URL_ROLLING_NEWS_GunDongXinWen);
 
       final Request request = new Request.Builder()
               .url(url)

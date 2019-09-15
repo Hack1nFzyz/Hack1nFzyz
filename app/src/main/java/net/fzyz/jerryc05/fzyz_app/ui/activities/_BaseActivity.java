@@ -1,13 +1,11 @@
 package net.fzyz.jerryc05.fzyz_app.ui.activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 
-import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,37 +13,35 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 import net.fzyz.jerryc05.fzyz_app.BuildConfig;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.Objects;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 
+import static android.util.Base64.URL_SAFE;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static net.fzyz.jerryc05.fzyz_app.core.WebsiteCollection.URL_CALENDAR_DETAIL;
+import static net.fzyz.jerryc05.fzyz_app.core.WebsiteCollection.URL_FZYZ_HOST;
+
+@SuppressWarnings("unused")
 public abstract class _BaseActivity extends AppCompatActivity {
 
   private static final String TAG = "_BaseActivity";
 
-  public static  ThreadPoolExecutor threadPoolExecutor;
-  private static OkHttpClient       okHttpClient;
+  public static ThreadPoolExecutor threadPoolExecutor;
 
-  private static final int
-          NOT_CONNECTED = -1,
-          CELLULAR      = 0,
-          WIFI          = 1;
-
-  @Retention(RetentionPolicy.SOURCE)
-  @IntDef({NOT_CONNECTED, CELLULAR, WIFI})
-  private @interface ConnectionType {
+  private static class OkHttpClientLazyLoader {
+    static final OkHttpClient okHttpClient = new OkHttpClient();
   }
 
   @Override
   protected void onCreate(@Nullable final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     //noinspection deprecation | We knew this is deprecated, but we need it.
-    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_TIME);
+    AppCompatDelegate.setDefaultNightMode(
+            AppCompatDelegate.MODE_NIGHT_AUTO_TIME);
+    newThreadPoolExecutor();
   }
 
   @Override
@@ -53,63 +49,65 @@ public abstract class _BaseActivity extends AppCompatActivity {
     if (BuildConfig.DEBUG)
       Log.d(TAG, "onDestroy: Called!");
 
-    if (threadPoolExecutor != null) {
-      threadPoolExecutor.shutdownNow();
-      threadPoolExecutor = null;
-    }
+    threadPoolExecutor.shutdownNow();
     super.onDestroy();
   }
 
-  public static ThreadPoolExecutor getThreadPoolExecutor() {
+  private static void newThreadPoolExecutor() {
     if (BuildConfig.DEBUG)
-      Log.d(TAG, "getThreadPoolExecutor: Called!");
+      Log.d(TAG, "newThreadPoolExecutor: Called!");
 
-    if (threadPoolExecutor == null) {
-      final int processorCount = Runtime.getRuntime().availableProcessors();
-      threadPoolExecutor = new ThreadPoolExecutor(processorCount,
-              2 * processorCount, 5, TimeUnit.SECONDS,
-              new LinkedBlockingQueue<>(1));
-      threadPoolExecutor.allowCoreThreadTimeOut(true);
-    }
-    return threadPoolExecutor;
+    final int processorCount = Runtime.getRuntime().availableProcessors();
+    threadPoolExecutor = new ThreadPoolExecutor(processorCount,
+            2 * processorCount, 5, SECONDS,
+            new LinkedBlockingQueue<>(1));
+    threadPoolExecutor.allowCoreThreadTimeOut(true);
   }
 
   public static OkHttpClient getOkHttpClient() {
-    if (okHttpClient == null)
-      okHttpClient = new OkHttpClient();
-    return okHttpClient;
+    return OkHttpClientLazyLoader.okHttpClient;
   }
 
-  @SuppressWarnings("unused")
-  @ConnectionType
-  public int isWifi() {
-    return isWifi(this);
+  public boolean isActiveNetworkMetered() {
+    return isActiveNetworkMetered(this);
   }
 
-
-  @SuppressWarnings("unused")
-  @ConnectionType
-  public static int isWifi(@NonNull final Activity activity) {
-    if(BuildConfig.DEBUG)
-      Log.d(TAG, "isWifi: Called!");
+  public static boolean isActiveNetworkMetered(@NonNull final Context context) {
+    if (BuildConfig.DEBUG)
+      Log.d(TAG, "isActiveNetworkMetered: Called!");
 
     final ConnectivityManager connectivityManager = Objects.requireNonNull(
             (ConnectivityManager)
-                    activity.getSystemService(Context.CONNECTIVITY_SERVICE),
-            "isWifi: connectivityManager is null");
-    // We knew these are deprecated, but we need it.
-    final NetworkInfo wifiInfo = Objects.requireNonNull(
-            connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI),
-            "isWifi: wifiInfo is null");
-    final NetworkInfo mobileInfo = Objects.requireNonNull(
-            connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE),
-            "isWifi: mobileInfo is null");
+                    context.getSystemService(Context.CONNECTIVITY_SERVICE),
+            "isActiveNetworkMetered: connectivityManager is null!");
+    return connectivityManager.isActiveNetworkMetered();
+  }
 
-    if (mobileInfo.isConnectedOrConnecting())
-      return CELLULAR;
-    else if (wifiInfo.isConnectedOrConnecting())
-      return WIFI;
-    else
-      return NOT_CONNECTED;
+  /**
+   * @param url Encoded url
+   * @return Decoded url.
+   */
+  public static String decodeURL(@NonNull final String url) {
+    final String decoded = (url.equals(URL_FZYZ_HOST)
+            ? "" : new String(Base64.decode(URL_FZYZ_HOST, URL_SAFE)))
+            + new String(Base64.decode(url, URL_SAFE));
+    if (BuildConfig.DEBUG)
+      Log.d(TAG, "decodeURL: " + decoded);
+    return decoded;
+  }
+
+  /**
+   * Parse date string to its corresponding calendar url.
+   *
+   * @param date Date of format yyyy-mm-dd.
+   * @return Decoded url.
+   */
+  public static String decodeCalendarDateURL(@NonNull final String date) {
+    final String decoded = new String(Base64.decode(URL_FZYZ_HOST, URL_SAFE))
+            + new String(Base64.decode(URL_CALENDAR_DETAIL, URL_SAFE))
+            + date;
+    if (BuildConfig.DEBUG)
+      Log.d(TAG, "decodeURL: " + decoded);
+    return decoded;
   }
 }

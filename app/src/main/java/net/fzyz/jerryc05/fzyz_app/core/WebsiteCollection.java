@@ -6,13 +6,13 @@ public interface WebsiteCollection {
   String
           URL_GET_NEWS_PREFIX                                         =
           "L2Rvb25lL2hvbWUvcG9ydGFsL2dldE5ld3Muc2h0bWw/",
-          URL_SCHOOL_NEWS_PREFIX_1                                    = URL_GET_NEWS_PREFIX
+          URL_SCHOOL_NEWS_PREFIX_1              = URL_GET_NEWS_PREFIX
                   + "bmV3c19sZXZlbHRhZz0wJmlzX291dHNpZGU9MSZuZXdudW1zPTEwJnR5cGVzPT",
-          URL_SCHOOL_NEWS_PREFIX_2                                    = URL_GET_NEWS_PREFIX
+          URL_SCHOOL_NEWS_PREFIX_2              = URL_GET_NEWS_PREFIX
                   + "bmV3c19sZXZlbHRhZz0wJmlzX291dHNpZGU9MSZuZXdudW1zPTExJnR5cGVzPT",
-          URL_INDEX_RES_LIST_PREFIX                                   =
+          URL_INDEX_RES_LIST_PREFIX             =
                   "L2Rvb25lL2tub3dsZWRnZS9pbmZvL2luZGV4cmVzbGlzdC5zaHRtbD9rdHlwZWlkPT",
-          URL_BASE                              = "aHR0cDovL3d3dy5menl6Lm5ldA==",
+          URL_FZYZ_HOST                         = "aHR0cDovL3d3dy5menl6Lm5ldA==",
           URL_ROLLING_NEWS_GunDongXinWen        =
                   "L25ld3MvbmV3c21nci9nZXRNb3ZlSW1nLnNodG1s",
           URL_OFFICE_ANNOUNCEMENT_ChuShiGongGao = URL_GET_NEWS_PREFIX
