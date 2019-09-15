@@ -11,8 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
-import net.fzyz.jerryc05.fzyz_app.BuildConfig;
-
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -21,6 +20,7 @@ import okhttp3.OkHttpClient;
 
 import static android.util.Base64.URL_SAFE;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static net.fzyz.jerryc05.fzyz_app.BuildConfig.DEBUG;
 import static net.fzyz.jerryc05.fzyz_app.core.WebsiteCollection.URL_CALENDAR_DETAIL;
 import static net.fzyz.jerryc05.fzyz_app.core.WebsiteCollection.URL_FZYZ_HOST;
 
@@ -41,21 +41,27 @@ public abstract class _BaseActivity extends AppCompatActivity {
     //noinspection deprecation | We knew this is deprecated, but we need it.
     AppCompatDelegate.setDefaultNightMode(
             AppCompatDelegate.MODE_NIGHT_AUTO_TIME);
-    newThreadPoolExecutor();
+    initThreadPoolExecutor();
   }
 
   @Override
   protected void onDestroy() {
-    if (BuildConfig.DEBUG)
+    if (DEBUG)
       Log.d(TAG, "onDestroy: Called!");
 
-    threadPoolExecutor.shutdownNow();
+    final List<Runnable> tasks = threadPoolExecutor.shutdownNow();
+    if (DEBUG)
+      Log.d(TAG, "onDestroy: Unfinished tasks = " + tasks);
+
     super.onDestroy();
   }
 
-  private static void newThreadPoolExecutor() {
-    if (BuildConfig.DEBUG)
+  private static void initThreadPoolExecutor() {
+    if (DEBUG)
       Log.d(TAG, "newThreadPoolExecutor: Called!");
+
+    if (threadPoolExecutor != null)
+      return;
 
     final int processorCount = Runtime.getRuntime().availableProcessors();
     threadPoolExecutor = new ThreadPoolExecutor(processorCount,
@@ -73,7 +79,7 @@ public abstract class _BaseActivity extends AppCompatActivity {
   }
 
   public static boolean isActiveNetworkMetered(@NonNull final Context context) {
-    if (BuildConfig.DEBUG)
+    if (DEBUG)
       Log.d(TAG, "isActiveNetworkMetered: Called!");
 
     final ConnectivityManager connectivityManager = Objects.requireNonNull(
@@ -91,7 +97,7 @@ public abstract class _BaseActivity extends AppCompatActivity {
     final String decoded = (url.equals(URL_FZYZ_HOST)
             ? "" : new String(Base64.decode(URL_FZYZ_HOST, URL_SAFE)))
             + new String(Base64.decode(url, URL_SAFE));
-    if (BuildConfig.DEBUG)
+    if (DEBUG)
       Log.d(TAG, "decodeURL: " + decoded);
     return decoded;
   }
@@ -106,8 +112,8 @@ public abstract class _BaseActivity extends AppCompatActivity {
     final String decoded = new String(Base64.decode(URL_FZYZ_HOST, URL_SAFE))
             + new String(Base64.decode(URL_CALENDAR_DETAIL, URL_SAFE))
             + date;
-    if (BuildConfig.DEBUG)
-      Log.d(TAG, "decodeURL: " + decoded);
+    if (DEBUG)
+      Log.d(TAG, "decodeCalendarDateURL: " + decoded);
     return decoded;
   }
 }

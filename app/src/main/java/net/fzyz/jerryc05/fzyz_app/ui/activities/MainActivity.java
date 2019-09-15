@@ -102,10 +102,11 @@ public final class MainActivity extends _BaseActivity {
                 case R.id.nav_academic:
                   fragmentClass = AcademicFragment.class;
                   break;
-                case R.id.nav_activity:
-                default:
+                case R.id.nav_misc:
                   fragmentClass = ProfileFragment.class;
                   break;
+                default:
+                  return true;
               }
               setFragment(fragmentClass);
               return true;
