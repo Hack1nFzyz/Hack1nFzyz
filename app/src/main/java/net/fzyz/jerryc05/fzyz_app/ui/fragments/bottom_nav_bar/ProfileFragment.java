@@ -49,10 +49,6 @@ public final class ProfileFragment extends Fragment implements
   private ContentLoadingProgressBar progressBar;
   private TextView                  loggingIn;
 
-  @Keep
-  public ProfileFragment() {
-  }
-
   @Nullable
   @Override
   public View onCreateView(@NonNull final LayoutInflater inflater,

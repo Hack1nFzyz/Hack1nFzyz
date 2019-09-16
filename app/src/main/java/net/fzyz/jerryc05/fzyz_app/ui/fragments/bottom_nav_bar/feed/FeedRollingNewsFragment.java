@@ -13,10 +13,6 @@ public final class FeedRollingNewsFragment extends _FeedBaseFragment
 
   public static final int STRING_ID = R.string.rolling_news;
 
-  @Keep
-  public FeedRollingNewsFragment() {
-  }
-
   @Override
   String getDecodedURL() {
     return decodeURL(URL_ROLLING_NEWS_GunDongXinWen);

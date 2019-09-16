@@ -24,6 +24,12 @@
 
 -allowaccessmodification
 
+-repackageclasses
+
+-dontskipnonpubliclibraryclasses
+
+-dontskipnonpubliclibraryclassmembers
+
 -mergeinterfacesaggressively
 
 -overloadaggressively
@@ -31,6 +37,10 @@
 -dontpreverify
 
 #-dontobfuscate
+
+-keepclasseswithmembers class * extends androidx.fragment.app.Fragment {
+    public <init>();
+}
 
 -assumenosideeffects class android.util.Log {*;}
 

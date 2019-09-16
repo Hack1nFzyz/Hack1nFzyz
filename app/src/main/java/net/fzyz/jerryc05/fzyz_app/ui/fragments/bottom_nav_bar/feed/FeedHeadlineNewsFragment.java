@@ -13,10 +13,6 @@ public final class FeedHeadlineNewsFragment extends _FeedBaseFragment
 
   public static final int STRING_ID = R.string.headline_news;
 
-  @Keep
-  public FeedHeadlineNewsFragment() {
-  }
-
   @Override
   String getDecodedURL() {
     return decodeURL(URL_HEADLINE_NEWS_ZuiXinXinWenTouTiao);

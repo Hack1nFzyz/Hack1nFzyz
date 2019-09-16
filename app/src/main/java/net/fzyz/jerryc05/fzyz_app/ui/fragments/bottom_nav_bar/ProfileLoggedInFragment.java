@@ -14,10 +14,6 @@ import net.fzyz.jerryc05.fzyz_app.R;
 
 public final class ProfileLoggedInFragment extends Fragment {
 
-  @Keep
-  public ProfileLoggedInFragment() {
-  }
-
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater,

@@ -15,10 +15,6 @@ import net.fzyz.jerryc05.fzyz_app.R;
 
 public final class AcademicFragment extends Fragment {
 
-  @Keep
-  public AcademicFragment() {
-  }
-
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater,

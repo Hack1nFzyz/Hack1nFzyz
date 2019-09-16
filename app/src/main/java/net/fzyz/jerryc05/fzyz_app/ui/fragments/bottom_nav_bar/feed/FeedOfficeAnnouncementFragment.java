@@ -13,10 +13,6 @@ public final class FeedOfficeAnnouncementFragment extends _FeedBaseFragment
 
   public static final int STRING_ID = R.string.office_announcement;
 
-  @Keep
-  public FeedOfficeAnnouncementFragment() {
-  }
-
   @Override
   String getDecodedURL() {
     return decodeURL(URL_OFFICE_ANNOUNCEMENT_ChuShiGongGao);

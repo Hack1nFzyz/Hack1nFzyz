@@ -34,10 +34,6 @@ public class FeedFragment extends Fragment {
   private ViewPager viewPager;
   private Activity  activity;
 
-  @Keep
-  public FeedFragment() {
-  }
-
   @Nullable
   @Override
   public View onCreateView(@NonNull final LayoutInflater inflater,
