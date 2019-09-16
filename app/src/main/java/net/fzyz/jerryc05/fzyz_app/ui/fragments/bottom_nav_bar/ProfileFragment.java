@@ -1,6 +1,5 @@
 package net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar;
 
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -11,6 +10,7 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
@@ -33,21 +33,25 @@ import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.threadPoolE
 public final class ProfileFragment extends Fragment implements
         View.OnClickListener, TextView.OnEditorActionListener {
 
-  static final String TAG = ProfileFragment.class.getName();
+  private static final String  TAG = "ProfileFragment";
+  public static        boolean isLoggedIn;
 
-  public static boolean isLoggedIn;
-  MainActivity              activity;
-  CircleImageView           avatar;
-  TextInputLayout           usernameLayout;
-  TextInputEditText         usernameText;
-  TextInputLayout           passwordLayout;
-  TextInputEditText         passwordText;
-  MaterialButton            teacherLogin;
-  MaterialButton            studentLogin;
-  MaterialButton            publicLogin;
-  MaterialButton            register;
-  ContentLoadingProgressBar progressBar;
-  TextView                  loggingIn;
+  private MainActivity              activity;
+  private CircleImageView           avatar;
+  private TextInputLayout           usernameLayout;
+  private TextInputEditText         usernameText;
+  private TextInputLayout           passwordLayout;
+  private TextInputEditText         passwordText;
+  private MaterialButton            teacherLogin;
+  private MaterialButton            studentLogin;
+  private MaterialButton            publicLogin;
+  private MaterialButton            register;
+  private ContentLoadingProgressBar progressBar;
+  private TextView                  loggingIn;
+
+  @Keep
+  public ProfileFragment() {
+  }
 
   @Nullable
   @Override
@@ -159,7 +163,7 @@ public final class ProfileFragment extends Fragment implements
     return false;
   }
 
-  void loginSucceed(@NonNull final View view) {
+  private void loginSucceed(@NonNull final View view) {
     try {
       Thread.sleep(500);
     } catch (final InterruptedException e) {

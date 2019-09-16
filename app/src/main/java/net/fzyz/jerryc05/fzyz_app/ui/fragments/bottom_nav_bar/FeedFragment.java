@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -25,14 +26,17 @@ import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.feed.FeedSchoolAff
 
 import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 
-
-public final class FeedFragment extends Fragment {
+public class FeedFragment extends Fragment {
 
   private static final String TAG = "FeedFragment";
 
   private TabLayout tabLayout;
   private ViewPager viewPager;
   private Activity  activity;
+
+  @Keep
+  public FeedFragment() {
+  }
 
   @Nullable
   @Override

@@ -18,6 +18,7 @@ import androidx.biometric.BiometricPrompt.PromptInfo;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentFactory;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -35,6 +36,7 @@ import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileLoggedInFra
 
 import java.lang.ref.WeakReference;
 
+import static android.widget.Toast.LENGTH_LONG;
 import static android.widget.Toast.LENGTH_SHORT;
 
 public final class MainActivity extends _BaseActivity {
@@ -53,7 +55,10 @@ public final class MainActivity extends _BaseActivity {
 
     threadPoolExecutor.execute(this::setToolBarAndDrawer);
     threadPoolExecutor.execute(this::setBottomNavView);
-    threadPoolExecutor.execute(() -> setFragment(FeedFragment.class));
+//    threadPoolExecutor.execute(() ->
+    setFragment(FeedFragment.class)
+//    )
+    ;
   }
 
   @Override
@@ -166,7 +171,7 @@ public final class MainActivity extends _BaseActivity {
             .build();
   }
 
-  @WorkerThread
+  //  @WorkerThread
   public void setFragment(@NonNull Class fragmentClass) {
     if (fragmentManager == null)
       fragmentManager = getSupportFragmentManager();

@@ -1,5 +1,6 @@
 package net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.feed;
 
+import androidx.annotation.Keep;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener;
 
 import net.fzyz.jerryc05.fzyz_app.R;
@@ -11,6 +12,10 @@ public final class FeedOfficeAnnouncementFragment extends _FeedBaseFragment
         implements OnRefreshListener {
 
   public static final int STRING_ID = R.string.office_announcement;
+
+  @Keep
+  public FeedOfficeAnnouncementFragment() {
+  }
 
   @Override
   String getDecodedURL() {
