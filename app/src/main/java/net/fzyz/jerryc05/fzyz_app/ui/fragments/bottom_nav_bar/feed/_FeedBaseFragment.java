@@ -62,13 +62,14 @@ abstract class _FeedBaseFragment extends Fragment
 
   @WorkerThread
   private void initSwipeRefreshLayout() {
-    swipeRefreshLayout.setOnRefreshListener(this);
-
     while (activity == null)
       activity = getActivity();
-    swipeRefreshLayout.setColorSchemeColors(
-            ContextCompat.getColor(activity, R.color.colorPrimary));
-    activity.runOnUiThread(this::onRefresh);
+    activity.runOnUiThread(() -> {
+      swipeRefreshLayout.setOnRefreshListener(this);
+      swipeRefreshLayout.setColorSchemeColors(
+              ContextCompat.getColor(activity, R.color.colorPrimary));
+      onRefresh();
+    });
   }
 
   abstract String getDecodedURL();

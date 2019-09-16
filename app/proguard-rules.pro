@@ -38,6 +38,7 @@
 
 #-dontobfuscate
 
+# For initializing fragments via reflection.
 -keepclasseswithmembers class * extends androidx.fragment.app.Fragment {
     public <init>();
 }

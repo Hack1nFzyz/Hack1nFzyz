@@ -53,10 +53,7 @@ public final class MainActivity extends _BaseActivity {
 
     threadPoolExecutor.execute(this::setToolBarAndDrawer);
     threadPoolExecutor.execute(this::setBottomNavView);
-//    threadPoolExecutor.execute(() ->
-    setFragment(FeedFragment.class)
-//    )
-    ;
+    threadPoolExecutor.execute(() -> setFragment(FeedFragment.class));
   }
 
   @Override
@@ -92,6 +89,7 @@ public final class MainActivity extends _BaseActivity {
     runOnUiThread(() -> drawerLayout.addDrawerListener(actionBarDrawerToggle));
   }
 
+  @SuppressWarnings("SameReturnValue")
   @WorkerThread
   private void setBottomNavView() {
     final OnNavigationItemSelectedListener onNavigationItemSelectedListener =
@@ -169,7 +167,7 @@ public final class MainActivity extends _BaseActivity {
             .build();
   }
 
-  //  @WorkerThread
+  @WorkerThread
   public void setFragment(@NonNull Class fragmentClass) {
     if (fragmentManager == null)
       fragmentManager = getSupportFragmentManager();
