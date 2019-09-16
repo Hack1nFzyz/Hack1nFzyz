@@ -41,26 +41,26 @@ public class LoginHelper {
 //  }
 
 //  public static void loginAsTeacher(String username, String password) {
-//    loginHelper(username, password, WebsiteCollection.decodeURL(
-//            WebsiteCollection.URL_TEACHER_LOGIN));
+//    loginHelper(username, password, ApiFzyz.decodeURL(
+//            ApiFzyz.URL_TEACHER_LOGIN));
 //  }
 
 //  public static void loginAsPublic(String username, String password) {
-//    loginHelper(username, password, WebsiteCollection.decodeURL(
-//            WebsiteCollection.URL_PUBLIC_LOGIN));
+//    loginHelper(username, password, ApiFzyz.decodeURL(
+//            ApiFzyz.URL_PUBLIC_LOGIN));
 //  }
 
 //  /**
 //   * Idk why this shit exists, but I found it inside the js code.
 //   */
 //  public static void loginAsOther(String username, String password) {
-//    loginHelper(username, password, WebsiteCollection.decodeURL(
-//            WebsiteCollection.URL_OTHER_LOGIN));
+//    loginHelper(username, password, ApiFzyz.decodeURL(
+//            ApiFzyz.URL_OTHER_LOGIN));
 //  }
 
 //  public static void loginAsStudent(String username, String password, final @NonNull Context context) {
 //    loginHelper(username, password, URLConnectionBuilder.decodeURL(
-//            WebsiteCollection.URL_STUDENT_LOGIN),context);
+//            ApiFzyz.URL_STUDENT_LOGIN),context);
 //  }
 }
 // todo add greyed out register/public_login button.

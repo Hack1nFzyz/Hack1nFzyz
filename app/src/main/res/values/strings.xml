@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Hack-FZYZ</string>
     <string name="nav_header_username">Hello Guest!</string>
+    <string name="open_drawer">Open drawer</string>
 
     <string name="feed">Feed</string>
     <string name="academic">Academic</string>

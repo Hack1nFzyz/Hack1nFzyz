@@ -34,7 +34,7 @@
 
 -assumenosideeffects class android.util.Log {*;}
 
--keep class net.fzyz.jerryc05.fzyz_app.core.WebsiteCollection {*;}
+-keep class net.fzyz.jerryc05.fzyz_app.core.apis.ApiFzyz {*;}
 
 # JSR 305 annotations are for embedding nullability information.
 -dontwarn javax.annotation.**

@@ -17,12 +17,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import okhttp3.OkHttpClient;
+import okhttp3.Request.Builder;
 
+import static android.util.Base64.DEFAULT;
 import static android.util.Base64.URL_SAFE;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static net.fzyz.jerryc05.fzyz_app.BuildConfig.DEBUG;
-import static net.fzyz.jerryc05.fzyz_app.core.WebsiteCollection.URL_CALENDAR_DETAIL;
-import static net.fzyz.jerryc05.fzyz_app.core.WebsiteCollection.URL_FZYZ_HOST;
+import static net.fzyz.jerryc05.fzyz_app.core.apis.ApiFzyz.URL_CALENDAR_DETAIL;
+import static net.fzyz.jerryc05.fzyz_app.core.apis.ApiFzyz.URL_FZYZ_HOST;
 
 @SuppressWarnings("unused")
 public abstract class _BaseActivity extends AppCompatActivity {
@@ -31,8 +32,8 @@ public abstract class _BaseActivity extends AppCompatActivity {
 
   public static ThreadPoolExecutor threadPoolExecutor;
 
-  private static class OkHttpClientLazyLoader {
-    static final OkHttpClient okHttpClient = new OkHttpClient();
+  public static final class OkHttpClientLazyLoader {
+    public static final OkHttpClient okHttpClient = new OkHttpClient();
   }
 
   @Override
@@ -46,19 +47,17 @@ public abstract class _BaseActivity extends AppCompatActivity {
 
   @Override
   protected void onDestroy() {
-    if (DEBUG)
-      Log.d(TAG, "onDestroy: Called!");
+    Log.w(TAG, "onDestroy() called");
 
     final List<Runnable> tasks = threadPoolExecutor.shutdownNow();
-    if (DEBUG)
-      Log.d(TAG, "onDestroy: Unfinished tasks = " + tasks);
+    threadPoolExecutor = null;
 
+    Log.w(TAG, "onDestroy(): Unfinished tasks = " + tasks);
     super.onDestroy();
   }
 
   private static void initThreadPoolExecutor() {
-    if (DEBUG)
-      Log.d(TAG, "newThreadPoolExecutor: Called!");
+    Log.w(TAG, "initThreadPoolExecutor() called");
 
     if (threadPoolExecutor != null)
       return;
@@ -70,17 +69,17 @@ public abstract class _BaseActivity extends AppCompatActivity {
     threadPoolExecutor.allowCoreThreadTimeOut(true);
   }
 
-  public static OkHttpClient getOkHttpClient() {
-    return OkHttpClientLazyLoader.okHttpClient;
+  public static Builder getMyOkHttpRequestBuilder(@NonNull final String url) {
+    return new Builder().url(url).header("User-Agent",
+            "Mozilla/5.0 (Linux; Android) AppleWebKit Chrome Safari");
   }
 
-  public boolean isActiveNetworkMetered() {
+  public final boolean isActiveNetworkMetered() {
     return isActiveNetworkMetered(this);
   }
 
   public static boolean isActiveNetworkMetered(@NonNull final Context context) {
-    if (DEBUG)
-      Log.d(TAG, "isActiveNetworkMetered: Called!");
+    Log.w(TAG, "isActiveNetworkMetered() called with: context = [" + context + "]");
 
     final ConnectivityManager connectivityManager = Objects.requireNonNull(
             (ConnectivityManager)
@@ -94,11 +93,13 @@ public abstract class _BaseActivity extends AppCompatActivity {
    * @return Decoded url.
    */
   public static String decodeURL(@NonNull final String url) {
+    Log.w(TAG, "decodeURL() called with: url = [" + url + "]");
+
     final String decoded = (url.equals(URL_FZYZ_HOST)
             ? "" : new String(Base64.decode(URL_FZYZ_HOST, URL_SAFE)))
-            + new String(Base64.decode(url, URL_SAFE));
-    if (DEBUG)
-      Log.d(TAG, "decodeURL: " + decoded);
+            + new String(Base64.decode(url, DEFAULT));
+
+    Log.w(TAG, "decodeURL() returned: " + decoded);
     return decoded;
   }
 
@@ -112,8 +113,9 @@ public abstract class _BaseActivity extends AppCompatActivity {
     final String decoded = new String(Base64.decode(URL_FZYZ_HOST, URL_SAFE))
             + new String(Base64.decode(URL_CALENDAR_DETAIL, URL_SAFE))
             + date;
-    if (DEBUG)
-      Log.d(TAG, "decodeCalendarDateURL: " + decoded);
+
+    Log.w(TAG, "decodeCalendarDateURL() returned: " + decoded);
     return decoded;
+    // http://www.fzyz.net/school/calendar/getSchoolCalendar.shtml?cal.CALENDAR_DAY=2019-06-15
   }
 }

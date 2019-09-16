@@ -1,5 +1,6 @@
 package net.fzyz.jerryc05.fzyz_app.ui.activities;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -32,17 +33,18 @@ import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.FeedFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileLoggedInFragment;
 
+import java.lang.ref.WeakReference;
+
 import static android.widget.Toast.LENGTH_SHORT;
 
 public final class MainActivity extends _BaseActivity {
 
   private static final String TAG = "MainActivity";
 
-  private DrawerLayout    drawerLayout;
-  private Fragment        currentFragment;
-  private FragmentManager fragmentManager;
-  BiometricPrompt biometricPrompt; // Synthetic accessor in AuthenticationCallback
-  PromptInfo      promptInfo;
+  private DrawerLayout            drawerLayout;
+  private Fragment                currentFragment;
+  private FragmentManager         fragmentManager;
+  static  WeakReference<Activity> activityWeakReference; // Synthetic accessor in AuthenticationCallback
 
   @Override
   protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -70,10 +72,8 @@ public final class MainActivity extends _BaseActivity {
   public void onBackPressed() {
     if (drawerLayout.isDrawerOpen(GravityCompat.START))
       drawerLayout.closeDrawer(GravityCompat.START);
-    else {
-      Log.d(TAG, "onBackPressed: Ready to quit.");
+    else
       threadPoolExecutor.execute(this::setExitDialog);
-    }
   }
 
   @WorkerThread
@@ -82,9 +82,9 @@ public final class MainActivity extends _BaseActivity {
     setSupportActionBar(toolbar);
 
     drawerLayout = findViewById(R.id.drawer_layout);
-    final ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(
-            this, drawerLayout, toolbar,
-            R.string.app_name, R.string.appbar_scrolling_view_behavior);
+    final ActionBarDrawerToggle actionBarDrawerToggle =
+            new ActionBarDrawerToggle(this, drawerLayout, toolbar,
+                    R.string.open_drawer, R.string.appbar_scrolling_view_behavior);
     actionBarDrawerToggle.syncState();
     runOnUiThread(() -> drawerLayout.addDrawerListener(actionBarDrawerToggle));
   }
@@ -118,51 +118,52 @@ public final class MainActivity extends _BaseActivity {
   }
 
   private BiometricPrompt getBiometricPrompt() {
-    if (biometricPrompt == null) {
-      final AuthenticationCallback authenticationCallback =
-              new AuthenticationCallback() {
-                @Override
-                public void onAuthenticationError(int errorCode,
-                                                  @NonNull final CharSequence errString) {
-                  runOnUiThread(() -> Toast.makeText(MainActivity.this,
-                          errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON
-                                  ? "NegativeButton" : errString, LENGTH_SHORT).show());
-                  biometricPrompt = null;
-//                  promptInfo = null; // Set both to null will crash on MIUI.
-                }
+    if (activityWeakReference == null)
+      activityWeakReference = new WeakReference<>(this);
 
-                @Override
-                public void onAuthenticationSucceeded(
-                        @NonNull final AuthenticationResult result) {
-                  runOnUiThread(() -> Toast.makeText(MainActivity.this,
-                          "SUCCESS", LENGTH_SHORT).show());
-                  biometricPrompt = null;
-//                  promptInfo = null; // Set both to null will crash on MIUI.
-                }
+    final AuthenticationCallback authenticationCallback = new AuthenticationCallback() {
+      @Override
+      public void onAuthenticationError(int errorCode,
+                                        @NonNull final CharSequence errString) {
+        final Activity activity = activityWeakReference.get();
+        if (activity != null)
+          activity.runOnUiThread(() -> Toast.makeText(activity,
+                  errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON
+                          ? "NegativeButton" : errString, LENGTH_SHORT).show());
+      }
 
-                @Override
-                public void onAuthenticationFailed() {
-                  runOnUiThread(() -> Toast.makeText(MainActivity.this,
-                          "FAILED", LENGTH_SHORT).show());
-                }
-              };
-      biometricPrompt = new BiometricPrompt(this,
-              threadPoolExecutor, authenticationCallback);
-    }
-    return biometricPrompt;
+      @Override
+      public void onAuthenticationSucceeded(
+              @NonNull final AuthenticationResult result) {
+        final Activity activity = activityWeakReference.get();
+        if (activity != null)
+          activity.runOnUiThread(() -> Toast.makeText(activity,
+                  "SUCCESS", LENGTH_SHORT).show());
+//          biometricPrompt = null;
+//          promptInfo = null; // Set both to null will crash on MIUI.
+      }
+
+      @Override
+      public void onAuthenticationFailed() {
+        final Activity activity = activityWeakReference.get();
+        if (activity != null)
+          activity.runOnUiThread(() -> Toast.makeText(activity,
+                  "FAILED", LENGTH_SHORT).show());
+      }
+    };
+    return new BiometricPrompt(this,
+            threadPoolExecutor, authenticationCallback);
   }
 
-  private PromptInfo getPromptInfo() {
-    if (promptInfo == null)
-      promptInfo = new PromptInfo.Builder()
-              .setTitle("This is title")
-              .setSubtitle("This is subtitle")
-              .setDescription("This is description")
+  private static PromptInfo getPromptInfo() {
+    return new PromptInfo.Builder()
+            .setTitle("This is title")
+            .setSubtitle("This is subtitle")
+            .setDescription("This is description")
 //              .setNegativeButtonText("NegativeButton")
-              .setConfirmationRequired(true)
-              .setDeviceCredentialAllowed(true)
-              .build();
-    return promptInfo;
+            .setConfirmationRequired(true)
+            .setDeviceCredentialAllowed(true)
+            .build();
   }
 
   @WorkerThread
@@ -183,18 +184,18 @@ public final class MainActivity extends _BaseActivity {
 
       if (currentFragment instanceof ProfileFragment
               && fragmentClass.equals(ProfileLoggedInFragment.class)) {
-        Log.d(TAG, "setFragment: Removing  " + currentFragment.getTag());
+        Log.w(TAG, "setFragment: Removing  " + currentFragment.getTag());
         transaction.remove(currentFragment);
 
       } else if (currentFragment != null) {
-        Log.d(TAG, "setFragment: Hiding    " + currentFragment.getTag());
+        Log.w(TAG, "setFragment: Hiding    " + currentFragment.getTag());
         transaction.hide(currentFragment);
       }
 
       if (existingFragment != null) {
         transaction.show(existingFragment);
         currentFragment = existingFragment;
-        Log.d(TAG, "setFragment: Reusing   " + existingFragment.getTag());
+        Log.w(TAG, "setFragment: Reusing   " + existingFragment.getTag());
 
       } else {
         try {
@@ -202,7 +203,7 @@ public final class MainActivity extends _BaseActivity {
           transaction.add(R.id.activity_main_frameLayout, newFragment,
                   fragmentClass.getSimpleName());
           currentFragment = newFragment;
-          Log.d(TAG, "setFragment: Creating  "
+          Log.w(TAG, "setFragment: Creating  "
                   + fragmentClass.getSimpleName());
         } catch (final Exception e) {
           throw new IllegalStateException("Cannot instantiate "
@@ -211,7 +212,7 @@ public final class MainActivity extends _BaseActivity {
       }
       transaction.commit();
     } else
-      Log.d(TAG, "setFragment: Unchanged " + fragmentClass.getSimpleName());
+      Log.w(TAG, "setFragment: Unchanged " + fragmentClass.getSimpleName());
   }
 
   private void setExitDialog() {

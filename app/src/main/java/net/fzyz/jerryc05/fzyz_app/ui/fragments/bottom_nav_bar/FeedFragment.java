@@ -1,5 +1,6 @@
 package net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,9 +28,11 @@ import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ON
 
 public final class FeedFragment extends Fragment {
 
-  private static final String    TAG = "FeedFragment";
-  private              TabLayout tabLayout;
-  private              ViewPager viewPager;
+  private static final String TAG = "FeedFragment";
+
+  private TabLayout tabLayout;
+  private ViewPager viewPager;
+  private Activity  activity;
 
   @Nullable
   @Override
@@ -88,7 +91,10 @@ public final class FeedFragment extends Fragment {
         }
       };
       viewPager.setAdapter(adapter);
-      tabLayout.setupWithViewPager(viewPager);
+
+      while (activity == null)
+        activity = getActivity();
+      activity.runOnUiThread(() -> tabLayout.setupWithViewPager(viewPager));
     });
   }
 }

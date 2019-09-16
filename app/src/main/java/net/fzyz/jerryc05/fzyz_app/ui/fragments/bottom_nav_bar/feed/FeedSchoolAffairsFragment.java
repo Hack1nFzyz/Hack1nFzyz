@@ -1,25 +1,19 @@
 package net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.feed;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener;
 
 import net.fzyz.jerryc05.fzyz_app.R;
 
-public final class FeedSchoolAffairsFragment extends Fragment {
+import static net.fzyz.jerryc05.fzyz_app.core.apis.ApiFzyz.URL_SCHOOL_AFFAIRS_XiaoWuGongKai;
+import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.decodeURL;
+
+public final class FeedSchoolAffairsFragment extends _FeedBaseFragment
+        implements OnRefreshListener {
 
   public static final int STRING_ID = R.string.school_affairs;
 
-  @Nullable
   @Override
-  public View onCreateView(@NonNull final LayoutInflater inflater,
-                           @Nullable final ViewGroup container,
-                           @Nullable final Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.frag_feed_content, container, false);
+  String getDecodedURL() {
+    return decodeURL(URL_SCHOOL_AFFAIRS_XiaoWuGongKai);
   }
 }
