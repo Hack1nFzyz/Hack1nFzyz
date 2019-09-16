@@ -24,7 +24,6 @@ import java.util.Objects;
 import okhttp3.Response;
 
 import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.OkHttpClientLazyLoader.okHttpClient;
-import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.decodeURL;
 import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.getMyOkHttpRequestBuilder;
 import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.threadPoolExecutor;
 

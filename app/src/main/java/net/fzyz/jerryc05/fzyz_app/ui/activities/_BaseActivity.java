@@ -2,6 +2,7 @@ package net.fzyz.jerryc05.fzyz_app.ui.activities;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -17,6 +18,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.Request.Builder;
 
 import static android.util.Base64.DEFAULT;
