@@ -1,6 +1,7 @@
 package net.fzyz.jerryc05.fzyz_app.ui.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -123,12 +124,14 @@ public final class MainActivity extends _BaseActivity {
       activityWeakReference = new WeakReference<>(this);
 
     final AuthenticationCallback authenticationCallback = new AuthenticationCallback() {
+      final Activity activity = activityWeakReference.get();
+      final Context applicationContext = getApplicationContext();
+
       @Override
       public void onAuthenticationError(int errorCode,
                                         @NonNull final CharSequence errString) {
-        final Activity activity = activityWeakReference.get();
         if (activity != null)
-          activity.runOnUiThread(() -> Toast.makeText(activity,
+          activity.runOnUiThread(() -> Toast.makeText(applicationContext,
                   errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON
                           ? "NegativeButton" : errString, LENGTH_SHORT).show());
       }
@@ -136,19 +139,15 @@ public final class MainActivity extends _BaseActivity {
       @Override
       public void onAuthenticationSucceeded(
               @NonNull final AuthenticationResult result) {
-        final Activity activity = activityWeakReference.get();
         if (activity != null)
-          activity.runOnUiThread(() -> Toast.makeText(activity,
+          activity.runOnUiThread(() -> Toast.makeText(applicationContext,
                   "SUCCESS", LENGTH_SHORT).show());
-//          biometricPrompt = null;
-//          promptInfo = null; // Set both to null will crash on MIUI.
       }
 
       @Override
       public void onAuthenticationFailed() {
-        final Activity activity = activityWeakReference.get();
         if (activity != null)
-          activity.runOnUiThread(() -> Toast.makeText(activity,
+          activity.runOnUiThread(() -> Toast.makeText(applicationContext,
                   "FAILED", LENGTH_SHORT).show());
       }
     };
