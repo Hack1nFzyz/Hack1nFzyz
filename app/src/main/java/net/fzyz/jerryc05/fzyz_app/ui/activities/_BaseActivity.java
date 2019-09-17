@@ -3,6 +3,7 @@ package net.fzyz.jerryc05.fzyz_app.ui.activities;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.util.ArrayMap;
 import android.util.Base64;
 import android.util.Log;
 
@@ -11,16 +12,22 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.HttpUrl;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Request.Builder;
 
 import static android.util.Base64.DEFAULT;
 import static android.util.Base64.URL_SAFE;
+import static java.util.Collections.emptyList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static net.fzyz.jerryc05.fzyz_app.core.apis.ApiFzyz.URL_CALENDAR_DETAIL;
 import static net.fzyz.jerryc05.fzyz_app.core.apis.ApiFzyz.URL_FZYZ_HOST;
@@ -31,10 +38,6 @@ public abstract class _BaseActivity extends AppCompatActivity {
   private static final String TAG = "_BaseActivity";
 
   public static ThreadPoolExecutor threadPoolExecutor;
-
-  public static final class OkHttpClientLazyLoader {
-    public static final OkHttpClient okHttpClient = new OkHttpClient();
-  }
 
   @Override
   protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -56,6 +59,55 @@ public abstract class _BaseActivity extends AppCompatActivity {
     super.onDestroy();
   }
 
+  public static final class OkHttpClientLazyLoader {
+    private static final Interceptor  clearUAInterceptor = chain ->
+            chain.proceed(chain.request().newBuilder()
+                    .removeHeader("User-Agent")
+                    .removeHeader("Connection")
+                    .build());
+    private final static CookieJar    cookieJar          = new CookieJar() {
+      private ArrayMap<String, ArrayMap<String, Cookie>> allCookiesArrayMap;
+
+      @Override
+      public void saveFromResponse(@NonNull final HttpUrl url,
+                                   @NonNull final List<Cookie> cookies) {
+        if (!cookies.isEmpty()) {
+          if (allCookiesArrayMap == null)
+            allCookiesArrayMap = new ArrayMap<>(1);
+
+          final ArrayMap<String, Cookie> existingCookies = allCookiesArrayMap.get(url.host());
+          final ArrayMap<String, Cookie> cookiesArrayMap = existingCookies != null
+                  ? existingCookies : new ArrayMap<>(cookies.size());
+          for (Cookie cookie : cookies)
+            cookiesArrayMap.put(cookie.name(), cookie);
+          allCookiesArrayMap.put(url.host(), cookiesArrayMap);
+
+          Log.w(TAG, "saveFromResponse: " + Arrays.toString(Objects.requireNonNull(
+                  allCookiesArrayMap.get(url.host())).values().toArray(new Cookie[0])));
+        }
+      }
+
+      @NonNull
+      @Override
+      public List<Cookie> loadForRequest(@NonNull final HttpUrl url) {
+        if (allCookiesArrayMap == null)
+          return emptyList();
+
+        final ArrayMap<String, Cookie> cookiesArrayMap = allCookiesArrayMap.get(url.host());
+        Log.w(TAG, "loadForRequest: " + (cookiesArrayMap != null
+                ? Arrays.toString(Objects.requireNonNull(
+                allCookiesArrayMap.get(url.host())).values().toArray(new Cookie[0]))
+                : "null"));
+        return cookiesArrayMap == null ? emptyList()
+                : new ArrayList<>(cookiesArrayMap.values());
+      }
+    };
+    public static final  OkHttpClient okHttpClient       = new OkHttpClient.Builder()
+            .addNetworkInterceptor(clearUAInterceptor)
+            .cookieJar(cookieJar)
+            .build();
+  }
+
   private static void initThreadPoolExecutor() {
     Log.w(TAG, "initThreadPoolExecutor() called");
 
@@ -69,23 +121,17 @@ public abstract class _BaseActivity extends AppCompatActivity {
     threadPoolExecutor.allowCoreThreadTimeOut(true);
   }
 
-  public static Builder getMyOkHttpRequestBuilder(@NonNull final String url) {
-    return new Builder().url(url).header("User-Agent",
-            "Mozilla/5.0 (Linux; Android) AppleWebKit Chrome Safari");
-  }
-
   public final boolean isActiveNetworkMetered() {
-    return isActiveNetworkMetered(this);
+    return isActiveNetworkMetered(getApplicationContext());
   }
 
   public static boolean isActiveNetworkMetered(@NonNull final Context context) {
     Log.w(TAG, "isActiveNetworkMetered() called with: context = [" + context + "]");
 
-    final ConnectivityManager connectivityManager = Objects.requireNonNull(
-            (ConnectivityManager)
-                    context.getSystemService(Context.CONNECTIVITY_SERVICE),
-            "isActiveNetworkMetered: connectivityManager is null!");
-    return connectivityManager.isActiveNetworkMetered();
+    return Objects.requireNonNull((ConnectivityManager)
+                    context.getSystemService(CONNECTIVITY_SERVICE),
+            "isActiveNetworkMetered: connectivityManager is null!")
+            .isActiveNetworkMetered();
   }
 
   /**

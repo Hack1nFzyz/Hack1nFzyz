@@ -21,10 +21,10 @@ import net.fzyz.jerryc05.fzyz_app.R;
 
 import java.util.Objects;
 
+import okhttp3.Request;
 import okhttp3.Response;
 
 import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.OkHttpClientLazyLoader.okHttpClient;
-import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.getMyOkHttpRequestBuilder;
 import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.threadPoolExecutor;
 
 abstract class _FeedBaseFragment extends Fragment
@@ -81,7 +81,7 @@ abstract class _FeedBaseFragment extends Fragment
 
     threadPoolExecutor.execute(() -> {
       try (final Response response = okHttpClient.newCall(
-              getMyOkHttpRequestBuilder(getDecodedURL()).build()).execute()) {
+              new Request.Builder().url(getDecodedURL()).build()).execute()) {
         final String result = Objects.requireNonNull(
                 response.body()).string();
         activity.runOnUiThread(() -> textView.setText(result));
