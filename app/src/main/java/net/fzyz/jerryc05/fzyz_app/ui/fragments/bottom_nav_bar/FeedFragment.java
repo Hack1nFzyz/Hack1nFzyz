@@ -24,6 +24,7 @@ import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.feed.FeedRollingNe
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.feed.FeedSchoolAffairsFragment;
 
 import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
+import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.threadPoolExecutor;
 
 public class FeedFragment extends Fragment {
 
@@ -44,11 +45,12 @@ public class FeedFragment extends Fragment {
   @Override
   public void onViewCreated(@NonNull final View view,
                             @Nullable final Bundle savedInstanceState) {
-    _BaseActivity.threadPoolExecutor.execute(() -> { //f:off
+    threadPoolExecutor.execute(() -> { //f:off
     if (tabLayout == null)
         tabLayout =  view.findViewById(R.id.frag_feed_tabLayout);
     if (viewPager == null)
         viewPager =  view.findViewById(R.id.frag_feed_viewPager); //f:on
+      viewPager.setOffscreenPageLimit(2);
 
       final FragmentStatePagerAdapter adapter = new FragmentStatePagerAdapter(
               getChildFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
