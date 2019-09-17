@@ -60,12 +60,12 @@ public abstract class _BaseActivity extends AppCompatActivity {
   }
 
   public static final class OkHttpClientLazyLoader {
-    private static final Interceptor  clearUAInterceptor = chain ->
+    private static final Interceptor  removeHeadersInterceptor = chain ->
             chain.proceed(chain.request().newBuilder()
                     .removeHeader("User-Agent")
                     .removeHeader("Connection")
                     .build());
-    private final static CookieJar    cookieJar          = new CookieJar() {
+    private static final CookieJar    cookieJar                = new CookieJar() {
       private ArrayMap<String, ArrayMap<String, Cookie>> allCookiesArrayMap;
 
       @Override
@@ -102,8 +102,8 @@ public abstract class _BaseActivity extends AppCompatActivity {
                 : new ArrayList<>(cookiesArrayMap.values());
       }
     };
-    public static final  OkHttpClient okHttpClient       = new OkHttpClient.Builder()
-            .addNetworkInterceptor(clearUAInterceptor)
+    public static final  OkHttpClient okHttpClient             = new OkHttpClient.Builder()
+            .addNetworkInterceptor(removeHeadersInterceptor)
             .cookieJar(cookieJar)
             .build();
   }
