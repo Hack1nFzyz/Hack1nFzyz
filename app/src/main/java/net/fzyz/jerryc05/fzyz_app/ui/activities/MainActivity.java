@@ -34,27 +34,26 @@ import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.FeedFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileLoggedInFragment;
 
-import java.lang.ref.WeakReference;
-
 import static android.widget.Toast.LENGTH_SHORT;
 
 public final class MainActivity extends _BaseActivity {
 
   private static final String TAG = "MainActivity";
 
-  private DrawerLayout            drawerLayout;
-  private Fragment                currentFragment;
-  private FragmentManager         fragmentManager;
-  static  WeakReference<Activity> activityWeakReference; // Synthetic accessor in AuthenticationCallback
+  private DrawerLayout    drawerLayout;
+  private Fragment        currentFragment;
+  private FragmentManager fragmentManager;
 
   @Override
   protected void onCreate(@Nullable final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    threadPoolExecutor.execute(this::setToolBarAndDrawer);
-    threadPoolExecutor.execute(this::setBottomNavView);
-    threadPoolExecutor.execute(() -> setFragment(FeedFragment.class));
+    threadPoolExecutor.execute(() -> {
+      setToolBarAndDrawer();
+      setFragment(FeedFragment.class);
+      setBottomNavView();
+    });
   }
 
   @Override
@@ -120,9 +119,6 @@ public final class MainActivity extends _BaseActivity {
   }
 
   private BiometricPrompt getBiometricPrompt() {
-    if (activityWeakReference == null)
-      activityWeakReference = new WeakReference<>(this);
-
     final AuthenticationCallback authenticationCallback = new AuthenticationCallback() {
       final Activity activity = activityWeakReference.get();
       final Context applicationContext = getApplicationContext();
@@ -210,7 +206,7 @@ public final class MainActivity extends _BaseActivity {
                   + fragmentClass.getSimpleName());
         }
       }
-      transaction.commit();
+      transaction.commitAllowingStateLoss();
     } else
       Log.w(TAG, "setFragment: Unchanged " + fragmentClass.getSimpleName());
   }
