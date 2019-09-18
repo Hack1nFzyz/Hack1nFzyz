@@ -16,7 +16,6 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.tabs.TabLayout;
 
 import net.fzyz.jerryc05.fzyz_app.R;
-import net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.feed.FeedHeadlineNewsFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.feed.FeedLatestNewsFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.feed.FeedOfficeAnnouncementFragment;

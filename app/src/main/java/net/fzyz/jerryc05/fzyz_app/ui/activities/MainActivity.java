@@ -1,12 +1,9 @@
 package net.fzyz.jerryc05.fzyz_app.ui.activities;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,8 +31,6 @@ import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.FeedFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileLoggedInFragment;
 
-import static android.widget.Toast.LENGTH_SHORT;
-
 public final class MainActivity extends _BaseActivity {
 
   private static final String TAG = "MainActivity";
@@ -43,6 +38,7 @@ public final class MainActivity extends _BaseActivity {
   private DrawerLayout    drawerLayout;
   private Fragment        currentFragment;
   private FragmentManager fragmentManager;
+  private BiometricPrompt biometricPrompt;
 
   @Override
   protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -119,39 +115,33 @@ public final class MainActivity extends _BaseActivity {
   }
 
   private BiometricPrompt getBiometricPrompt() {
-    final AuthenticationCallback authenticationCallback = new AuthenticationCallback() {
-      final Activity activity = activityWeakReference.get();
-      final Context applicationContext = getApplicationContext();
+    if (biometricPrompt != null) // must keep these 2 lines, or app will crash on pre-10
+      return biometricPrompt;
 
+    final AuthenticationCallback authenticationCallback = new AuthenticationCallback() {
       @Override
       public void onAuthenticationError(int errorCode,
                                         @NonNull final CharSequence errString) {
-        if (activity != null)
-          activity.runOnUiThread(() -> Toast.makeText(applicationContext,
-                  errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON
-                          ? "NegativeButton" : errString, LENGTH_SHORT).show());
+        Log.w(TAG, "onAuthenticationError: " + errString);
       }
 
       @Override
       public void onAuthenticationSucceeded(
               @NonNull final AuthenticationResult result) {
-        if (activity != null)
-          activity.runOnUiThread(() -> Toast.makeText(applicationContext,
-                  "SUCCESS", LENGTH_SHORT).show());
+        Log.w(TAG, "onAuthenticationSucceeded: ");
       }
 
       @Override
       public void onAuthenticationFailed() {
-        if (activity != null)
-          activity.runOnUiThread(() -> Toast.makeText(applicationContext,
-                  "FAILED", LENGTH_SHORT).show());
+        Log.w(TAG, "onAuthenticationFailed: ");
       }
     };
-    return new BiometricPrompt(this,
-            threadPoolExecutor, authenticationCallback);
+    biometricPrompt = new BiometricPrompt(
+            this, threadPoolExecutor, authenticationCallback);
+    return biometricPrompt;
   }
 
-  private static PromptInfo getPromptInfo() {
+  static PromptInfo getPromptInfo() {
     return new PromptInfo.Builder()
             .setTitle("This is title")
             .setSubtitle("This is subtitle")
