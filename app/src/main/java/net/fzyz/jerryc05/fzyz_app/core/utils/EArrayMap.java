@@ -53,14 +53,15 @@ public final class EArrayMap<K extends Serializable, V extends Serializable>
     return mArrayMap.toString();
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public void readExternal(ObjectInput in) throws ClassNotFoundException, IOException {
     try {
-      //noinspection unchecked
-      mArrayMap.put((K) in.readObject(), (V) in.readObject());
+      final K k = (K) in.readObject();
+      final V v = (V) in.readObject();
+      mArrayMap.put(k, v);
     } catch (final EOFException e) {//
     }
-    in.close();
   }
 
   @Override
@@ -69,7 +70,6 @@ public final class EArrayMap<K extends Serializable, V extends Serializable>
       out.writeObject(entry.getKey());
       out.writeObject(entry.getValue());
     }
-    out.close();
   }
 //  public final Creator<EArrayMap> CREATOR =
 //          new Creator<EArrayMap>() {

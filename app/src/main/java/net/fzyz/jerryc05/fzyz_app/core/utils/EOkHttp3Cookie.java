@@ -13,6 +13,7 @@ public final class EOkHttp3Cookie implements Externalizable {
 
   private Cookie mCookie;
 
+  @SuppressWarnings("WeakerAccess")
   public EOkHttp3Cookie() {
   }
 

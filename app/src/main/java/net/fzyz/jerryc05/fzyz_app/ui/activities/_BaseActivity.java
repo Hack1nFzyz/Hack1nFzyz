@@ -150,7 +150,7 @@ public abstract class _BaseActivity extends AppCompatActivity {
 
         } catch (final Exception e) {
           Log.e(TAG, "loadForRequest: ", e);
-          if (e instanceof FileNotFoundException)
+          if (!(e instanceof FileNotFoundException))
             activity.runOnUiThread(() -> Toast.makeText(activity.getApplicationContext(),
                     e.toString(), Toast.LENGTH_LONG).show());
         }
