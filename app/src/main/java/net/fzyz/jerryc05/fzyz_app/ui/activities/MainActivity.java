@@ -1,18 +1,18 @@
 package net.fzyz.jerryc05.fzyz_app.ui.activities;
 
+import android.content.DialogInterface;
+import android.hardware.biometrics.BiometricPrompt;
 import android.os.Bundle;
+import android.os.CancellationSignal;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.biometric.BiometricPrompt;
-import androidx.biometric.BiometricPrompt.AuthenticationCallback;
-import androidx.biometric.BiometricPrompt.AuthenticationResult;
-import androidx.biometric.BiometricPrompt.PromptInfo;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -31,6 +31,10 @@ import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.FeedFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileLoggedInFragment;
 
+import static android.os.Build.VERSION.SDK_INT;
+import static android.os.Build.VERSION_CODES.P;
+import static android.os.Build.VERSION_CODES.Q;
+
 public final class MainActivity extends _BaseActivity {
 
   private static final String TAG = "MainActivity";
@@ -38,7 +42,6 @@ public final class MainActivity extends _BaseActivity {
   private DrawerLayout    drawerLayout;
   private Fragment        currentFragment;
   private FragmentManager fragmentManager;
-  private BiometricPrompt biometricPrompt;
 
   @Override
   protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -60,7 +63,7 @@ public final class MainActivity extends _BaseActivity {
 
   @Override
   public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
-    getBiometricPrompt().authenticate(getPromptInfo());
+    threadPoolExecutor.execute(this::startBiometricAuthentication);
     return super.onOptionsItemSelected(item);
   }
 
@@ -114,42 +117,61 @@ public final class MainActivity extends _BaseActivity {
             .setOnNavigationItemSelectedListener(onNavigationItemSelectedListener));
   }
 
-  private BiometricPrompt getBiometricPrompt() {
-    if (biometricPrompt != null) // must keep these 2 lines, or app will crash on pre-10
-      return biometricPrompt;
+  @WorkerThread
+  private void startBiometricAuthentication() {
+    if (SDK_INT >= P) {
+      final BiometricPrompt.Builder builder = new BiometricPrompt.Builder(getApplicationContext())
+              .setTitle("This is title")
+              .setSubtitle("This is subtitle")
+              .setDescription("This is description");
+      if (SDK_INT >= Q)
+        builder.setDeviceCredentialAllowed(true);
+      else {
+        final DialogInterface.OnClickListener onClickListener = (dialog, which) -> {
+          Log.w(TAG, "startBiometricAuthentication: Negative Button Pressed!");
 
-    final AuthenticationCallback authenticationCallback = new AuthenticationCallback() {
-      @Override
-      public void onAuthenticationError(int errorCode,
-                                        @NonNull final CharSequence errString) {
-        Log.w(TAG, "onAuthenticationError: " + errString);
+          runOnUiThread(() -> Toast.makeText(this,
+                  "Negative Button Pressed!", Toast.LENGTH_LONG).show());
+        };
+        builder.setNegativeButton("NegativeButtonText", threadPoolExecutor, onClickListener);
       }
 
-      @Override
-      public void onAuthenticationSucceeded(
-              @NonNull final AuthenticationResult result) {
-        Log.w(TAG, "onAuthenticationSucceeded: ");
-      }
+      final CancellationSignal cancellationSignal = new CancellationSignal();
+      final BiometricPrompt.AuthenticationCallback authenticationCallback =
+              new BiometricPrompt.AuthenticationCallback() {
+                private void logAndToastResult(@NonNull final String err) {
+                  Log.w(TAG, err);
+                  runOnUiThread(() -> Toast.makeText(
+                          getApplicationContext(), err, Toast.LENGTH_LONG).show());
+                }
 
-      @Override
-      public void onAuthenticationFailed() {
-        Log.w(TAG, "onAuthenticationFailed: ");
-      }
-    };
-    biometricPrompt = new BiometricPrompt(
-            this, threadPoolExecutor, authenticationCallback);
-    return biometricPrompt;
-  }
+                @Override
+                public void onAuthenticationError(int errorCode,
+                                                  @NonNull CharSequence errString) {
+                  logAndToastResult("onAuthenticationError: " + errString);
+                }
 
-  static PromptInfo getPromptInfo() {
-    return new PromptInfo.Builder()
-            .setTitle("This is title")
-            .setSubtitle("This is subtitle")
-            .setDescription("This is description")
-//              .setNegativeButtonText("NegativeButton")
-            .setConfirmationRequired(true)
-            .setDeviceCredentialAllowed(true)
-            .build();
+                @Override
+                public void onAuthenticationHelp(int helpCode,
+                                                 @NonNull final CharSequence helpString) {
+                  logAndToastResult("onAuthenticationHelp: " + helpString);
+                }
+
+                @Override
+                public void onAuthenticationSucceeded(
+                        @NonNull final BiometricPrompt.AuthenticationResult result) {
+                  logAndToastResult("onAuthenticationSucceeded: " + result.toString());
+                }
+
+                @Override
+                public void onAuthenticationFailed() {
+                  logAndToastResult("onAuthenticationFailed: ");
+                }
+              };
+
+      builder.build()
+              .authenticate(cancellationSignal, threadPoolExecutor, authenticationCallback);
+    }
   }
 
   @WorkerThread
@@ -201,6 +223,7 @@ public final class MainActivity extends _BaseActivity {
       Log.w(TAG, "setFragment: Unchanged " + fragmentClass.getSimpleName());
   }
 
+  @WorkerThread
   private void setExitDialog() {
     final String[][] testBank = {
             {"校训", "植基立本", "成德达材"},
