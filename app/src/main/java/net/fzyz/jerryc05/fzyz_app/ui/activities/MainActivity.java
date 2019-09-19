@@ -27,6 +27,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import net.fzyz.jerryc05.fzyz_app.R;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.AcademicFragment;
+import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ExpenseFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.FeedFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ProfileLoggedInFragment;
@@ -101,6 +102,9 @@ public final class MainActivity extends _BaseActivity {
                   break;
                 case R.id.nav_academic:
                   fragmentClass = AcademicFragment.class;
+                  break;
+                case R.id.nav_expense:
+                  fragmentClass = ExpenseFragment.class;
                   break;
                 case R.id.nav_misc:
                   fragmentClass = ProfileFragment.class;

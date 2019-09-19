@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -75,7 +74,6 @@ abstract class _FeedBaseFragment extends Fragment
 
   abstract String getDecodedURL();
 
-  @UiThread
   @Override
   public void onRefresh() {
     swipeRefreshLayout.setRefreshing(true);
@@ -83,8 +81,7 @@ abstract class _FeedBaseFragment extends Fragment
     threadPoolExecutor.execute(() -> {
       try (final Response response = activity.getOkHttpClient().newCall(
               new Request.Builder().url(getDecodedURL()).build()).execute()) {
-        final String result = Objects.requireNonNull(
-                response.body()).string();
+        final String result = Objects.requireNonNull(response.body()).string();
         activity.runOnUiThread(() -> textView.setText(result));
 
       } catch (final UnknownHostException e) {

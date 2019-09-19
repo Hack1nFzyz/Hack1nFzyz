@@ -51,7 +51,7 @@ public abstract class _BaseActivity extends AppCompatActivity {
   public static  ThreadPoolExecutor threadPoolExecutor;
   private static Interceptor        removeHeadersInterceptor;
   private        CookieJar          cookieJar;
-  public         OkHttpClient       okHttpClient;
+  private        OkHttpClient       okHttpClient;
 
   @Override
   protected void onCreate(@Nullable final Bundle savedInstanceState) {
