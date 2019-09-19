@@ -1,6 +1,5 @@
 package net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.feed;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,13 +17,15 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener;
 
 import net.fzyz.jerryc05.fzyz_app.R;
+import net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity;
 
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.Objects;
 
 import okhttp3.Request;
 import okhttp3.Response;
 
-import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.OkHttpClientLazyLoader.okHttpClient;
 import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.threadPoolExecutor;
 
 abstract class _FeedBaseFragment extends Fragment
@@ -32,7 +33,7 @@ abstract class _FeedBaseFragment extends Fragment
 
   private TextView           textView;
   private SwipeRefreshLayout swipeRefreshLayout;
-  private Activity           activity;
+  private _BaseActivity      activity;
 
   @Nullable
   @Override
@@ -63,7 +64,7 @@ abstract class _FeedBaseFragment extends Fragment
   @WorkerThread
   private void initSwipeRefreshLayout() {
     while (activity == null)
-      activity = getActivity();
+      activity = (_BaseActivity) getActivity();
     activity.runOnUiThread(() -> {
       swipeRefreshLayout.setOnRefreshListener(this);
       swipeRefreshLayout.setColorSchemeColors(
@@ -80,15 +81,22 @@ abstract class _FeedBaseFragment extends Fragment
     swipeRefreshLayout.setRefreshing(true);
 
     threadPoolExecutor.execute(() -> {
-      try (final Response response = okHttpClient.newCall(
+      try (final Response response = activity.getOkHttpClient().newCall(
               new Request.Builder().url(getDecodedURL()).build()).execute()) {
         final String result = Objects.requireNonNull(
                 response.body()).string();
         activity.runOnUiThread(() -> textView.setText(result));
 
-      } catch (Exception e) {
-        activity.runOnUiThread(() -> Toast.makeText(activity,
-                e.toString(), Toast.LENGTH_LONG).show());
+      } catch (final UnknownHostException e) {
+        activity.runOnUiThread(() -> Toast.makeText(activity.getApplicationContext(),
+                "Wait... Did you connect to the internet?", Toast.LENGTH_LONG).show());
+
+      } catch (final SocketTimeoutException e) {
+        activity.runOnUiThread(() -> Toast.makeText(activity.getApplicationContext(),
+                "Wait... Do you have a stable internet connection?", Toast.LENGTH_LONG).show());
+
+      } catch (final Exception e) {
+        throw new IllegalStateException(e);
       }
 
       activity.runOnUiThread(() -> swipeRefreshLayout.setRefreshing(false));

@@ -1,6 +1,5 @@
 package net.fzyz.jerryc05.fzyz_app.ui.activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
@@ -22,7 +21,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -50,8 +48,10 @@ public abstract class _BaseActivity extends AppCompatActivity {
 
   private static final String TAG = "_BaseActivity";
 
-  public static ThreadPoolExecutor      threadPoolExecutor;
-  public static WeakReference<Activity> activityWeakReference;
+  public static  ThreadPoolExecutor threadPoolExecutor;
+  private static Interceptor        removeHeadersInterceptor;
+  private        CookieJar          cookieJar;
+  public         OkHttpClient       okHttpClient;
 
   @Override
   protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -60,8 +60,6 @@ public abstract class _BaseActivity extends AppCompatActivity {
     AppCompatDelegate.setDefaultNightMode(
             AppCompatDelegate.MODE_NIGHT_AUTO_TIME);
     initThreadPoolExecutor();
-    if (activityWeakReference == null)
-      activityWeakReference = new WeakReference<>(this);
   }
 
   @Override
@@ -75,70 +73,70 @@ public abstract class _BaseActivity extends AppCompatActivity {
     super.onDestroy();
   }
 
-  public static final class OkHttpClientLazyLoader {
-    private static final Interceptor removeHeadersInterceptor = chain ->
+  private static Interceptor getRemoveHeadersInterceptor() {
+    if (removeHeadersInterceptor != null) return removeHeadersInterceptor;
+
+    removeHeadersInterceptor = chain ->
             chain.proceed(chain.request().newBuilder()
                     .removeHeader("User-Agent")
                     .removeHeader("Connection")
                     .build());
+    return removeHeadersInterceptor;
+  }
 
-    private static final CookieJar cookieJar = new CookieJar() {
+  private CookieJar getCookieJar() {
+    if (cookieJar != null) return cookieJar;
+
+    cookieJar = new CookieJar() {
       private static final String COOKIES_FILENAME = "sys_network_cookies.gz";
 
       @Override
       public void saveFromResponse(@NonNull final HttpUrl url,
                                    @NonNull final List<Cookie> cookies) {
-        if (!cookies.isEmpty()) {
-          final EArrayMap<String, EArrayMap
-                  <String, EOkHttp3Cookie>> allCookiesArrayMap =
-                  new EArrayMap<>(1);
+        if (cookies.isEmpty()) return;
 
-          final EArrayMap<String, EOkHttp3Cookie>
-                  existingExternalizableOkHttp3Cookies = allCookiesArrayMap.get(url.host());
-          final EArrayMap<String, EOkHttp3Cookie>
-                  cookiesExternalizableArrayMap =
-                  existingExternalizableOkHttp3Cookies != null
-                          ? existingExternalizableOkHttp3Cookies
-                          : new EArrayMap<>(cookies.size());
+        final EArrayMap<String, EArrayMap
+                <String, EOkHttp3Cookie>> allCookiesArrayMap =
+                new EArrayMap<>(1);
 
-          for (Cookie cookie : cookies)
-            cookiesExternalizableArrayMap.put(
-                    cookie.name(), EOkHttp3Cookie.of(cookie));
-          allCookiesArrayMap.put(url.host(), cookiesExternalizableArrayMap);
+        final EArrayMap<String, EOkHttp3Cookie>
+                existingExternalizableOkHttp3Cookies = allCookiesArrayMap.get(url.host());
+        final EArrayMap<String, EOkHttp3Cookie>
+                cookiesExternalizableArrayMap =
+                existingExternalizableOkHttp3Cookies != null
+                        ? existingExternalizableOkHttp3Cookies
+                        : new EArrayMap<>(cookies.size());
 
-          Log.w(TAG, "saveFromResponse: " + Arrays.toString(Objects.requireNonNull(
-                  allCookiesArrayMap.get(url.host())).values().toArray(new EOkHttp3Cookie[0])));
+        for (Cookie cookie : cookies)
+          cookiesExternalizableArrayMap.put(
+                  cookie.name(), EOkHttp3Cookie.of(cookie));
+        allCookiesArrayMap.put(url.host(), cookiesExternalizableArrayMap);
 
-          final Activity activity = activityWeakReference.get();
-          if (activity == null) return;
+        Log.w(TAG, "saveFromResponse: " + Arrays.toString(Objects.requireNonNull(
+                allCookiesArrayMap.get(url.host())).values().toArray(new EOkHttp3Cookie[0])));
 
-          try (final FileOutputStream fileOS = activity.getApplicationContext()
-                  .openFileOutput(COOKIES_FILENAME, MODE_PRIVATE);
-               final GZIPOutputStream gzipOS = new GZIPOutputStream(fileOS);
-               final ObjectOutputStream objectOS = new ObjectOutputStream(gzipOS)) {
+        try (final FileOutputStream fileOS = getApplicationContext()
+                .openFileOutput(COOKIES_FILENAME, MODE_PRIVATE);
+             final GZIPOutputStream gzipOS = new GZIPOutputStream(fileOS);
+             final ObjectOutputStream objectOS = new ObjectOutputStream(gzipOS)) {
 
-            objectOS.writeObject(allCookiesArrayMap);
-            Log.w(TAG, "saveFromResponse: Wrote to file!");
+          objectOS.writeObject(allCookiesArrayMap);
+          Log.w(TAG, "saveFromResponse: Wrote to file!");
 
-          } catch (final Exception e) {
-            Log.e(TAG, "saveFromResponse: ", e);
-            activity.runOnUiThread(() -> Toast.makeText(activity.getApplicationContext(),
-                    e.toString(), Toast.LENGTH_LONG).show());
-          }
+        } catch (final Exception e) {
+          Log.e(TAG, "saveFromResponse: ", e);
+          runOnUiThread(() -> Toast.makeText(getApplicationContext(),
+                  e.toString(), Toast.LENGTH_LONG).show());
         }
       }
 
       @NonNull
       @Override
       public List<Cookie> loadForRequest(@NonNull final HttpUrl url) {
-        final Activity activity = activityWeakReference.get();
-        if (activity == null) return emptyList();
-
-        final File cookiesFile =
-                new File(activity.getFilesDir(), COOKIES_FILENAME);
+        final File                                           cookiesFile        = new File(getFilesDir(), COOKIES_FILENAME);
         EArrayMap<String, EArrayMap<String, EOkHttp3Cookie>> allCookiesArrayMap = null;
 
-        try (final FileInputStream fileIS = activity.getApplicationContext()
+        try (final FileInputStream fileIS = getApplicationContext()
                 .openFileInput(COOKIES_FILENAME);
              final GZIPInputStream gzipIS = new GZIPInputStream(fileIS);
              final ObjectInputStream objectIS = new ObjectInputStream(gzipIS)) {
@@ -151,7 +149,7 @@ public abstract class _BaseActivity extends AppCompatActivity {
         } catch (final Exception e) {
           Log.e(TAG, "loadForRequest: ", e);
           if (!(e instanceof FileNotFoundException))
-            activity.runOnUiThread(() -> Toast.makeText(activity.getApplicationContext(),
+            runOnUiThread(() -> Toast.makeText(getApplicationContext(),
                     e.toString(), Toast.LENGTH_LONG).show());
         }
         if (allCookiesArrayMap == null) return emptyList();
@@ -168,11 +166,17 @@ public abstract class _BaseActivity extends AppCompatActivity {
         return cookieList;
       }
     };
+    return cookieJar;
+  }
 
-    public static final OkHttpClient okHttpClient = new OkHttpClient.Builder()
-            .addNetworkInterceptor(removeHeadersInterceptor)
-            .cookieJar(cookieJar)
+  public OkHttpClient getOkHttpClient() {
+    if (okHttpClient != null) return okHttpClient;
+
+    okHttpClient = new OkHttpClient.Builder()
+            .addNetworkInterceptor(getRemoveHeadersInterceptor())
+            .cookieJar(getCookieJar())
             .build();
+    return okHttpClient;
   }
 
   private static void initThreadPoolExecutor() {
