@@ -90,11 +90,11 @@ public class FeedFragment extends Fragment {
           return fragmentClasses.length;
         }
       };
-      viewPager.setAdapter(adapter);
 
       while (activity == null)
         activity = getActivity();
       activity.runOnUiThread(() -> tabLayout.setupWithViewPager(viewPager));
+      activity.runOnUiThread(() -> viewPager.setAdapter(adapter));
     });
   }
 }

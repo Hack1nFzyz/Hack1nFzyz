@@ -86,17 +86,19 @@ abstract class _FeedBaseFragment extends Fragment
 
       } catch (final UnknownHostException e) {
         activity.runOnUiThread(() -> Toast.makeText(activity.getApplicationContext(),
-                "Wait... Did you connect to the internet?", Toast.LENGTH_LONG).show());
+                "Wait... Did you connect to the internet?\n"
+                        + e.getMessage(), Toast.LENGTH_LONG).show());
 
       } catch (final SocketTimeoutException e) {
         activity.runOnUiThread(() -> Toast.makeText(activity.getApplicationContext(),
-                "Wait... Do you have a stable internet connection?", Toast.LENGTH_LONG).show());
+                "Wait... Do you have a stable internet connection?\n"
+                        + e.getMessage(), Toast.LENGTH_LONG).show());
 
       } catch (final Exception e) {
         throw new IllegalStateException(e);
+      } finally {
+        activity.runOnUiThread(() -> swipeRefreshLayout.setRefreshing(false));
       }
-
-      activity.runOnUiThread(() -> swipeRefreshLayout.setRefreshing(false));
     });
   }
 }

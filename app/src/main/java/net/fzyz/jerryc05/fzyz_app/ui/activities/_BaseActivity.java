@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.collection.ArraySet;
 
 import net.fzyz.jerryc05.fzyz_app.core.utils.EArrayMap;
 import net.fzyz.jerryc05.fzyz_app.core.utils.EOkHttp3Cookie;
@@ -19,8 +20,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,11 +35,16 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import okhttp3.Call;
+import okhttp3.Connection;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
+import okhttp3.Dns;
+import okhttp3.EventListener;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
 
 import static android.util.Base64.DEFAULT;
 import static android.util.Base64.URL_SAFE;
@@ -50,7 +60,6 @@ public abstract class _BaseActivity extends AppCompatActivity {
 
   public static  ThreadPoolExecutor threadPoolExecutor;
   private static Interceptor        removeHeadersInterceptor;
-  private        CookieJar          cookieJar;
   private        OkHttpClient       okHttpClient;
 
   @Override
@@ -84,97 +93,142 @@ public abstract class _BaseActivity extends AppCompatActivity {
     return removeHeadersInterceptor;
   }
 
-  private CookieJar getCookieJar() {
-    if (cookieJar != null) return cookieJar;
-
-    cookieJar = new CookieJar() {
-      private static final String COOKIES_FILENAME = "sys_network_cookies.gz";
-
-      @Override
-      public void saveFromResponse(@NonNull final HttpUrl url,
-                                   @NonNull final List<Cookie> cookies) {
-        if (cookies.isEmpty()) return;
-
-        final EArrayMap<String, EArrayMap
-                <String, EOkHttp3Cookie>> allCookiesArrayMap =
-                new EArrayMap<>(1);
-
-        final EArrayMap<String, EOkHttp3Cookie>
-                existingExternalizableOkHttp3Cookies = allCookiesArrayMap.get(url.host());
-        final EArrayMap<String, EOkHttp3Cookie>
-                cookiesExternalizableArrayMap =
-                existingExternalizableOkHttp3Cookies != null
-                        ? existingExternalizableOkHttp3Cookies
-                        : new EArrayMap<>(cookies.size());
-
-        for (Cookie cookie : cookies)
-          cookiesExternalizableArrayMap.put(
-                  cookie.name(), EOkHttp3Cookie.of(cookie));
-        allCookiesArrayMap.put(url.host(), cookiesExternalizableArrayMap);
-
-        Log.w(TAG, "saveFromResponse: " + Arrays.toString(Objects.requireNonNull(
-                allCookiesArrayMap.get(url.host())).values().toArray(new EOkHttp3Cookie[0])));
-
-        try (final FileOutputStream fileOS = getApplicationContext()
-                .openFileOutput(COOKIES_FILENAME, MODE_PRIVATE);
-             final GZIPOutputStream gzipOS = new GZIPOutputStream(fileOS);
-             final ObjectOutputStream objectOS = new ObjectOutputStream(gzipOS)) {
-
-          objectOS.writeObject(allCookiesArrayMap);
-          Log.w(TAG, "saveFromResponse: Wrote to file!");
-
-        } catch (final Exception e) {
-          Log.e(TAG, "saveFromResponse: ", e);
-          runOnUiThread(() -> Toast.makeText(getApplicationContext(),
-                  e.toString(), Toast.LENGTH_LONG).show());
-        }
-      }
-
-      @NonNull
-      @Override
-      public List<Cookie> loadForRequest(@NonNull final HttpUrl url) {
-        final File                                           cookiesFile        = new File(getFilesDir(), COOKIES_FILENAME);
-        EArrayMap<String, EArrayMap<String, EOkHttp3Cookie>> allCookiesArrayMap = null;
-
-        try (final FileInputStream fileIS = getApplicationContext()
-                .openFileInput(COOKIES_FILENAME);
-             final GZIPInputStream gzipIS = new GZIPInputStream(fileIS);
-             final ObjectInputStream objectIS = new ObjectInputStream(gzipIS)) {
-
-          //noinspection unchecked
-          allCookiesArrayMap = (EArrayMap<String, EArrayMap<String, EOkHttp3Cookie>>)
-                  objectIS.readObject();
-          Log.w(TAG, "loadForRequest: Loaded from file!");
-
-        } catch (final Exception e) {
-          Log.e(TAG, "loadForRequest: ", e);
-          if (!(e instanceof FileNotFoundException))
-            runOnUiThread(() -> Toast.makeText(getApplicationContext(),
-                    e.toString(), Toast.LENGTH_LONG).show());
-        }
-        if (allCookiesArrayMap == null) return emptyList();
-
-        final EArrayMap<String, EOkHttp3Cookie> cookiesArrayMap =
-                allCookiesArrayMap.get(url.host());
-        if (cookiesArrayMap == null) return emptyList();
-
-        Log.w(TAG, "loadForRequest: " + Arrays.toString(Objects.requireNonNull(
-                allCookiesArrayMap.get(url.host())).values().toArray(new EOkHttp3Cookie[0])));
-        ArrayList<Cookie> cookieList = new ArrayList<>(cookiesArrayMap.size());
-        for (EOkHttp3Cookie eCookie : cookiesArrayMap.values())
-          cookieList.add(eCookie.toOkHttp3Cookie());
-        return cookieList;
-      }
-    };
-    return cookieJar;
-  }
-
   public OkHttpClient getOkHttpClient() {
     if (okHttpClient != null) return okHttpClient;
 
     okHttpClient = new OkHttpClient.Builder()
             .addNetworkInterceptor(getRemoveHeadersInterceptor())
-            .cookieJar(getCookieJar())
+            .cookieJar(new CookieJar() {
+              private static final String COOKIES_FILENAME = "sys_network_cookies.gz";
+
+              @Override
+              public void saveFromResponse(@NonNull final HttpUrl url,
+                                           @NonNull final List<Cookie> cookies) {
+                if (cookies.isEmpty()) return;
+
+                final EArrayMap<String, EArrayMap
+                        <String, EOkHttp3Cookie>> allCookiesArrayMap =
+                        new EArrayMap<>(1);
+
+                final EArrayMap<String, EOkHttp3Cookie>
+                        existingExternalizableOkHttp3Cookies = allCookiesArrayMap.get(url.host());
+                final EArrayMap<String, EOkHttp3Cookie>
+                        cookiesExternalizableArrayMap =
+                        existingExternalizableOkHttp3Cookies != null
+                                ? existingExternalizableOkHttp3Cookies
+                                : new EArrayMap<>(cookies.size());
+
+                for (Cookie cookie : cookies)
+                  cookiesExternalizableArrayMap.put(
+                          cookie.name(), EOkHttp3Cookie.of(cookie));
+                allCookiesArrayMap.put(url.host(), cookiesExternalizableArrayMap);
+
+                Log.w(TAG, "saveFromResponse: " + Arrays.toString(Objects.requireNonNull(
+                        allCookiesArrayMap.get(url.host())).values().toArray(new EOkHttp3Cookie[0])));
+
+                try (final FileOutputStream fileOS = getApplicationContext()
+                        .openFileOutput(COOKIES_FILENAME, MODE_PRIVATE);
+                     final GZIPOutputStream gzipOS = new GZIPOutputStream(fileOS);
+                     final ObjectOutputStream objectOS = new ObjectOutputStream(gzipOS)) {
+
+                  objectOS.writeObject(allCookiesArrayMap);
+                  Log.w(TAG, "saveFromResponse: Wrote to file!");
+
+                } catch (final Exception e) {
+                  Log.e(TAG, "saveFromResponse: ", e);
+                  runOnUiThread(() -> Toast.makeText(getApplicationContext(),
+                          e.toString(), Toast.LENGTH_LONG).show());
+                }
+              }
+
+              @NonNull
+              @Override
+              public List<Cookie> loadForRequest(@NonNull final HttpUrl url) {
+                final File                                                 cookiesFile = new File(getFilesDir(), COOKIES_FILENAME);
+                final EArrayMap<String, EArrayMap<String, EOkHttp3Cookie>> allCookiesArrayMap;
+
+                try (final FileInputStream fileIS = getApplicationContext()
+                        .openFileInput(COOKIES_FILENAME);
+                     final GZIPInputStream gzipIS = new GZIPInputStream(fileIS);
+                     final ObjectInputStream objectIS = new ObjectInputStream(gzipIS)) {
+
+                  //noinspection unchecked
+                  allCookiesArrayMap = (EArrayMap) objectIS.readObject();
+                  Log.w(TAG, "loadForRequest: Loaded from file!");
+
+                } catch (final Exception e) {
+                  Log.w(TAG, "loadForRequest: ", e);
+                  if (!(e instanceof FileNotFoundException))
+                    runOnUiThread(() -> Toast.makeText(getApplicationContext(),
+                            e.toString(), Toast.LENGTH_LONG).show());
+                  return emptyList();
+                }
+                final EArrayMap<String, EOkHttp3Cookie> cookiesArrayMap =
+                        allCookiesArrayMap.get(url.host());
+                if (cookiesArrayMap == null) return emptyList();
+
+                Log.w(TAG, "loadForRequest: " + Arrays.toString(Objects.requireNonNull(
+                        allCookiesArrayMap.get(url.host())).values().toArray(new EOkHttp3Cookie[0])));
+                ArrayList<Cookie> cookieList = new ArrayList<>(cookiesArrayMap.size());
+                for (EOkHttp3Cookie eCookie : cookiesArrayMap.values())
+                  cookieList.add(eCookie.toOkHttp3Cookie());
+                return cookieList;
+              }
+            })
+            .dns(hostname -> {
+              if (!hostname.contains("fzyz.net")) return Dns.SYSTEM.lookup(hostname);
+
+              final ArraySet<InetAddress> set = new ArraySet<>(3);
+              set.add(InetAddress.getByName("172.0.0.15"));
+              set.add(InetAddress.getByName("110.90.118.123"));
+              set.addAll(Dns.SYSTEM.lookup("fzyz.net"));
+              return new ArrayList<>(set);
+            }).eventListener(new EventListener() {
+              @Override
+              public void connectStart(Call call, InetSocketAddress inetSocketAddress, Proxy proxy) {
+                Log.w(TAG, "connectStart() called with: call = [" + call + "], inetSocketAddress = [" + inetSocketAddress + "], proxy = [" + proxy + "]");
+              }
+
+              @Override
+              public void connectEnd(Call call, InetSocketAddress inetSocketAddress, Proxy proxy, @Nullable Protocol protocol) {
+                Log.w(TAG, "connectEnd() called with: call = [" + call + "], inetSocketAddress = [" + inetSocketAddress + "], proxy = [" + proxy + "], protocol = [" + protocol + "]");
+              }
+
+              @Override
+              public void connectionAcquired(Call call, Connection connection) {
+                Log.w(TAG, "connectionAcquired() called with: call = [" + call + "], connection = [" + connection + "]");
+              }
+
+              @Override
+              public void connectionReleased(Call call, Connection connection) {
+                super.connectionReleased(call, connection);
+              }
+
+              @Override
+              public void connectFailed(Call call, InetSocketAddress inetSocketAddress, Proxy proxy, @Nullable Protocol protocol, IOException ioe) {
+                Log.w(TAG, "connectFailed() called with: call = [" + call + "], inetSocketAddress = [" + inetSocketAddress + "], proxy = [" + proxy + "], protocol = [" + protocol + "], ioe = [" + ioe + "]");
+              }
+
+              @Override
+              public void requestFailed(Call call, IOException ioe) {
+                Log.w(TAG, "requestFailed() called with: call = [" + call + "], ioe = [" + ioe + "]");
+              }
+
+              @Override
+              public void responseFailed(Call call, IOException ioe) {
+                Log.w(TAG, "responseFailed() called with: call = [" + call + "], ioe = [" + ioe + "]");
+              }
+
+              @Override
+              public void callEnd(Call call) {
+                Log.w(TAG, "callEnd() called with: call = [" + call + "]");
+              }
+
+              @Override
+              public void callFailed(Call call, IOException ioe) {
+                Log.w(TAG, "callFailed() called with: call = [" + call + "], ioe = [" + ioe + "]");
+              }
+            })
             .build();
     return okHttpClient;
   }

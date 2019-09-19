@@ -20,5 +20,6 @@
 *.lnk
 *.js
 *.jsp
-/*.jks
+*.jks
 *.apk
+temp
