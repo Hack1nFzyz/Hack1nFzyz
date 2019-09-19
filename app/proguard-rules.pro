@@ -42,6 +42,10 @@
 -keepclasseswithmembers class * extends androidx.fragment.app.Fragment {
     public <init>();
 }
+# For deserializing objects.
+-keepclasseswithmembers class * extends java.io.Externalizable {
+    public <init>();
+}
 
 -assumenosideeffects class android.util.Log {*;}
 

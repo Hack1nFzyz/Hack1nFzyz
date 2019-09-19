@@ -11,7 +11,8 @@ import okhttp3.Cookie;
 
 public final class EOkHttp3Cookie implements Externalizable {
 
-  private Cookie mCookie;
+  private static final long   serialVersionUID = 1;
+  private              Cookie mCookie;
 
   @SuppressWarnings("WeakerAccess")
   public EOkHttp3Cookie() {

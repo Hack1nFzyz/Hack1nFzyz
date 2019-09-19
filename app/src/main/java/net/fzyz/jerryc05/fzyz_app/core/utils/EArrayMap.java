@@ -17,7 +17,8 @@ import java.util.Map;
 public final class EArrayMap<K extends Serializable, V extends Serializable>
         implements Externalizable {
 
-  private final ArrayMap<K, V> mArrayMap;
+  private static final long           serialVersionUID = 1;
+  private final        ArrayMap<K, V> mArrayMap;
 
   public EArrayMap() {
     this(1);

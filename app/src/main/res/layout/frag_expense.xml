@@ -1,10 +1,78 @@
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/text_expense"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginEnd="8dp"
-    android:text="@string/nothing_here"
-    android:textAlignment="center"
-    android:textSize="20sp" />
+    android:layout_height="match_parent">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/frag_expense_username_textLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/frag_expense_login_text_margin"
+        android:hint="@string/username"
+        android:layout_marginTop="10dp"
+        app:counterEnabled="true"
+        app:counterMaxLength="11"
+        app:endIconMode="clear_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/frag_expense_username_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionNext"
+            android:inputType="number" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/frag_expense_password_textLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/frag_expense_login_text_margin"
+        android:hint="@string/password"
+        app:endIconMode="password_toggle"
+        app:errorEnabled="true"
+        app:layout_constraintEnd_toEndOf="@+id/frag_expense_username_textLayout"
+        app:layout_constraintStart_toStartOf="@+id/frag_expense_username_textLayout"
+        app:layout_constraintTop_toBottomOf="@+id/frag_expense_username_textLayout"
+        app:layout_constraintVertical_bias=".05">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/frag_expense_password_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionDone"
+            android:inputType="textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/frag_expense_login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/login"
+        app:layout_constraintBottom_toBottomOf="@+id/frag_expense_password_textLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/frag_expense_username_textLayout"
+        app:layout_constraintTop_toTopOf="@+id/frag_expense_username_textLayout" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frag_expense_password_textLayout">
+
+        <TextView
+            android:id="@+id/text_expense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/nothing_here"
+            android:textAlignment="center"
+            android:textSize="20sp" />
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

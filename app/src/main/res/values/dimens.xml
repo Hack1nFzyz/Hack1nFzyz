@@ -7,4 +7,5 @@
 
     <dimen name="frag_profile_login_avatar_diameter">100dp</dimen>
     <dimen name="frag_profile_login_text_margin">50dp</dimen>
+    <dimen name="frag_expense_login_text_margin">100dp</dimen>
 </resources>
