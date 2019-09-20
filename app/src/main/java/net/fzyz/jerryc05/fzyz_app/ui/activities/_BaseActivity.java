@@ -15,17 +15,16 @@ import androidx.collection.ArraySet;
 
 import net.fzyz.jerryc05.fzyz_app.core.utils.EArrayMap;
 import net.fzyz.jerryc05.fzyz_app.core.utils.EOkHttp3Cookie;
+import net.fzyz.jerryc05.fzyz_app.core.utils.ToastUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,16 +34,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import okhttp3.Call;
-import okhttp3.Connection;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.Dns;
-import okhttp3.EventListener;
 import okhttp3.HttpUrl;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Protocol;
 
 import static android.util.Base64.DEFAULT;
 import static android.util.Base64.URL_SAFE;
@@ -58,9 +52,8 @@ public abstract class _BaseActivity extends AppCompatActivity {
 
   private static final String TAG = "_BaseActivity";
 
-  public static  ThreadPoolExecutor threadPoolExecutor;
-  private static Interceptor        removeHeadersInterceptor;
-  private        OkHttpClient       okHttpClient;
+  public static ThreadPoolExecutor threadPoolExecutor;
+  private       OkHttpClient       okHttpClient;
 
   @Override
   protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -82,22 +75,28 @@ public abstract class _BaseActivity extends AppCompatActivity {
     super.onDestroy();
   }
 
-  private static Interceptor getRemoveHeadersInterceptor() {
-    if (removeHeadersInterceptor != null) return removeHeadersInterceptor;
-
-    removeHeadersInterceptor = chain ->
-            chain.proceed(chain.request().newBuilder()
-                    .removeHeader("User-Agent")
-                    .removeHeader("Connection")
-                    .build());
-    return removeHeadersInterceptor;
-  }
-
   public OkHttpClient getOkHttpClient() {
     if (okHttpClient != null) return okHttpClient;
 
     okHttpClient = new OkHttpClient.Builder()
-            .addNetworkInterceptor(getRemoveHeadersInterceptor())
+            .addInterceptor(chain -> {
+              final int MAX_ATTEMPT = 3;
+
+              for (int attemptCountdown = MAX_ATTEMPT; ; )
+                try {
+                  return chain.proceed(chain.request());
+                } catch (final SocketTimeoutException e) {
+                  attemptCountdown--;
+                  Log.w(TAG, "intercept: Retrying... attemptCountdown = " + attemptCountdown);
+                  if (attemptCountdown <= 1)
+                    return chain.proceed(chain.request());
+                }
+            })
+            .addNetworkInterceptor(chain ->
+                    chain.proceed(chain.request().newBuilder()
+                            .removeHeader("User-Agent")
+                            .removeHeader("Connection")
+                            .build()))
             .cookieJar(new CookieJar() {
               private static final String COOKIES_FILENAME = "sys_network_cookies.gz";
 
@@ -136,8 +135,7 @@ public abstract class _BaseActivity extends AppCompatActivity {
 
                 } catch (final Exception e) {
                   Log.e(TAG, "saveFromResponse: ", e);
-                  runOnUiThread(() -> Toast.makeText(getApplicationContext(),
-                          e.toString(), Toast.LENGTH_LONG).show());
+                  ToastUtils.showText(_BaseActivity.this, e.toString(), Toast.LENGTH_LONG);
                 }
               }
 
@@ -159,8 +157,8 @@ public abstract class _BaseActivity extends AppCompatActivity {
                 } catch (final Exception e) {
                   Log.w(TAG, "loadForRequest: ", e);
                   if (!(e instanceof FileNotFoundException))
-                    runOnUiThread(() -> Toast.makeText(getApplicationContext(),
-                            e.toString(), Toast.LENGTH_LONG).show());
+                    ToastUtils.showText(_BaseActivity.this,
+                            e.toString(), Toast.LENGTH_LONG);
                   return emptyList();
                 }
                 final EArrayMap<String, EOkHttp3Cookie> cookiesArrayMap =
@@ -169,66 +167,30 @@ public abstract class _BaseActivity extends AppCompatActivity {
 
                 Log.w(TAG, "loadForRequest: " + Arrays.toString(Objects.requireNonNull(
                         allCookiesArrayMap.get(url.host())).values().toArray(new EOkHttp3Cookie[0])));
-                ArrayList<Cookie> cookieList = new ArrayList<>(cookiesArrayMap.size());
+                final ArrayList<Cookie> cookieList = new ArrayList<>(cookiesArrayMap.size());
                 for (EOkHttp3Cookie eCookie : cookiesArrayMap.values())
                   cookieList.add(eCookie.toOkHttp3Cookie());
                 return cookieList;
               }
             })
             .dns(hostname -> {
-              if (!hostname.contains("fzyz.net")) return Dns.SYSTEM.lookup(hostname);
+              if (hostname.contains("fzyz.net")) {
+                final ArraySet<InetAddress> set = new ArraySet<>(2);
+                set.add(InetAddress.getByName("110.90.118.123"));
+                set.add(InetAddress.getByName("172.0.0.15"));
+                set.addAll(Dns.SYSTEM.lookup("fzyz.net"));
+                return new ArrayList<>(set);
 
-              final ArraySet<InetAddress> set = new ArraySet<>(3);
-              set.add(InetAddress.getByName("172.0.0.15"));
-              set.add(InetAddress.getByName("110.90.118.123"));
-              set.addAll(Dns.SYSTEM.lookup("fzyz.net"));
-              return new ArrayList<>(set);
-            }).eventListener(new EventListener() {
-              @Override
-              public void connectStart(Call call, InetSocketAddress inetSocketAddress, Proxy proxy) {
-                Log.w(TAG, "connectStart() called with: call = [" + call + "], inetSocketAddress = [" + inetSocketAddress + "], proxy = [" + proxy + "]");
-              }
+              } else if (hostname.contains("yidingyigou.net")) {
+                final ArraySet<InetAddress> set = new ArraySet<>(1);
+                set.add(InetAddress.getByName("27.155.99.126"));
+                set.addAll(Dns.SYSTEM.lookup("yidingyigou.net"));
+                return new ArrayList<>(set);
 
-              @Override
-              public void connectEnd(Call call, InetSocketAddress inetSocketAddress, Proxy proxy, @Nullable Protocol protocol) {
-                Log.w(TAG, "connectEnd() called with: call = [" + call + "], inetSocketAddress = [" + inetSocketAddress + "], proxy = [" + proxy + "], protocol = [" + protocol + "]");
-              }
-
-              @Override
-              public void connectionAcquired(Call call, Connection connection) {
-                Log.w(TAG, "connectionAcquired() called with: call = [" + call + "], connection = [" + connection + "]");
-              }
-
-              @Override
-              public void connectionReleased(Call call, Connection connection) {
-                super.connectionReleased(call, connection);
-              }
-
-              @Override
-              public void connectFailed(Call call, InetSocketAddress inetSocketAddress, Proxy proxy, @Nullable Protocol protocol, IOException ioe) {
-                Log.w(TAG, "connectFailed() called with: call = [" + call + "], inetSocketAddress = [" + inetSocketAddress + "], proxy = [" + proxy + "], protocol = [" + protocol + "], ioe = [" + ioe + "]");
-              }
-
-              @Override
-              public void requestFailed(Call call, IOException ioe) {
-                Log.w(TAG, "requestFailed() called with: call = [" + call + "], ioe = [" + ioe + "]");
-              }
-
-              @Override
-              public void responseFailed(Call call, IOException ioe) {
-                Log.w(TAG, "responseFailed() called with: call = [" + call + "], ioe = [" + ioe + "]");
-              }
-
-              @Override
-              public void callEnd(Call call) {
-                Log.w(TAG, "callEnd() called with: call = [" + call + "]");
-              }
-
-              @Override
-              public void callFailed(Call call, IOException ioe) {
-                Log.w(TAG, "callFailed() called with: call = [" + call + "], ioe = [" + ioe + "]");
-              }
+              } else
+                return Dns.SYSTEM.lookup(hostname);
             })
+            .readTimeout(2, SECONDS)
             .build();
     return okHttpClient;
   }

@@ -24,7 +24,8 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import net.fzyz.jerryc05.fzyz_app.R;
-import net.fzyz.jerryc05.fzyz_app.core.utils.Crypto;
+import net.fzyz.jerryc05.fzyz_app.core.utils.CryptoUtils;
+import net.fzyz.jerryc05.fzyz_app.core.utils.ToastUtils;
 import net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity;
 
 import org.json.JSONException;
@@ -122,9 +123,9 @@ public final class ExpenseFragment extends Fragment implements TextView.OnEditor
               .key("password").value(byteArrayToMD5(password.getBytes()))
               .key("uuid").value(getUUID(getActivityOfFragment().getApplicationContext()))
               .endObject().toString();
-      final String seq = new String(Crypto.getRandomKeyOf16());
-      final String req_params = Crypto.encrypt(
-              json.getBytes(), seq.getBytes(), Crypto.ALGORITHM_AES);
+      final String seq = new String(CryptoUtils.getRandomKeyOf16());
+      final String req_params = CryptoUtils.encrypt(
+              json.getBytes(), seq.getBytes(), CryptoUtils.ALGORITHM_AES);
 
       builder
               .add("req_params", req_params)
@@ -132,8 +133,7 @@ public final class ExpenseFragment extends Fragment implements TextView.OnEditor
 
     } catch (final JSONException e) {
       Log.e(TAG, "idPwdOToFormBodyBuilder: ", e);
-      getActivityOfFragment().runOnUiThread(() -> Toast.makeText(
-              activity.getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show());
+      ToastUtils.showText(getActivityOfFragment(), e.toString(), Toast.LENGTH_LONG);
     }
     return builder;
   }

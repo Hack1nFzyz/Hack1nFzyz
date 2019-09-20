@@ -26,6 +26,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import net.fzyz.jerryc05.fzyz_app.R;
+import net.fzyz.jerryc05.fzyz_app.core.utils.ToastUtils;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.AcademicFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.ExpenseFragment;
 import net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar.FeedFragment;
@@ -134,8 +135,8 @@ public final class MainActivity extends _BaseActivity {
         final DialogInterface.OnClickListener onClickListener = (dialog, which) -> {
           Log.w(TAG, "startBiometricAuthentication: Negative Button Pressed!");
 
-          runOnUiThread(() -> Toast.makeText(this,
-                  "Negative Button Pressed!", Toast.LENGTH_LONG).show());
+          ToastUtils.showText(this,
+                  "Negative Button Pressed!", Toast.LENGTH_LONG);
         };
         builder.setNegativeButton("NegativeButtonText", threadPoolExecutor, onClickListener);
       }
@@ -145,8 +146,7 @@ public final class MainActivity extends _BaseActivity {
               new BiometricPrompt.AuthenticationCallback() {
                 private void logAndToastResult(@NonNull final String err) {
                   Log.w(TAG, err);
-                  runOnUiThread(() -> Toast.makeText(
-                          getApplicationContext(), err, Toast.LENGTH_LONG).show());
+                  ToastUtils.showText(MainActivity.this, err, Toast.LENGTH_LONG);
                 }
 
                 @Override

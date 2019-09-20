@@ -1,5 +1,6 @@
 package net.fzyz.jerryc05.fzyz_app.core.utils;
 
+import android.annotation.SuppressLint;
 import android.util.Base64;
 
 import androidx.annotation.NonNull;
@@ -18,7 +19,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-public final class Crypto {
+public final class CryptoUtils {
   //  private static final String  ALGORITHM   = "AES";
 //  public static final  int     Base64_FLAG = 2;
   private static final char[] KEY_CHARS = new char[]{
@@ -96,7 +97,7 @@ public final class Crypto {
                                 @NonNull final SecretKey SECRET_KEY) {
     String s;
     try {
-      final Cipher instance = Cipher.getInstance("AES/ECB/PKCS5Padding");
+      @SuppressLint("GetInstance") final Cipher instance = Cipher.getInstance("AES/ECB/PKCS5Padding");
       instance.init(1, SECRET_KEY);
       s = new String(Base64.encode(instance.doFinal(DATA), 2));
     } catch (BadPaddingException | InvalidKeyException | IllegalBlockSizeException | NoSuchAlgorithmException | NoSuchPaddingException ex) {

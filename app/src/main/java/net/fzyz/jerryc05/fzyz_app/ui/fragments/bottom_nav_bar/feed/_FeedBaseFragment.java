@@ -16,6 +16,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener;
 
 import net.fzyz.jerryc05.fzyz_app.R;
+import net.fzyz.jerryc05.fzyz_app.core.utils.ToastUtils;
 import net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity;
 
 import java.net.SocketTimeoutException;
@@ -85,14 +86,14 @@ abstract class _FeedBaseFragment extends Fragment
         activity.runOnUiThread(() -> textView.setText(result));
 
       } catch (final UnknownHostException e) {
-        activity.runOnUiThread(() -> Toast.makeText(activity.getApplicationContext(),
-                "Wait... Did you connect to the internet?\n"
-                        + e.getMessage(), Toast.LENGTH_LONG).show());
+        ToastUtils.showText(activity,
+                "Unknown Host!\nDid you connect to the internet?\n"
+                        + e.getMessage(), Toast.LENGTH_LONG);
 
       } catch (final SocketTimeoutException e) {
-        activity.runOnUiThread(() -> Toast.makeText(activity.getApplicationContext(),
-                "Wait... Do you have a stable internet connection?\n"
-                        + e.getMessage(), Toast.LENGTH_LONG).show());
+        ToastUtils.showText(activity,
+                "Socket Timeout!\nDo you have a stable internet connection?\n"
+                        + e.getMessage(), Toast.LENGTH_LONG);
 
       } catch (final Exception e) {
         throw new IllegalStateException(e);
