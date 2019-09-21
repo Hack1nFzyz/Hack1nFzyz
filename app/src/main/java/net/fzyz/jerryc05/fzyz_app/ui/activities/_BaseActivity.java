@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.collection.ArraySet;
 
 import net.fzyz.jerryc05.fzyz_app.core.utils.EArrayMap;
 import net.fzyz.jerryc05.fzyz_app.core.utils.EOkHttp3Cookie;
@@ -24,6 +23,8 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,11 +35,14 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import okhttp3.Call;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.Dns;
+import okhttp3.EventListener;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
 
 import static android.util.Base64.DEFAULT;
 import static android.util.Base64.URL_SAFE;
@@ -175,22 +179,26 @@ public abstract class _BaseActivity extends AppCompatActivity {
             })
             .dns(hostname -> {
               if (hostname.contains("fzyz.net")) {
-                final ArraySet<InetAddress> set = new ArraySet<>(2);
-                set.add(InetAddress.getByName("110.90.118.123"));
-                set.add(InetAddress.getByName("172.0.0.15"));
-                set.addAll(Dns.SYSTEM.lookup("fzyz.net"));
-                return new ArrayList<>(set);
-
-              } else if (hostname.contains("yidingyigou.net")) {
-                final ArraySet<InetAddress> set = new ArraySet<>(1);
-                set.add(InetAddress.getByName("27.155.99.126"));
-                set.addAll(Dns.SYSTEM.lookup("yidingyigou.net"));
-                return new ArrayList<>(set);
+                final List<InetAddress> sysResult =
+                        Dns.SYSTEM.lookup("fzyz.net");
+                final ArrayList<InetAddress> inetAddresses =
+                        new ArrayList<>(sysResult.size() + 1);
+                inetAddresses.add(InetAddress.getByName("110.90.118.123"));
+                return inetAddresses;
 
               } else
                 return Dns.SYSTEM.lookup(hostname);
             })
             .readTimeout(2, SECONDS)
+            .eventListener(new EventListener() {
+              @Override
+              public void connectEnd(Call call, InetSocketAddress inetSocketAddress,
+                                     Proxy proxy, Protocol protocol) {
+                Log.w(TAG, "connectEnd() called with: call = [" + call
+                        + "], inetSocketAddress = [" + inetSocketAddress
+                        + "], proxy = [" + proxy + "], protocol = [" + protocol + "]");
+              }
+            })
             .build();
     return okHttpClient;
   }

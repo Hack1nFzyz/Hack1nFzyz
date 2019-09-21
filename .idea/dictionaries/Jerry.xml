@@ -2,6 +2,9 @@
   <dictionary name="Jerry">
     <words>
       <w>affero</w>
+      <w>alipay</w>
+      <w>appid</w>
+      <w>chargefee</w>
       <w>chuan</w>
       <w>chuang</w>
       <w>codacy</w>
@@ -9,10 +12,13 @@
       <w>feng</w>
       <w>focss</w>
       <w>fzyz</w>
+      <w>inet</w>
       <w>jerryc</w>
       <w>jiao</w>
       <w>kabaddi</w>
+      <w>kkzn</w>
       <w>licensors</w>
+      <w>mchappid</w>
       <w>michaeldaiminqi</w>
       <w>miui</w>
       <w>mozilla</w>
@@ -26,7 +32,9 @@
       <w>sublicensing</w>
       <w>tencent</w>
       <w>tiao</w>
+      <w>unionpay</w>
       <w>wipo</w>
+      <w>wxpay</w>
       <w>xiao</w>
       <w>ydyg</w>
       <w>yidingyigou</w>

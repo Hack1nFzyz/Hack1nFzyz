@@ -8,9 +8,9 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="@dimen/frag_expense_login_text_margin"
         android:hint="@string/username"
-        android:layout_marginTop="10dp"
         app:counterEnabled="true"
         app:counterMaxLength="11"
         app:endIconMode="clear_text"
@@ -59,7 +59,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/frag_expense_password_textLayout">
@@ -71,6 +72,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            android:paddingBottom="@dimen/activity_vertical_margin"
             android:text="@string/nothing_here"
             android:textAlignment="center"
             android:textSize="20sp" />

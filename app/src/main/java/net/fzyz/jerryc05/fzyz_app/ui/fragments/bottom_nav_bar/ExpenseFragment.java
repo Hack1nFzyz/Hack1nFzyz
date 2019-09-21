@@ -1,11 +1,11 @@
 package net.fzyz.jerryc05.fzyz_app.ui.fragments.bottom_nav_bar;
 
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -26,6 +26,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import net.fzyz.jerryc05.fzyz_app.R;
 import net.fzyz.jerryc05.fzyz_app.core.utils.CryptoUtils;
 import net.fzyz.jerryc05.fzyz_app.core.utils.ToastUtils;
+import net.fzyz.jerryc05.fzyz_app.core.utils.ydyg.MemberLoginPOJO;
 import net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity;
 
 import org.json.JSONException;
@@ -42,6 +43,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import static net.fzyz.jerryc05.fzyz_app.core.apis.ApiYdyg.URL_MEMBER_LOGIN;
+import static net.fzyz.jerryc05.fzyz_app.core.apis.ApiYdyg.URL_MEMBER_MEMBER_INFO;
 import static net.fzyz.jerryc05.fzyz_app.core.apis.ApiYdyg.URL_YDYG_HOST;
 import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.threadPoolExecutor;
 
@@ -74,7 +76,7 @@ public final class ExpenseFragment extends Fragment implements TextView.OnEditor
       login.setOnClickListener(v -> {
         textView.setText("Logging in ......");
         //noinspection ConstantConditions
-        threadPoolExecutor.execute(() -> requestLogin(
+        threadPoolExecutor.execute(() -> fetchMemberLogin(
                 username.getText().toString(), password.getText().toString()));
       });
       textView = view.findViewById(R.id.text_expense);
@@ -92,26 +94,54 @@ public final class ExpenseFragment extends Fragment implements TextView.OnEditor
     return false;
   }
 
-  @WorkerThread
-  private void requestLogin(@NonNull final String username, @NonNull final String password) {
-    try (final Response response = getActivityOfFragment().getOkHttpClient().newCall(
-            new Request.Builder()
-                    .url(URL_YDYG_HOST + URL_MEMBER_LOGIN)
-                    .post(idPwdOToFormBodyBuilder(username, password).build())
-                    .build()
-    ).execute()) {
-      final String result = Objects.requireNonNull(response.body()).string();
-      getActivityOfFragment().runOnUiThread(() -> textView.setText(result));
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
   private _BaseActivity getActivityOfFragment() {
     while (activity == null)
       activity = (_BaseActivity) getActivity();
     return activity;
+  }
+
+  @WorkerThread
+  private void fetchMemberLogin(@NonNull final String username,
+                                @NonNull final String password) {
+    try (final Response response = getActivityOfFragment().getOkHttpClient().newCall(
+            new Request.Builder()
+                    .url(URL_YDYG_HOST + URL_MEMBER_LOGIN)
+                    .post(idPwdOToFormBodyBuilder(username, password).build())
+                    .build()).execute()) {
+      final String result = Objects.requireNonNull(response.body(),
+              "requestMemberLogin: response.body() is null!").string();
+      Log.d(TAG, "requestMemberLogin: " + result);
+      getActivityOfFragment().runOnUiThread(() -> textView.setText(result));
+
+      final MemberLoginPOJO memberLoginPOJO = MemberLoginPOJO.parseJson(result);
+      if (!memberLoginPOJO.flag.equals("success"))
+        return;
+
+      getchMemberInfo(memberLoginPOJO.rspData.memberId, memberLoginPOJO.rspData.accessToken);
+
+    } catch (final IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @WorkerThread
+  private void getchMemberInfo(@NonNull final String recId,
+                               @NonNull final String accessToken) {
+    try (final Response response = getActivityOfFragment().getOkHttpClient().newCall(
+            new Request.Builder()
+                    .url(URL_YDYG_HOST + URL_MEMBER_MEMBER_INFO)
+                    .post(new FormBody.Builder()
+                            .add("req_params", "{\"rec_id\":\"" + recId + "\"}")
+                            .add("access_token", accessToken)
+                            .build())
+                    .build()).execute()) {
+      final String result = Objects.requireNonNull(response.body(),
+              "requestLogin: response.body() is null!").string();
+      getActivityOfFragment().runOnUiThread(() -> textView.append(result));
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   private FormBody.Builder idPwdOToFormBodyBuilder(@NonNull final String username,
@@ -123,9 +153,9 @@ public final class ExpenseFragment extends Fragment implements TextView.OnEditor
               .key("password").value(byteArrayToMD5(password.getBytes()))
               .key("uuid").value(getUUID(getActivityOfFragment().getApplicationContext()))
               .endObject().toString();
-      final String seq = new String(CryptoUtils.getRandomKeyOf16());
-      final String req_params = CryptoUtils.encrypt(
-              json.getBytes(), seq.getBytes(), CryptoUtils.ALGORITHM_AES);
+      final String seq = new String(CryptoUtils.getRandomKey(16));
+      final String req_params = new String(Base64.encode(CryptoUtils.encrypt(
+              json.getBytes(), seq.getBytes(), CryptoUtils.ALGORITHM_AES), Base64.NO_WRAP));
 
       builder
               .add("req_params", req_params)
@@ -141,12 +171,12 @@ public final class ExpenseFragment extends Fragment implements TextView.OnEditor
   private static String getUUID(@NonNull final Context context) {
     final SharedPreferences sp = context.getSharedPreferences(
             "com.kkzn.ydyg", Context.MODE_PRIVATE);
-    String uuid = sp.getString("com.kkzn.ydyg:USER_PREFERENCE_NAME:UUID", "");
+    String uuid = sp.getString("com.kkzn.ydyg:USER_PREFERENCE_NAME:UUID", null);
 
     if (TextUtils.isEmpty(uuid))
       uuid = UUID.randomUUID().toString();
-    sp.edit().putString("com.kkzn.ydyg:USER_PREFERENCE_NAME:UUID", uuid).apply();
 
+    sp.edit().putString("com.kkzn.ydyg:USER_PREFERENCE_NAME:UUID", uuid).apply();
     return uuid;
   }
 
