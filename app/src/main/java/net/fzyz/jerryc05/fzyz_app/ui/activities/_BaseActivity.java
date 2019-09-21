@@ -91,7 +91,8 @@ public abstract class _BaseActivity extends AppCompatActivity {
                   return chain.proceed(chain.request());
                 } catch (final SocketTimeoutException e) {
                   attemptCountdown--;
-                  Log.w(TAG, "intercept: Retrying... attemptCountdown = " + attemptCountdown);
+                  Log.w(TAG, "intercept: " + e.toString()
+                          + "Retrying... attemptCountdown = " + attemptCountdown);
                   if (attemptCountdown <= 1)
                     return chain.proceed(chain.request());
                 }
@@ -135,7 +136,7 @@ public abstract class _BaseActivity extends AppCompatActivity {
                      final ObjectOutputStream objectOS = new ObjectOutputStream(gzipOS)) {
 
                   objectOS.writeObject(allCookiesArrayMap);
-                  Log.w(TAG, "saveFromResponse: Wrote to file!");
+                  Log.w(TAG, "saveFromResponse: Cookies wrote to file!");
 
                 } catch (final Exception e) {
                   Log.e(TAG, "saveFromResponse: ", e);
@@ -156,7 +157,7 @@ public abstract class _BaseActivity extends AppCompatActivity {
 
                   //noinspection unchecked
                   allCookiesArrayMap = (EArrayMap) objectIS.readObject();
-                  Log.w(TAG, "loadForRequest: Loaded from file!");
+                  Log.w(TAG, "loadForRequest: Cookies loaded from file!");
 
                 } catch (final Exception e) {
                   Log.w(TAG, "loadForRequest: ", e);

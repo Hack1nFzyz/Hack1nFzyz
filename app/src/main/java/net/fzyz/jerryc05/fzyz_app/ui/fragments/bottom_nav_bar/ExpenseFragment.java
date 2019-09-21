@@ -26,6 +26,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import net.fzyz.jerryc05.fzyz_app.R;
 import net.fzyz.jerryc05.fzyz_app.core.utils.CryptoUtils;
 import net.fzyz.jerryc05.fzyz_app.core.utils.ToastUtils;
+import net.fzyz.jerryc05.fzyz_app.core.utils.ydyg.AccountRecordPOJO;
+import net.fzyz.jerryc05.fzyz_app.core.utils.ydyg.MemberInfoPOJO;
 import net.fzyz.jerryc05.fzyz_app.core.utils.ydyg.MemberLoginPOJO;
 import net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity;
 
@@ -35,6 +37,9 @@ import org.json.JSONStringer;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -42,8 +47,9 @@ import okhttp3.FormBody;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static net.fzyz.jerryc05.fzyz_app.core.apis.ApiYdyg.URL_MEMBER_ACCOUNT_RECORD;
+import static net.fzyz.jerryc05.fzyz_app.core.apis.ApiYdyg.URL_MEMBER_INFO;
 import static net.fzyz.jerryc05.fzyz_app.core.apis.ApiYdyg.URL_MEMBER_LOGIN;
-import static net.fzyz.jerryc05.fzyz_app.core.apis.ApiYdyg.URL_MEMBER_MEMBER_INFO;
 import static net.fzyz.jerryc05.fzyz_app.core.apis.ApiYdyg.URL_YDYG_HOST;
 import static net.fzyz.jerryc05.fzyz_app.ui.activities._BaseActivity.threadPoolExecutor;
 
@@ -109,38 +115,103 @@ public final class ExpenseFragment extends Fragment implements TextView.OnEditor
                     .post(idPwdOToFormBodyBuilder(username, password).build())
                     .build()).execute()) {
       final String result = Objects.requireNonNull(response.body(),
-              "requestMemberLogin: response.body() is null!").string();
-      Log.d(TAG, "requestMemberLogin: " + result);
-      getActivityOfFragment().runOnUiThread(() -> textView.setText(result));
+              "fetchMemberLogin: response.body() is null!").string();
+      Log.d(TAG, "fetchMemberLogin: " + result);
 
       final MemberLoginPOJO memberLoginPOJO = MemberLoginPOJO.parseJson(result);
-      if (!memberLoginPOJO.flag.equals("success"))
+      if (!memberLoginPOJO.flag.equals("success")) {
+        getActivityOfFragment().runOnUiThread(() -> textView.setText(memberLoginPOJO.rspDsc));
         return;
+      }
 
-      getchMemberInfo(memberLoginPOJO.rspData.memberId, memberLoginPOJO.rspData.accessToken);
+      final String toShow = "Name: " + memberLoginPOJO.rspData.memName +
+              "\nClass: " + memberLoginPOJO.rspData.company.dptName;
+      getActivityOfFragment().runOnUiThread(() -> textView.setText(toShow));
+
+      fetchMemberInfo(memberLoginPOJO.rspData.memberId, memberLoginPOJO.rspData.accessToken);
 
     } catch (final IOException e) {
-      e.printStackTrace();
+      Log.e(TAG, "fetchMemberLogin: ", e);
+      getActivityOfFragment().runOnUiThread(() -> textView.setText(e.toString()));
     }
   }
 
   @WorkerThread
-  private void getchMemberInfo(@NonNull final String recId,
+  private void fetchMemberInfo(@NonNull final String recId,
                                @NonNull final String accessToken) {
     try (final Response response = getActivityOfFragment().getOkHttpClient().newCall(
             new Request.Builder()
-                    .url(URL_YDYG_HOST + URL_MEMBER_MEMBER_INFO)
+                    .url(URL_YDYG_HOST + URL_MEMBER_INFO)
                     .post(new FormBody.Builder()
                             .add("req_params", "{\"rec_id\":\"" + recId + "\"}")
                             .add("access_token", accessToken)
                             .build())
                     .build()).execute()) {
       final String result = Objects.requireNonNull(response.body(),
-              "requestLogin: response.body() is null!").string();
-      getActivityOfFragment().runOnUiThread(() -> textView.append(result));
+              "fetchMemberInfo: response.body() is null!").string();
+      Log.d(TAG, "fetchMemberInfo: " + result);
+
+      final MemberInfoPOJO memberInfoPOJO = MemberInfoPOJO.parseJson(result);
+      if (!memberInfoPOJO.flag.equals("success")) {
+        getActivityOfFragment().runOnUiThread(() -> textView.setText(memberInfoPOJO.rspDsc));
+        return;
+      }
+
+      final String toShow = "\nBalance: RMB " + memberInfoPOJO.rspData.cashAccount + '\n';
+      getActivityOfFragment().runOnUiThread(() -> textView.append(toShow));
+
+      fetchAccountRecord(recId, "2019-08-22", "0", "10",
+              new SimpleDateFormat("YYYY-MM-dd", Locale.getDefault())
+                      .format(new Date()), accessToken);
 
     } catch (IOException e) {
-      e.printStackTrace();
+      Log.e(TAG, "fetchMemberInfo: ", e);
+      getActivityOfFragment().runOnUiThread(() -> textView.setText(e.toString()));
+    }
+  }
+
+  @WorkerThread
+  private void fetchAccountRecord(@NonNull final String memberId,
+                                  @NonNull final String startTime,
+                                  @NonNull final String start,
+                                  @NonNull final String limit,
+                                  @NonNull final String endTime,
+                                  @NonNull final String accessToken) {
+    try (final Response response = getActivityOfFragment().getOkHttpClient().newCall(
+            new Request.Builder()
+                    .url(URL_YDYG_HOST + URL_MEMBER_ACCOUNT_RECORD)
+                    .post(new FormBody.Builder()
+                            .add("req_params",
+                                    "{\"member_id\":\"" + memberId
+                                            + "\",\"starttime\":\"" + startTime
+                                            + "\",\"start\":\"" + start
+                                            + "\",\"limit\":\"" + limit
+                                            + "\",\"endtime\":\"" + endTime + "\"}")
+                            .add("access_token", accessToken)
+                            .build())
+                    .build()).execute()) {
+      final String result = Objects.requireNonNull(response.body(),
+              "fetchAccountRecord: response.body() is null!").string();
+      Log.d(TAG, "fetchAccountRecord: " + result);
+
+      final AccountRecordPOJO accountRecordPOJO = AccountRecordPOJO.parseJson(result);
+
+      final StringBuilder stringBuilder = new StringBuilder(16);
+      for (AccountRecordPOJO.RspDatum data : accountRecordPOJO.rspData)
+        stringBuilder
+                .append("\nRMB ").append(data.amount)
+                .append(" as ").append(data.recStatusCh)
+                .append("\non ").append(data.recUpdatetime)
+                .append(data.detail != null ? "\n@ " + data.detail.shopName : "")
+                .append('\n');
+
+      getActivityOfFragment().runOnUiThread(() -> textView.append(stringBuilder.toString()));
+
+//      if (!accountRecordPOJO.flag.equals("success")) return;
+
+    } catch (IOException e) {
+      Log.e(TAG, "fetchAccountRecord: ", e);
+      getActivityOfFragment().runOnUiThread(() -> textView.setText(e.toString()));
     }
   }
 

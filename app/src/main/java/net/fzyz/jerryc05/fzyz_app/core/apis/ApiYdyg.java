@@ -42,7 +42,7 @@ public interface ApiYdyg {
           URL_GOODS_PAY_ORDER             = "/mall/goods/payOrder",
           URL_GOODS_TAKE_FOOD_LIST        = "/mall/goods/takeFoodList",
           URL_GOODS_GOURMET_FOOD          = "/mall/goods/gourmetFood",
-          URL_MEMBER_MEMBER_INFO          = "/mall/member/memberInfo",
+          URL_MEMBER_INFO                 = "/mall/member/memberInfo",
           URL_MEMBER_CURRENT_VERSION      = "/mall/member/currentVersion",
           URL_MEMBER_FEED_BACK            = "/mall/member/feedback",
           URL_MALL_ORDER_COMMENT          = "/mall/mall/orderComment",

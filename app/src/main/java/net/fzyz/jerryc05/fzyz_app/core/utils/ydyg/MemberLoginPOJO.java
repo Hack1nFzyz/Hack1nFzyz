@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringReader;
 
-@SuppressWarnings({"unused", "InnerClassMayBeStatic", "WeakerAccess"})
+@SuppressWarnings("WeakerAccess")
 public class MemberLoginPOJO implements Serializable {
   private final static long serialVersionUID = 1;
 
@@ -33,7 +33,7 @@ public class MemberLoginPOJO implements Serializable {
           break;
         case "rsp_data":
           jsonReader.beginObject();
-          memberLoginPOJO.rspData = memberLoginPOJO.new RspData();
+          memberLoginPOJO.rspData = new RspData();
           while (jsonReader.hasNext())
             switch (jsonReader.nextName()) {
               case "access_token":
@@ -50,7 +50,7 @@ public class MemberLoginPOJO implements Serializable {
                 break;
               case "company":
                 jsonReader.beginObject();
-                memberLoginPOJO.rspData.company = memberLoginPOJO.rspData.new Company();
+                memberLoginPOJO.rspData.company = new RspData.Company();
                 while (jsonReader.hasNext())
                   switch (jsonReader.nextName()) {
                     case "dpt_name":
@@ -107,7 +107,10 @@ public class MemberLoginPOJO implements Serializable {
     return memberLoginPOJO;
   }
 
-  public class RspData implements Serializable {
+  private MemberLoginPOJO() {
+  }
+
+  public static class RspData implements Serializable {
     private final static long serialVersionUID = 1;
 
     public String  accessToken;
@@ -146,7 +149,7 @@ public class MemberLoginPOJO implements Serializable {
     //    public String  trackingUrl;
     //    public String  isLyadmin;
 
-    public class Company implements Serializable {
+    public static class Company implements Serializable {
       private final static long serialVersionUID = 1;
 
       //    public String     cmpId;

@@ -141,10 +141,9 @@ public final class MainActivity extends _BaseActivity {
         builder.setNegativeButton("NegativeButtonText", threadPoolExecutor, onClickListener);
       }
 
-      final CancellationSignal cancellationSignal = new CancellationSignal();
-      final BiometricPrompt.AuthenticationCallback authenticationCallback =
+      builder.build().authenticate(new CancellationSignal(), threadPoolExecutor,
               new BiometricPrompt.AuthenticationCallback() {
-                private void logAndToastResult(@NonNull final String err) {
+                private void logWAndToastResult(@NonNull final String err) {
                   Log.w(TAG, err);
                   ToastUtils.showText(MainActivity.this, err, Toast.LENGTH_LONG);
                 }
@@ -152,29 +151,26 @@ public final class MainActivity extends _BaseActivity {
                 @Override
                 public void onAuthenticationError(int errorCode,
                                                   @NonNull CharSequence errString) {
-                  logAndToastResult("onAuthenticationError: " + errString);
+                  logWAndToastResult("onAuthenticationError: " + errString);
                 }
 
                 @Override
                 public void onAuthenticationHelp(int helpCode,
                                                  @NonNull final CharSequence helpString) {
-                  logAndToastResult("onAuthenticationHelp: " + helpString);
+                  logWAndToastResult("onAuthenticationHelp: " + helpString);
                 }
 
                 @Override
                 public void onAuthenticationSucceeded(
                         @NonNull final BiometricPrompt.AuthenticationResult result) {
-                  logAndToastResult("onAuthenticationSucceeded: " + result.toString());
+                  logWAndToastResult("onAuthenticationSucceeded: " + result.toString());
                 }
 
                 @Override
                 public void onAuthenticationFailed() {
-                  logAndToastResult("onAuthenticationFailed: ");
+                  logWAndToastResult("onAuthenticationFailed: ");
                 }
-              };
-
-      builder.build()
-              .authenticate(cancellationSignal, threadPoolExecutor, authenticationCallback);
+              });
     }
   }
 
