@@ -128,7 +128,8 @@ public final class ExpenseFragment extends Fragment implements TextView.OnEditor
               "\nClass: " + memberLoginPOJO.rspData.company.dptName;
       getActivityOfFragment().runOnUiThread(() -> textView.setText(toShow));
 
-      fetchMemberInfo(memberLoginPOJO.rspData.memberId, memberLoginPOJO.rspData.accessToken);
+      fetchMemberInfo(memberLoginPOJO.rspData.memberId,
+              memberLoginPOJO.rspData.accessToken, 0, 10);
 
     } catch (final IOException e) {
       Log.e(TAG, "fetchMemberLogin: ", e);
@@ -138,7 +139,9 @@ public final class ExpenseFragment extends Fragment implements TextView.OnEditor
 
   @WorkerThread
   private void fetchMemberInfo(@NonNull final String recId,
-                               @NonNull final String accessToken) {
+                               @NonNull final String accessToken,
+                               final int start,
+                               final int limit) {
     try (final Response response = getActivityOfFragment().getOkHttpClient().newCall(
             new Request.Builder()
                     .url(URL_YDYG_HOST + URL_MEMBER_INFO)
@@ -160,7 +163,8 @@ public final class ExpenseFragment extends Fragment implements TextView.OnEditor
       final String toShow = "\nBalance: RMB " + memberInfoPOJO.rspData.cashAccount + '\n';
       getActivityOfFragment().runOnUiThread(() -> textView.append(toShow));
 
-      fetchAccountRecord(recId, "2019-08-22", "0", "10",
+      fetchAccountRecord(recId, "2019-08-22",
+              Integer.toString(start), Integer.toString(limit),
               new SimpleDateFormat("YYYY-MM-dd", Locale.getDefault())
                       .format(new Date()), accessToken);
 
@@ -226,7 +230,7 @@ public final class ExpenseFragment extends Fragment implements TextView.OnEditor
               .endObject().toString();
       final String seq = new String(CryptoUtils.getRandomKey(16));
       final String req_params = new String(Base64.encode(CryptoUtils.encrypt(
-              json.getBytes(), seq.getBytes(), CryptoUtils.ALGORITHM_AES), Base64.NO_WRAP));
+              json.getBytes(), seq.getBytes(), CryptoUtils.ALGORITHM_AES_ECB_PKCS5PADDING), Base64.NO_WRAP));
 
       builder
               .add("req_params", req_params)

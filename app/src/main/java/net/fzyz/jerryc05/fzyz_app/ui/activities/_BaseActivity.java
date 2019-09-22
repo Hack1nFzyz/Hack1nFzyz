@@ -12,8 +12,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import net.fzyz.jerryc05.fzyz_app.R;
 import net.fzyz.jerryc05.fzyz_app.core.utils.EArrayMap;
 import net.fzyz.jerryc05.fzyz_app.core.utils.EOkHttp3Cookie;
+import net.fzyz.jerryc05.fzyz_app.core.utils.NotificationUtils;
 import net.fzyz.jerryc05.fzyz_app.core.utils.ToastUtils;
 
 import java.io.File;
@@ -50,6 +52,8 @@ import static java.util.Collections.emptyList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static net.fzyz.jerryc05.fzyz_app.core.apis.ApiFzyz.URL_CALENDAR_DETAIL;
 import static net.fzyz.jerryc05.fzyz_app.core.apis.ApiFzyz.URL_FZYZ_HOST;
+import static net.fzyz.jerryc05.fzyz_app.core.utils.NotificationUtils.CHANNEL_ID_ERROR_HANDLING;
+import static net.fzyz.jerryc05.fzyz_app.core.utils.NotificationUtils.NOTIFICATION_TITLE_FATAL_ERROR;
 
 @SuppressWarnings("unused")
 public abstract class _BaseActivity extends AppCompatActivity {
@@ -63,9 +67,20 @@ public abstract class _BaseActivity extends AppCompatActivity {
   protected void onCreate(@Nullable final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     //noinspection deprecation | We knew this is deprecated, but we need it.
-    AppCompatDelegate.setDefaultNightMode(
-            AppCompatDelegate.MODE_NIGHT_AUTO_TIME);
+    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_TIME);
     initThreadPoolExecutor();
+
+    Thread.setDefaultUncaughtExceptionHandler((paramThread, paramThrowable) -> {
+      new NotificationUtils(getApplicationContext(),
+              CHANNEL_ID_ERROR_HANDLING, R.drawable.ic_launcher_fzyz_background,
+              NOTIFICATION_TITLE_FATAL_ERROR).show();
+
+      if (Thread.getDefaultUncaughtExceptionHandler() != null)
+        Thread.getDefaultUncaughtExceptionHandler()
+                .uncaughtException(paramThread, paramThrowable);
+      else
+        System.exit(1);
+    });
   }
 
   @Override
@@ -195,9 +210,9 @@ public abstract class _BaseActivity extends AppCompatActivity {
               @Override
               public void connectEnd(Call call, InetSocketAddress inetSocketAddress,
                                      Proxy proxy, Protocol protocol) {
-                Log.w(TAG, "connectEnd() called with: call = [" + call
-                        + "], inetSocketAddress = [" + inetSocketAddress
-                        + "], proxy = [" + proxy + "], protocol = [" + protocol + "]");
+                Log.w(TAG, "connectEnd() called with: inetSocketAddress = ["
+                        + inetSocketAddress + "], proxy = [" + proxy
+                        + "], protocol = [" + protocol + "]");
               }
             })
             .build();

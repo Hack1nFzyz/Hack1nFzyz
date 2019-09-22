@@ -6,14 +6,23 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringDef;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.security.GeneralSecurityException;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
+
+@SuppressLint("GetInstance")
 public final class CryptoUtils {
   private static final String TAG = "CryptoUtils";
 
@@ -23,32 +32,36 @@ public final class CryptoUtils {
           '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
   };
 
-  public static final String ALGORITHM_AES = "AES";
+  public static final String ALGORITHM_AES_ECB_PKCS5PADDING = "AES/ECB/PKCS5Padding";
 
-  @StringDef(ALGORITHM_AES)
+  @StringDef(ALGORITHM_AES_ECB_PKCS5PADDING)
   @Retention(RetentionPolicy.SOURCE)
   @interface Algorithms {
   }
 
+  @NonNull
   public static byte[] encrypt(@NonNull final byte[] DATA, @NonNull final byte[] KEY,
                                @NonNull @Algorithms final String ALGORITHM) {
-    return encrypt(DATA, new SecretKeySpec(KEY, ALGORITHM));
+    final int slashIndex = ALGORITHM.indexOf('/');
+    return encrypt(DATA, new SecretKeySpec(KEY,
+            slashIndex < 0 ? ALGORITHM : ALGORITHM.substring(0, slashIndex)));
   }
 
+  @NonNull
   private static byte[] encrypt(@NonNull final byte[] DATA,
                                 @NonNull final SecretKey SECRET_KEY) {
     try {
-      @SuppressLint("GetInstance") final Cipher instance =
-              Cipher.getInstance("AES/ECB/PKCS5Padding");
+      final Cipher instance = Cipher.getInstance("AES/ECB/PKCS5Padding");
       instance.init(Cipher.ENCRYPT_MODE, SECRET_KEY);
       return instance.doFinal(DATA);
 
-    } catch (final Exception e) {
+    } catch (final GeneralSecurityException e) {
       Log.e(TAG, "encrypt: ", e);
       throw new IllegalStateException(e);
     }
   }
 
+  @NonNull
   public static char[] getRandomKey(final int SIZE) {
     final Random random = new Random(System.currentTimeMillis());
     final char[] key    = new char[SIZE];
@@ -57,6 +70,27 @@ public final class CryptoUtils {
       key[i] = KEY_CHARS[random.nextInt(SIZE)];
 
     return key;
+  }
+
+  public static boolean isAESNISupported() throws IOException {
+    final File cpuInfo = new File("/proc/cpuinfo");
+    if (cpuInfo.exists())
+      try (final BufferedReader bufferedReader =
+                   new BufferedReader(new FileReader(cpuInfo))) {
+        final Pattern pattern = Pattern.compile(
+                "[^a-z]aes(?:[^a-z]|$)", CASE_INSENSITIVE);
+        String line;
+
+        //noinspection MethodCallInLoopCondition
+        while ((line = bufferedReader.readLine()) != null)
+          if (pattern.matcher(line).find())
+            return true;
+
+      } catch (final IOException e) {
+        Log.e(TAG, "getCPUInfo: ", e);
+        throw e;
+      }
+    return false;
   }
 
 //  private static final byte[]  KEY_SEED    = new byte[]{
