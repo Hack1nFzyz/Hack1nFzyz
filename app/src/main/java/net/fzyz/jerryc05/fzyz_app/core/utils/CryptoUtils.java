@@ -22,36 +22,35 @@ import javax.crypto.spec.SecretKeySpec;
 
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 
-@SuppressLint("GetInstance")
 public final class CryptoUtils {
   private static final String TAG = "CryptoUtils";
 
   private static final char[] KEY_CHARS = new char[]{
           'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
           'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-          '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
-  };
+          '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
   public static final String ALGORITHM_AES_ECB_PKCS5PADDING = "AES/ECB/PKCS5Padding";
 
   @StringDef(ALGORITHM_AES_ECB_PKCS5PADDING)
   @Retention(RetentionPolicy.SOURCE)
-  @interface Algorithms {
+  @interface Algorithm {
   }
 
   @NonNull
   public static byte[] encrypt(@NonNull final byte[] DATA, @NonNull final byte[] KEY,
-                               @NonNull @Algorithms final String ALGORITHM) {
+                               @NonNull @Algorithm final String ALGORITHM) {
     final int slashIndex = ALGORITHM.indexOf('/');
     return encrypt(DATA, new SecretKeySpec(KEY,
             slashIndex < 0 ? ALGORITHM : ALGORITHM.substring(0, slashIndex)));
   }
 
+  @SuppressLint("GetInstance")
   @NonNull
   private static byte[] encrypt(@NonNull final byte[] DATA,
                                 @NonNull final SecretKey SECRET_KEY) {
     try {
-      final Cipher instance = Cipher.getInstance("AES/ECB/PKCS5Padding");
+      final Cipher instance = Cipher.getInstance(ALGORITHM_AES_ECB_PKCS5PADDING);
       instance.init(Cipher.ENCRYPT_MODE, SECRET_KEY);
       return instance.doFinal(DATA);
 
@@ -62,7 +61,7 @@ public final class CryptoUtils {
   }
 
   @NonNull
-  public static char[] getRandomKey(final int SIZE) {
+  public static char[] generateRandomKeyFast(final int SIZE) {
     final Random random = new Random(System.currentTimeMillis());
     final char[] key    = new char[SIZE];
 

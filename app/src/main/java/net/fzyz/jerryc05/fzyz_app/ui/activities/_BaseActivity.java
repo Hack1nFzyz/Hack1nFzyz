@@ -71,8 +71,11 @@ public abstract class _BaseActivity extends AppCompatActivity {
     initThreadPoolExecutor();
 
     Thread.setDefaultUncaughtExceptionHandler((paramThread, paramThrowable) -> {
+      Log.e(TAG, "uncaughtException: [" + paramThrowable
+              + "] @ [" + paramThread + "]");
+      Log.e(TAG, "uncaughtException: ", paramThrowable);
       new NotificationUtils(getApplicationContext(),
-              CHANNEL_ID_ERROR_HANDLING, R.drawable.ic_launcher_fzyz_background,
+              CHANNEL_ID_ERROR_HANDLING, R.drawable.ic_launcher_fzyz_foreground,
               NOTIFICATION_TITLE_FATAL_ERROR).show();
 
       if (Thread.getDefaultUncaughtExceptionHandler() != null)

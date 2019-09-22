@@ -228,7 +228,7 @@ public final class ExpenseFragment extends Fragment implements TextView.OnEditor
               .key("password").value(byteArrayToMD5(password.getBytes()))
               .key("uuid").value(getUUID(getActivityOfFragment().getApplicationContext()))
               .endObject().toString();
-      final String seq = new String(CryptoUtils.getRandomKey(16));
+      final String seq = new String(CryptoUtils.generateRandomKeyFast(16));
       final String req_params = new String(Base64.encode(CryptoUtils.encrypt(
               json.getBytes(), seq.getBytes(), CryptoUtils.ALGORITHM_AES_ECB_PKCS5PADDING), Base64.NO_WRAP));
 
