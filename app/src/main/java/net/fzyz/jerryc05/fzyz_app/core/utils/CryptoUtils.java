@@ -22,6 +22,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 
+@SuppressWarnings("WeakerAccess")
 public final class CryptoUtils {
   private static final String TAG = "CryptoUtils";
 
@@ -31,6 +32,7 @@ public final class CryptoUtils {
           '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
   public static final String ALGORITHM_AES_ECB_PKCS5PADDING = "AES/ECB/PKCS5Padding";
+  public static final String ALGORITHM_XOR_CIPHER           = "X";
 
   @StringDef(ALGORITHM_AES_ECB_PKCS5PADDING)
   @Retention(RetentionPolicy.SOURCE)
@@ -38,26 +40,44 @@ public final class CryptoUtils {
   }
 
   @NonNull
-  public static byte[] encrypt(@NonNull final byte[] DATA, @NonNull final byte[] KEY,
-                               @NonNull @Algorithm final String ALGORITHM) {
-    final int slashIndex = ALGORITHM.indexOf('/');
-    return encrypt(DATA, new SecretKeySpec(KEY,
-            slashIndex < 0 ? ALGORITHM : ALGORITHM.substring(0, slashIndex)));
+  public static byte[] encrypt(@NonNull final byte[] data, @NonNull final byte[] key,
+                               @NonNull @Algorithm final String algorithm) {
+
+    switch (algorithm) {
+      case ALGORITHM_AES_ECB_PKCS5PADDING:
+        final int slashIndex = algorithm.indexOf('/');
+        //noinspection ConstantConditions
+        return encryptCipher(data, new SecretKeySpec(key, slashIndex < 0
+                ? algorithm : algorithm.substring(0, slashIndex)), algorithm);
+      case ALGORITHM_XOR_CIPHER:
+        return xorEnhanced(data, key);
+      default:
+        throw new IllegalArgumentException("Algorithm not found!");
+    }
   }
 
   @SuppressLint("GetInstance")
   @NonNull
-  private static byte[] encrypt(@NonNull final byte[] DATA,
-                                @NonNull final SecretKey SECRET_KEY) {
+  private static byte[] encryptCipher(@NonNull final byte[] data,
+                                      @NonNull final SecretKey secretKey,
+                                      @NonNull @Algorithm final String algorithm) {
     try {
-      final Cipher instance = Cipher.getInstance(ALGORITHM_AES_ECB_PKCS5PADDING);
-      instance.init(Cipher.ENCRYPT_MODE, SECRET_KEY);
-      return instance.doFinal(DATA);
+      final Cipher instance = Cipher.getInstance(algorithm);
+      instance.init(Cipher.ENCRYPT_MODE, secretKey);
+      return instance.doFinal(data);
 
     } catch (final GeneralSecurityException e) {
-      Log.e(TAG, "encrypt: ", e);
+      Log.e(TAG, "encryptCipher: ", e);
       throw new IllegalStateException(e);
     }
+  }
+
+  private static byte[] xorEnhanced(@NonNull final byte[] data, @NonNull final byte[] key) {
+    final int    dataLength = data.length;
+    final byte[] result     = new byte[dataLength];
+    for (int i = 0; i < dataLength; i++)
+      result[i] = (byte) (data[i] ^ key[i % key.length] ^ i);
+    return result;
   }
 
   @NonNull
@@ -71,17 +91,16 @@ public final class CryptoUtils {
     return key;
   }
 
-  public static boolean isAESNISupported() throws IOException {
+  public static boolean isAesNiSupported() throws IOException {
     final File cpuInfo = new File("/proc/cpuinfo");
     if (cpuInfo.exists())
       try (final BufferedReader bufferedReader =
                    new BufferedReader(new FileReader(cpuInfo))) {
         final Pattern pattern = Pattern.compile(
                 "[^a-z]aes(?:[^a-z]|$)", CASE_INSENSITIVE);
-        String line;
 
         //noinspection MethodCallInLoopCondition
-        while ((line = bufferedReader.readLine()) != null)
+        for (String line; (line = bufferedReader.readLine()) != null; )
           if (pattern.matcher(line).find())
             return true;
 

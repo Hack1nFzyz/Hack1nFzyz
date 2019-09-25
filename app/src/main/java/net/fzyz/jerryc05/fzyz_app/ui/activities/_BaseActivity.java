@@ -12,10 +12,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
-import net.fzyz.jerryc05.fzyz_app.R;
 import net.fzyz.jerryc05.fzyz_app.core.utils.EArrayMap;
 import net.fzyz.jerryc05.fzyz_app.core.utils.EOkHttp3Cookie;
-import net.fzyz.jerryc05.fzyz_app.core.utils.NotificationUtils;
 import net.fzyz.jerryc05.fzyz_app.core.utils.ToastUtils;
 
 import java.io.File;
@@ -34,8 +32,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
+import java.util.zip.Deflater;
+import java.util.zip.DeflaterInputStream;
+import java.util.zip.DeflaterOutputStream;
 
 import okhttp3.Call;
 import okhttp3.Cookie;
@@ -52,8 +51,6 @@ import static java.util.Collections.emptyList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static net.fzyz.jerryc05.fzyz_app.core.apis.ApiFzyz.URL_CALENDAR_DETAIL;
 import static net.fzyz.jerryc05.fzyz_app.core.apis.ApiFzyz.URL_FZYZ_HOST;
-import static net.fzyz.jerryc05.fzyz_app.core.utils.NotificationUtils.CHANNEL_ID_ERROR_HANDLING;
-import static net.fzyz.jerryc05.fzyz_app.core.utils.NotificationUtils.NOTIFICATION_TITLE_FATAL_ERROR;
 
 @SuppressWarnings("unused")
 public abstract class _BaseActivity extends AppCompatActivity {
@@ -74,9 +71,9 @@ public abstract class _BaseActivity extends AppCompatActivity {
       Log.e(TAG, "uncaughtException: [" + paramThrowable
               + "] @ [" + paramThread + "]");
       Log.e(TAG, "uncaughtException: ", paramThrowable);
-      new NotificationUtils(getApplicationContext(),
-              CHANNEL_ID_ERROR_HANDLING, R.drawable.ic_launcher_fzyz_foreground,
-              NOTIFICATION_TITLE_FATAL_ERROR).show();
+//      new NotificationUtils(getApplicationContext(),
+//              CHANNEL_ID_ERROR_HANDLING, R.drawable.ic_launcher_fzyz_foreground,
+//              NOTIFICATION_TITLE_FATAL_ERROR).show();
 
       if (Thread.getDefaultUncaughtExceptionHandler() != null)
         Thread.getDefaultUncaughtExceptionHandler()
@@ -121,7 +118,8 @@ public abstract class _BaseActivity extends AppCompatActivity {
                             .removeHeader("Connection")
                             .build()))
             .cookieJar(new CookieJar() {
-              private static final String COOKIES_FILENAME = "sys_network_cookies.gz";
+              private static final String COOKIES_FILENAME = "sys_network_cookies.deflate";
+              private final Deflater mDeflater = new Deflater(Deflater.BEST_COMPRESSION);
 
               @Override
               public void saveFromResponse(@NonNull final HttpUrl url,
@@ -150,8 +148,9 @@ public abstract class _BaseActivity extends AppCompatActivity {
 
                 try (final FileOutputStream fileOS = getApplicationContext()
                         .openFileOutput(COOKIES_FILENAME, MODE_PRIVATE);
-                     final GZIPOutputStream gzipOS = new GZIPOutputStream(fileOS);
-                     final ObjectOutputStream objectOS = new ObjectOutputStream(gzipOS)) {
+                     final DeflaterOutputStream deflaterOS =
+                             new DeflaterOutputStream(fileOS, mDeflater);
+                     final ObjectOutputStream objectOS = new ObjectOutputStream(deflaterOS)) {
 
                   objectOS.writeObject(allCookiesArrayMap);
                   Log.w(TAG, "saveFromResponse: Cookies wrote to file!");
@@ -170,8 +169,9 @@ public abstract class _BaseActivity extends AppCompatActivity {
 
                 try (final FileInputStream fileIS = getApplicationContext()
                         .openFileInput(COOKIES_FILENAME);
-                     final GZIPInputStream gzipIS = new GZIPInputStream(fileIS);
-                     final ObjectInputStream objectIS = new ObjectInputStream(gzipIS)) {
+                     final DeflaterInputStream deflaterIS = new DeflaterInputStream(
+                             fileIS, mDeflater);
+                     final ObjectInputStream objectIS = new ObjectInputStream(deflaterIS)) {
 
                   //noinspection unchecked
                   allCookiesArrayMap = (EArrayMap) objectIS.readObject();
@@ -189,7 +189,8 @@ public abstract class _BaseActivity extends AppCompatActivity {
                 if (cookiesArrayMap == null) return emptyList();
 
                 Log.w(TAG, "loadForRequest: " + Arrays.toString(Objects.requireNonNull(
-                        allCookiesArrayMap.get(url.host())).values().toArray(new EOkHttp3Cookie[0])));
+                        allCookiesArrayMap.get(url.host())).values()
+                        .toArray(new EOkHttp3Cookie[0])));
                 final ArrayList<Cookie> cookieList = new ArrayList<>(cookiesArrayMap.size());
                 for (EOkHttp3Cookie eCookie : cookiesArrayMap.values())
                   cookieList.add(eCookie.toOkHttp3Cookie());

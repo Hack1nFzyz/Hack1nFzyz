@@ -35,7 +35,7 @@ public class ExampleInstrumentedTest {
   @Test
   public void testCPUInfo() {
     try {
-      System.err.println("testCPUInfo: " + CryptoUtils.isAESNISupported());
+      System.err.println("testCPUInfo: " + CryptoUtils.isAesNiSupported());
     } catch (IOException e) {
       fail(e.toString());
     }
