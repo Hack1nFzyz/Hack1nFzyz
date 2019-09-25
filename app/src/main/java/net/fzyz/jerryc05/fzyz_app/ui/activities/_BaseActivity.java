@@ -33,8 +33,9 @@ import java.util.Objects;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.zip.Deflater;
-import java.util.zip.DeflaterInputStream;
 import java.util.zip.DeflaterOutputStream;
+import java.util.zip.Inflater;
+import java.util.zip.InflaterInputStream;
 
 import okhttp3.Call;
 import okhttp3.Cookie;
@@ -119,7 +120,6 @@ public abstract class _BaseActivity extends AppCompatActivity {
                             .build()))
             .cookieJar(new CookieJar() {
               private static final String COOKIES_FILENAME = "sys_network_cookies.deflate";
-              private final Deflater mDeflater = new Deflater(Deflater.BEST_COMPRESSION);
 
               @Override
               public void saveFromResponse(@NonNull final HttpUrl url,
@@ -148,10 +148,9 @@ public abstract class _BaseActivity extends AppCompatActivity {
 
                 try (final FileOutputStream fileOS = getApplicationContext()
                         .openFileOutput(COOKIES_FILENAME, MODE_PRIVATE);
-                     final DeflaterOutputStream deflaterOS =
-                             new DeflaterOutputStream(fileOS, mDeflater);
+                     final DeflaterOutputStream deflaterOS = new DeflaterOutputStream(
+                             fileOS, new Deflater(Deflater.BEST_COMPRESSION));
                      final ObjectOutputStream objectOS = new ObjectOutputStream(deflaterOS)) {
-
                   objectOS.writeObject(allCookiesArrayMap);
                   Log.w(TAG, "saveFromResponse: Cookies wrote to file!");
 
@@ -164,24 +163,27 @@ public abstract class _BaseActivity extends AppCompatActivity {
               @NonNull
               @Override
               public List<Cookie> loadForRequest(@NonNull final HttpUrl url) {
-                final File                                                 cookiesFile = new File(getFilesDir(), COOKIES_FILENAME);
+                final File cookiesFile = new File(getFilesDir(), COOKIES_FILENAME);
+
                 final EArrayMap<String, EArrayMap<String, EOkHttp3Cookie>> allCookiesArrayMap;
 
                 try (final FileInputStream fileIS = getApplicationContext()
                         .openFileInput(COOKIES_FILENAME);
-                     final DeflaterInputStream deflaterIS = new DeflaterInputStream(
-                             fileIS, mDeflater);
+                     final InflaterInputStream deflaterIS = new InflaterInputStream(
+                             fileIS, new Inflater());
                      final ObjectInputStream objectIS = new ObjectInputStream(deflaterIS)) {
-
                   //noinspection unchecked
                   allCookiesArrayMap = (EArrayMap) objectIS.readObject();
                   Log.w(TAG, "loadForRequest: Cookies loaded from file!");
 
+                } catch (final FileNotFoundException e) {
+                  Log.w(TAG, "loadForRequest: Cookie file not found! " +
+                          "Maybe have not initialized");
+                  return emptyList();
+
                 } catch (final Exception e) {
                   Log.w(TAG, "loadForRequest: ", e);
-                  if (!(e instanceof FileNotFoundException))
-                    ToastUtils.showText(_BaseActivity.this,
-                            e.toString(), Toast.LENGTH_LONG);
+                  ToastUtils.showText(_BaseActivity.this, e.toString(), Toast.LENGTH_LONG);
                   return emptyList();
                 }
                 final EArrayMap<String, EOkHttp3Cookie> cookiesArrayMap =
