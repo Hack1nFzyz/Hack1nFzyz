@@ -143,8 +143,9 @@ public abstract class _BaseActivity extends AppCompatActivity {
                           cookie.name(), EOkHttp3Cookie.of(cookie));
                 allCookiesArrayMap.put(url.host(), cookiesExternalizableArrayMap);
 
-                Log.w(TAG, "saveFromResponse: " + Arrays.toString(Objects.requireNonNull(
-                        allCookiesArrayMap.get(url.host())).values().toArray(new EOkHttp3Cookie[0])));
+                Log.w(TAG, "saveFromResponse: " + Arrays.toString(
+                        Objects.requireNonNull(allCookiesArrayMap.get(url.host())).values()
+                                .toArray(new EOkHttp3Cookie[0])));
 
                 try (final FileOutputStream fileOS = getApplicationContext()
                         .openFileOutput(COOKIES_FILENAME, MODE_PRIVATE);
@@ -177,8 +178,7 @@ public abstract class _BaseActivity extends AppCompatActivity {
                   Log.w(TAG, "loadForRequest: Cookies loaded from file!");
 
                 } catch (final FileNotFoundException e) {
-                  Log.w(TAG, "loadForRequest: Cookie file not found! " +
-                          "Maybe have not initialized");
+                  Log.w(TAG, "loadForRequest: Cookie file not found! Maybe have not initialized");
                   return emptyList();
 
                 } catch (final Exception e) {
@@ -186,8 +186,8 @@ public abstract class _BaseActivity extends AppCompatActivity {
                   ToastUtils.showText(_BaseActivity.this, e.toString(), Toast.LENGTH_LONG);
                   return emptyList();
                 }
-                final EArrayMap<String, EOkHttp3Cookie> cookiesArrayMap =
-                        allCookiesArrayMap.get(url.host());
+                final EArrayMap<String, EOkHttp3Cookie>
+                        cookiesArrayMap = allCookiesArrayMap.get(url.host());
                 if (cookiesArrayMap == null) return emptyList();
 
                 Log.w(TAG, "loadForRequest: " + Arrays.toString(Objects.requireNonNull(
