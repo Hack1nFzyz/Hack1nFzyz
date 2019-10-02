@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 import java.util.regex.Pattern;
 
@@ -33,6 +35,7 @@ public final class CryptoUtils {
 
   public static final String ALGORITHM_AES_ECB_PKCS5PADDING = "AES/ECB/PKCS5Padding";
   public static final String ALGORITHM_XOR_CIPHER           = "X";
+  public static final String ALGORITHM_MD5_DIGEST           = "MD5";
 
   @StringDef(ALGORITHM_AES_ECB_PKCS5PADDING)
   @Retention(RetentionPolicy.SOURCE)
@@ -78,6 +81,28 @@ public final class CryptoUtils {
     for (int i = 0; i < dataLength; i++)
       result[i] = (byte) (data[i] ^ key[i % key.length] ^ i);
     return result;
+  }
+
+  @NonNull
+  public static byte[] digest(@NonNull final byte[] data,
+                              @NonNull @Algorithm final String algorithm) {
+    if (ALGORITHM_MD5_DIGEST.equals(algorithm))
+      return digestMD5(data);
+    else
+      throw new IllegalStateException("Unknown algorithm [" + algorithm + "]");
+  }
+
+
+  private static byte[] digestMD5(@NonNull final byte[] data) {
+    try {
+      final MessageDigest md5 = MessageDigest.getInstance("MD5");
+      md5.update(data);
+      return md5.digest();
+
+    } catch (final NoSuchAlgorithmException e) {
+      Log.e(TAG, "MD5: ", e);
+      throw new IllegalStateException(e);
+    }
   }
 
   @NonNull

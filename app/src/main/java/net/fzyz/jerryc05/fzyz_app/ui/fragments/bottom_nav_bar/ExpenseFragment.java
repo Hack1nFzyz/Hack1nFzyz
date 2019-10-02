@@ -35,8 +35,6 @@ import org.json.JSONException;
 import org.json.JSONStringer;
 
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -225,7 +223,8 @@ public final class ExpenseFragment extends Fragment implements TextView.OnEditor
     try {
       final String json = new JSONStringer().object()
               .key("login_id").value(username)
-              .key("password").value(byteArrayToMD5(password.getBytes()))
+              .key("password").value(byteArrayToHexString(CryptoUtils.digest(
+                      password.getBytes(), CryptoUtils.ALGORITHM_MD5_DIGEST)))
               .key("uuid").value(getUUID(getActivityOfFragment().getApplicationContext()))
               .endObject().toString();
       final String seq = new String(CryptoUtils.generateRandomKeyFast(16));
@@ -255,19 +254,7 @@ public final class ExpenseFragment extends Fragment implements TextView.OnEditor
     return uuid;
   }
 
-  private static String byteArrayToMD5(@NonNull final byte[] input) {
-    try {
-      final MessageDigest md5 = MessageDigest.getInstance("MD5");
-      md5.update(input);
-      return byteArrayToHex(md5.digest());
-
-    } catch (final NoSuchAlgorithmException e) {
-      Log.e(TAG, "MD5: ", e);
-      throw new IllegalStateException(e);
-    }
-  }
-
-  private static String byteArrayToHex(@NonNull final byte[] input) {
+  private static String byteArrayToHexString(@NonNull final byte[] input) {
     final char[] hexDigits =
             {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
     final char[] resultCharArray = new char[(input.length << 1)];
