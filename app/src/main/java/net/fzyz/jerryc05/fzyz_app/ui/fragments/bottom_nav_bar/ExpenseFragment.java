@@ -114,7 +114,7 @@ public final class ExpenseFragment extends Fragment implements TextView.OnEditor
                     .build()).execute()) {
       final String result = Objects.requireNonNull(response.body(),
               "fetchMemberLogin: response.body() is null!").string();
-      Log.d(TAG, "fetchMemberLogin: " + result);
+      Log.d(TAG, "fetchMemberLogin:\n" + result);
 
       final MemberLoginPOJO memberLoginPOJO = MemberLoginPOJO.parseJson(result);
       if (!memberLoginPOJO.flag.equals("success")) {
@@ -130,7 +130,7 @@ public final class ExpenseFragment extends Fragment implements TextView.OnEditor
               memberLoginPOJO.rspData.accessToken, 0, 10);
 
     } catch (final IOException e) {
-      Log.e(TAG, "fetchMemberLogin: ", e);
+      Log.e(TAG, "fetchMemberLogin: " + e.toString() + '\n', e);
       getActivityOfFragment().runOnUiThread(() -> textView.setText(e.toString()));
     }
   }
