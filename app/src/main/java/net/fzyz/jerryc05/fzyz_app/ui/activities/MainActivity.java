@@ -83,11 +83,14 @@ public final class MainActivity extends _BaseActivity {
     setSupportActionBar(toolbar);
 
     drawerLayout = findViewById(R.id.drawer_layout);
-    final ActionBarDrawerToggle actionBarDrawerToggle =
-            new ActionBarDrawerToggle(this, drawerLayout, toolbar,
-                    R.string.open_drawer, R.string.appbar_scrolling_view_behavior);
-    actionBarDrawerToggle.syncState();
-    runOnUiThread(() -> drawerLayout.addDrawerListener(actionBarDrawerToggle));
+    final ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(
+            this, drawerLayout, toolbar,
+            R.string.open_drawer, R.string.appbar_scrolling_view_behavior);
+
+    runOnUiThread(() -> {
+      actionBarDrawerToggle.syncState();
+      drawerLayout.addDrawerListener(actionBarDrawerToggle);
+    });
   }
 
   @SuppressWarnings("SameReturnValue")
