@@ -2,7 +2,7 @@
   <a href="https://github.com/jerryc05/fzyz-app/">FZYZ - App</a>
 </h1>
 
-![Codacy grade](https://img.shields.io/codacy/grade/be5a76cf55794da0a69d8a9ce74a9454.svg) ![GitHub commit activity](https://img.shields.io/github/commit-activity/y/jerryc05/fzyz-app.svg) ![GitHub issues](https://img.shields.io/github/issues/jerryc05/fzyz-app.svg) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/jerryc05/fzyz-app.svg) ![GitHub License](https://img.shields.io/github/license/jerryc05/fzyz-app.svg)
+![Codacy grade](https://api.codacy.com/project/badge/Grade/136746dfb0aa4df1ad2e9bc950188e64?isInternal=true) ![GitHub commit activity](https://img.shields.io/github/commit-activity/y/jerryc05/fzyz-app.svg) ![GitHub issues](https://img.shields.io/github/issues/jerryc05/fzyz-app.svg) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/jerryc05/fzyz-app.svg) ![GitHub License](https://img.shields.io/github/license/jerryc05/fzyz-app.svg)
 
 **FZYZ-App** - A light-weight, material-designed unofficial Android client for Fuzhou No.1 High School.
 
