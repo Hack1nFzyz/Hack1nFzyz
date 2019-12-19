@@ -44,7 +44,7 @@ Please see [Contributing](#user-content-contributing) tab for more info if you w
 
 ## How To Use
 
-See GitHub pages from <https://hack1nfzyz.github.io/Hack1nFzyz//>.
+See GitHub pages from <https://hack1nfzyz.github.io/Hack1nFzyz/>.
 
 ## Contributing
 
