@@ -12,7 +12,7 @@
 
 **IMPORTANT!!!** This repo is only actively maintained on [GitHub](<https://github.com/Hack1nFzyz/Hack1nFzyz>).
 
-**For faster access from Mainland China**, there is a mirror site: [Tencent Dev](<https://dev.tencent.com/u/jerryc05/p/Hack1nFzyz/git>).
+**For faster access from Mainland China**, we provide a mirror site: [Tencent Dev](<https://dev.tencent.com/u/jerryc05/p/Hack1nFzyz/git>).
 
 Please see [Contributing](#user-content-contributing) tab for more info if you want to report anything.
 
