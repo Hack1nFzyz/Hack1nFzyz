@@ -32,7 +32,8 @@ Please see [Contributing](#user-content-contributing) tab for more info if you w
 
 ### Android
 -   To download **stable/beta** releases, go to **[release page](<https://github.com/Hack1nFzyz/Hack1nFzyz/releases>)**.
--   To download **nightly** releases, go to **[action page](<https://github.com/Hack1nFzyz/Hack1nFzyz/actions>)**, select the latest run, and click "**Upload to file.io**" section. You will find a temporary link there. **NOTE: YOU WILL NEED TO SIGN THE APK YOURSELF!**
+-   <del>To download **nightly** releases, go to **[action page](<https://github.com/Hack1nFzyz/Hack1nFzyz/actions>)**, select the latest run, and click "**Upload to file.io**" section. You will find a temporary link there. **NOTE: YOU WILL NEED TO SIGN THE APK YOURSELF!**</del>
+-   For **nightly** versions, you will have to build it yourself.
 
 ### iOS
 -   **No development in plan.** You are more than welcome to FORK this repository and implement an iOS client.

@@ -19,7 +19,3 @@ jobs:
       run:  |
         chmod +x ./gradlew
         sudo bash -c "./gradlew assembleRelease --no-daemon"
-    - name: Upload to file.io
-      run:  |
-        cd ./app/build/outputs/apk/release
-        curl -F "file=@app-release-unsigned.apk" https://file.io/?expires=3m
