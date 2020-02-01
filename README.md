@@ -32,7 +32,7 @@ Please see [Contributing](#user-content-contributing) tab for more info if you w
 
 ### Android
 -   To download **stable/beta** releases, go to **[release page](<https://github.com/Hack1nFzyz/Hack1nFzyz/releases>)**.
--   <del>To download **nightly** releases, go to **[action page](<https://github.com/Hack1nFzyz/Hack1nFzyz/actions>)**, select the latest run, and click "**Upload to file.io**" section. You will find a temporary link there. **NOTE: YOU WILL NEED TO SIGN THE APK YOURSELF!**</del>
+-   ~To download **nightly** releases, go to **[action page](<https://github.com/Hack1nFzyz/Hack1nFzyz/actions>)**, select the latest run, and click "**Upload to file.io**" section. You will find a temporary link there. **NOTE: YOU WILL NEED TO SIGN THE APK YOURSELF!**~
 -   For **nightly** versions, you will have to build it yourself.
 
 ### iOS
@@ -74,7 +74,7 @@ If we knew each other, it's fine. Otherwise, don't.
     -    *Bug Tester*
 
 -   **[@focss](<https://github.com/focss>)**
-	-    *UI designer*
+    -    *UI designer*
 
 ## License
 
